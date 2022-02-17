@@ -766,13 +766,6 @@ class digitalResource
      */
     public function completenessSampling($samplingFrequency, $timeout)
     {
-        if (!is_null($samplingFrequency)) {
-            $samplingFrequency = intval($samplingFrequency);
-        }
-        
-        if (!is_null($timeout)) {
-            $timeout = intval($timeout);
-        }
 
         $lifeCycleJournalController = \laabs::newController("lifeCycle/journal");
     
@@ -810,7 +803,7 @@ class digitalResource
         $endTime = microtime(true) + $timeout;
 
         foreach ($resources as $resource) {
-            if (!is_null($timeout) && ($endTime - microtime(true)) <= 0) {
+            if (($endTime - microtime(true)) <= 0) {
                 $logMessage = ["message" => "Time limit reached"];
                 \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
                 break;
