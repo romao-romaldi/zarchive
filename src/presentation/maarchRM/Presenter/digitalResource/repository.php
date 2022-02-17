@@ -178,11 +178,12 @@ class repository
      *
      * @return object JSON object with a status and message parameters
      */
-    public function checkAddessIntegrity($integrityResult)
+    public function checkAddressIntegrity($integrityResult)
     {
         if ($integrityResult) {
             $this->json->message = $this->translator->getText('No error found on the address.');
         } else {
+            $this->json->status = false;
             $this->json->message = $this->translator->getText('The address is still flawed.');
         } 
 

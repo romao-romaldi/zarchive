@@ -108,7 +108,7 @@ interface adminStorageInterface
     public function updateRepository_repositoryId_($repository);
 
     /**
-     *  Get addesses wich fail the integrity test
+     *  Get addresses which fail the integrity test
      *
      * @uses digitalResource/repository/readFlawedAddresses
      * @return  digitalResource/repository/flawedaddresses
@@ -117,11 +117,11 @@ interface adminStorageInterface
 
     /**
      * Validate an address integrity
-     * @param digitalResource/address    $address    The address to check
-     * @param digitalResource/repository $repository The repository of the address 
+     * @param string $resId         The resource identifier
+     * @param string $repositoryId  The repository identifier
      *
      * @uses digitalResource/repository/updateCheckaddressintegrity
-     * @return  digitalResource/repository/checkAddessIntegrity
+     * @return  digitalResource/repository/checkAddressIntegrity
      */
-    public function updateCheckaddressintegrity($address, $repository);
+    public function updateCheckaddressintegrity($resId, $repositoryId);
 }

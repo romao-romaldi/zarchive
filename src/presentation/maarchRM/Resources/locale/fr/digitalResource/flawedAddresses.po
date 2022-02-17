@@ -1,0 +1,24 @@
+# digitalResource/flawedAddresses
+# Language: fr
+# Content-Type: text/plain; charset=UTF-8
+
+msgid "Flawed addresses"
+msgstr "Contenus stockés invalides"
+
+msgid "addresses"
+msgstr "adresse(s)"
+
+msgid "Checking date"
+msgstr "Date de contrôle"
+
+msgid "Resource identifier"
+msgstr "Ressource"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Repository reference"
+msgstr "Support de stockage"
+
+msgid "Check integrity"
+msgstr "Vérifier l'intégrité"

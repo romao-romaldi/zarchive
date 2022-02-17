@@ -54,7 +54,7 @@ interface repositoryInterface
     public function update($repository);
 
     /**
-     * Check the integrty of all resources in a repository
+     * Check the integrity of all resources in a repository
      * @param string  $repositoryReference The reference of the repository to check
      * @param bool    $init                Start an new integrity check or continue from last check
      * @param integer $addressLimit        The maximum address to check
@@ -66,7 +66,7 @@ interface repositoryInterface
 
 
     /**
-     *  Get addesses wich fail the integrity test
+     *  Get addresses which fail the integrity test
      *
      * @action digitalResource/repository/getFlawedAddresses
      */
@@ -74,11 +74,11 @@ interface repositoryInterface
 
     /**
      *  Validate an address integrity
-     * @param digitalResource/address    $address    The address to check
-     * @param digitalResource/repository $repository The repository of the address 
+     * @param string $resId        The resource identifier
+     * @param string $repositoryId The repository identifier
      *
      * @action digitalResource/repository/validateAddressIntegrity
      */
-    public function updateCheckaddressintegrity($address, $repository = null);
+    public function updateCheckaddressintegrity($resId, $repositoryId);
 
 }
