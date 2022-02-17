@@ -352,7 +352,7 @@ class cluster
     }
 
     /**
-     * Verify a resouce
+     * Verify a resource
      *
      * @param object $cluster  The cluster object where the resource is store
      * @param object $resource The digitalResource object to verify
@@ -393,6 +393,43 @@ class cluster
 
         return $result;
     }
+
+    /**
+     * Check a resource
+     *
+     * @param object $cluster  The cluster object where the resource is store
+     * @param object $resource The digitalResource object to verify
+     *
+     * @return boolean The digitalResource verify
+     */
+    public function checkResource($cluster, $resource)
+    {
+
+        $result = true;
+
+        foreach ($cluster->clusterRepository as $clusterRepository) {
+            if ($clusterRepository->repository == null) {
+                continue;
+            }
+
+            $queryParams['repositoryId'] = $clusterRepository->repositoryId;
+            $queryParts['repositoryId'] = "repositoryId = :repositoryId";
+            $queryParams['resId'] = $resource->resId;
+            $queryParts['resId'] = "resId = :resId";
+
+            $queryString = implode(' AND ', $queryParts);
+
+            $resource->address = $this->sdoFactory->find("digitalResource/address", $queryString, $queryParams);
+            foreach ($resource->address as $address) {
+                if (!$this->repositoryController->isResource($clusterRepository->repository, $address)) {
+                    $result = false;
+                }
+            }
+        }
+
+        return $result;
+    }
+
 
     private function checkHash($address, $resource, $handler)
     {

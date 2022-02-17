@@ -203,6 +203,24 @@ msgstr "%s archive(s) détruite(s)"
 msgid "%s archives are restituted"
 msgstr "%s archive(s) restituée(s)"
 
+msgid "%s resource(s) to check"
+msgstr "%s ressource(s) à vérifier"
+
+msgid "%s checked resource(s)"
+msgstr "%s ressource(s) vérifiées(s)"
+
+msgid "%s failed resource(s)"
+msgstr "%s ressource(s) invalide(s)"
+
+msgid "Last checked resource identifier : %s"
+msgstr "Identifiant de la dernière ressource vérifiée : %s"
+
+msgid "Creation date of the last checked resource : %s"
+msgstr "Date de création de la dernière ressource vérifiée : %s"
+
+msgid "Time limit reached"
+msgstr "Le délai est expiré"
+
 msgid "Invalid archive identifier : %s"
 msgstr "Identifiant des archives invalides : %s"
 
