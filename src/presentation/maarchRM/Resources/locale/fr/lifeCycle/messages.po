@@ -205,6 +205,14 @@ msgid "failed"
 msgstr "Nombre de ressources échouées"
 msgctxt "eventInfo"
 
+msgid "timeout"
+msgstr "Délai maximal de contrôle (en secondes)"
+msgctxt "eventInfo"
+
+msgid "timeoutError"
+msgstr "Erreur de délai"
+msgctxt "eventInfo"
+
 msgid "type"
 msgstr "Type"
 msgctxt "eventInfo"

@@ -404,7 +404,6 @@ class cluster
      */
     public function checkResource($cluster, $resource)
     {
-
         $result = true;
 
         foreach ($cluster->clusterRepository as $clusterRepository) {
@@ -412,18 +411,10 @@ class cluster
                 continue;
             }
 
-            $queryParams['repositoryId'] = $clusterRepository->repositoryId;
-            $queryParts['repositoryId'] = "repositoryId = :repositoryId";
-            $queryParams['resId'] = $resource->resId;
-            $queryParts['resId'] = "resId = :resId";
-
-            $queryString = implode(' AND ', $queryParts);
-
-            $resource->address = $this->sdoFactory->find("digitalResource/address", $queryString, $queryParams);
-            foreach ($resource->address as $address) {
-                if (!$this->repositoryController->isResource($clusterRepository->repository, $address)) {
-                    $result = false;
-                }
+            // read au lieu de find
+            $address = $this->sdoFactory->read('digitalResource/address', ['resId' => $resource->resId, 'repositoryId' => $clusterRepository->repositoryId]);
+            if (!$this->repositoryController->isResource($clusterRepository->repository, $address)) {
+                $result = false;
             }
         }
 

@@ -766,7 +766,6 @@ class digitalResource
      */
     public function completenessSampling($samplingFrequency, $timeout)
     {
-
         $lifeCycleJournalController = \laabs::newController("lifeCycle/journal");
     
         $sortBy = "<created,<resId";
@@ -775,12 +774,14 @@ class digitalResource
         $checkedResources = 0;
 
         $lastCheckedResId = null;
-
+        $lastCheckedResCreated = null;
 
         // last checked resource
-        $search = $lifeCycleJournalController->searchEvent("recordsManagement/completenessCheck");
-        if (!empty($search)) {
-            $lastCheckedResId = json_decode($search[0]->eventInfo)[0];
+        $lastEvent = $lifeCycleJournalController->searchEvent("recordsManagement/completenessCheck");
+        if (!empty($lastEvent)) {
+            $lastEventInfo = json_decode($lastEvent[0]->eventInfo);
+            $lastCheckedResId = $lastEventInfo[0];
+            $lastCheckedResCreated = $lastEventInfo[1];
         }
 
         // check resources
@@ -795,15 +796,26 @@ class digitalResource
         $queryString = implode(' AND ', $queryParts);
 
         $resources = $this->sdoFactory->find("digitalResource/digitalResource", $queryString, $queryParams, $sortBy, 0, $resourcesToCheck);
+        if (count($resources) < $resourcesToCheck) {
+            $oldResources = $this->sdoFactory->find('digitalResource/digitalResource', null, null, $sortBy, 0, $resourcesToCheck - count($resources));
+            $resources = array_merge($resources,$oldResources);
+        }
 
         $success = true;
         $nbFailed = 0;
         $eventInfo = [];
+        $eventInfo['lastCheckedResId'] = $lastCheckedResId;
+        $eventInfo['lastCheckedResCreated'] = $lastCheckedResCreated;
 
         $endTime = microtime(true) + $timeout;
 
         foreach ($resources as $resource) {
             if (($endTime - microtime(true)) <= 0) {
+                $success = false;
+
+                $eventInfo['timeout'] = $timeout;
+                $eventInfo['timeoutError'] = "Le délai maximal de contrôle est expiré";
+
                 $logMessage = ["message" => "Time limit reached"];
                 \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
                 break;

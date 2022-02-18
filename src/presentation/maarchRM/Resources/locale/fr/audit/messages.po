@@ -219,7 +219,7 @@ msgid "Creation date of the last checked resource : %s"
 msgstr "Date de création de la dernière ressource vérifiée : %s"
 
 msgid "Time limit reached"
-msgstr "Le délai est expiré"
+msgstr "Le délai maximal de contrôle est expiré"
 
 msgid "Invalid archive identifier : %s"
 msgstr "Identifiant des archives invalides : %s"
@@ -241,6 +241,9 @@ msgstr "%s bordereau(x) validé(s)"
 
 msgid "%s message(s) processed"
 msgstr "%s bordereau(x) traité(s)"
+
+msgid "digitalResource/digitalResource/readCompleteness"
+msgstr "Contrôle d'exhaustivité des ressources"
 
 msgid "recordsManagement/accessRule/readIndex"
 msgstr "Lecture des règles de communicabilité"
