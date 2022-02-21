@@ -407,11 +407,7 @@ class cluster
         $result = true;
 
         foreach ($cluster->clusterRepository as $clusterRepository) {
-            if ($clusterRepository->repository == null) {
-                continue;
-            }
 
-            // read au lieu de find
             $address = $this->sdoFactory->read('digitalResource/address', ['resId' => $resource->resId, 'repositoryId' => $clusterRepository->repositoryId]);
             if (!$this->repositoryController->isResource($clusterRepository->repository, $address)) {
                 $result = false;
