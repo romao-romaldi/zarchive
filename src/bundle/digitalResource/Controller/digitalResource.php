@@ -807,10 +807,10 @@ class digitalResource
         $eventInfo['lastCheckedResId'] = $lastCheckedResId;
         $eventInfo['lastCheckedResCreated'] = $lastCheckedResCreated;
 
-        $endTime = microtime(true) + $timeout;
+        $endTime = time() + $timeout;
 
         foreach ($resources as $resource) {
-            if (($endTime - microtime(true)) <= 0) {
+            if ($endTime >= time()) {
                 $success = false;
 
                 $eventInfo['timeout'] = $timeout;
@@ -820,8 +820,9 @@ class digitalResource
                 \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
                 break;
             }
-            $checkedResources++;
+
             $completenessResult = $this->isStored($resource);
+            $checkedResources++;
             $eventInfo['lastCheckedResId'] = $resource->resId;
             $eventInfo['lastCheckedResCreated'] = $resource->created;
 

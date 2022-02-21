@@ -258,9 +258,7 @@ class repository
             $result = $repositoryService->readObject($address->path,0);
 
         } catch (\Exception $e) {
-            $address->integrityCheckResult = false;
-            $this->sdoFactory->update($address, 'digitalResource/address');
-            throw \laabs::newException("digitalResource/repositoryException", "Resource is not available at address %s.", 404, null, [$repository->repositoryUri.DIRECTORY_SEPARATOR.$address->path]);
+            throw \laabs::newException("digitalResource/repositoryException", "Could not check resource at address %s.", 500, null, [$repository->repositoryUri.DIRECTORY_SEPARATOR.$address->path]);
         }
 
         if (!$result) {
