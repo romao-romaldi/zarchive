@@ -778,75 +778,38 @@ trait archiveEntryTrait
     }
 
     /**
-     * Prepare the retention rule object for the update of an archive
-     *
-     * @param string $archiveId The archive identifier
-     * @return recordsManagement/archiveRetentionRule The retention rule object for the archive identifier
-     */
-  /*   public function prepareRetentionRuleObject($archive) {
-        $retentionRule = new \stdClass();
-        $retentionRule->archiveId = $archive->archiveId;
-        $retentionRule->previousStartDate = $archive->retentionStartDate;
-        $retentionRule->previousDuration = $archive->retentionDuration;
-        $retentionRule->previousFinalDisposition = $archive->finalDisposition;
-        return $retentionRule;
-    } */
-
-
-    /**
      * Update the retention rule start date of the parent of an archive
      *
      * @param recordsManagement/archive $archive The archive to receive
      */
-    public function updateParentRetentionRuleStartDate($archive) {
+    public function updateRetentionRuleStartDate($archive) {
 
         if (!empty($archive->parentArchiveId)) {
             $parentArchive = $this->sdoFactory->read('recordsManagement/archive', $archive->parentArchiveId);
-            $parentArchive->lastModificationDate = \laabs::newTimestamp();
-
             $parentArchivalProfile = $this->archivalProfileController->getByReference($parentArchive->archivalProfileReference);
+            $currentDate = \laabs::newDate();
 
             if ($parentArchivalProfile->isRetentionLastDeposit) {
-                $retentionRule = new \stdClass();
-                $retentionRule->archiveId = $parentArchive->archiveId;
-                $retentionRule->previousStartDate = $parentArchive->retentionStartDate;
-                $retentionRule->previousDuration = $parentArchive->retentionDuration;
-                $retentionRule->previousFinalDisposition = $parentArchive->finalDisposition;
+                $parentArchiveId = (string) $parentArchive->archiveId;
+                $archiveIds = $this->getChildrenArchives($parentArchiveId);
+                array_push($archiveIds, $parentArchiveId);
 
-                $this->updateRetentionRuleStartDate($parentArchive);
+                try {
+                    foreach($archiveIds as $archiveId) {
+                        $archiveToModify = $this->sdoFactory->read('recordsManagement/archive', $archiveId);
+                        
+                        $retentionRule = $this->retentionRuleController->read($archiveToModify->retentionRuleCode);
+                        $retentionRule = \laabs::castMessage($archiveToModify, 'recordsManagement/archiveRetentionRule');
+                        $retentionRule->retentionStartDate = $currentDate;
+                        $retentionRule->changeStartDate = true;
 
-                $retentionRule->retentionStartDate = $parentArchive->retentionStartDate;
-                $retentionRule->retentionDuration = $parentArchive->retentionDuration ;
-                $retentionRule->finalDisposition = $parentArchive->finalDisposition;
-                $retentionRule->lastModificationDate = $parentArchive->lastModificationDate;
+                        $this->modifyRetentionRule($retentionRule, $archiveId);   
+                    }
+                } catch (\Exception $exception) {
+                    throw $exception;
+                }
+
             }
-            $this->logRetentionRuleModification($parentArchive, $retentionRule, true);
-            // $this->updateParentRetentionRuleStartDate($parentArchive);
-        }
-    }
-     
-    /**
-     * Update the retention start date of an archive and all its children
-     *
-     * @param recordsManagement/archive $archive The parent archive to receive
-     */
-    public function updateRetentionRuleStartDate($archive)
-    {
-        $currentDate = \laabs::newDate();
-        if ($archive->retentionDuration && $archive->retentionStartDate != $currentDate) {
-
-            $archive->retentionStartDate = $currentDate;
-            $archive->disposalDate = $archive->retentionStartDate->shift($archive->retentionDuration);
-
-            //$this->sdoFactory->update($retentionRule, 'recordsManagement/archive');
-            $this->sdoFactory->update($archive, 'recordsManagement/archive');
-        }
-
-        $childrenArchiveIds = $this->getChildrenArchives($archive->archiveId);
-
-        foreach ($childrenArchiveIds as $childrenArchiveId) {
-            $childrenArchive = $this->sdoFactory->read('recordsManagement/archive', $childrenArchiveId);
-            $this->updateRetentionRuleStartDate($childrenArchive);
         }
     }
 
@@ -918,7 +881,7 @@ trait archiveEntryTrait
             $this->sdoFactory->commit();            
         }
 
-        $this->updateParentRetentionRuleStartDate($archive);
+        $this->updateRetentionRuleStartDate($archive);
         
         $this->logDeposit($archive);
 
