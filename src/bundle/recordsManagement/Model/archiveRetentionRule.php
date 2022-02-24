@@ -86,9 +86,4 @@ class archiveRetentionRule
      */
     public $retentionRuleStatus;
 
-    /**
-     * @var timestamp
-     */
-    public $lastModificationDate;
-
 }
