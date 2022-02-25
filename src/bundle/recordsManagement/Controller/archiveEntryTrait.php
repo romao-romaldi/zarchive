@@ -778,7 +778,7 @@ trait archiveEntryTrait
     }
 
     /**
-     * Update the retention rule start date of an archive
+     * Get the identifiers of the parent and the sibling archives
      *
      * @param recordsManagement/archive $archive The archive to receive
      * @return array Archive ids of the archive, the parent and the siblings of the archive
