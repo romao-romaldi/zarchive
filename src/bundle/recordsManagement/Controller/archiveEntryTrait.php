@@ -786,14 +786,7 @@ trait archiveEntryTrait
     public function getParentAndSiblingIds($archive) {
         $result = [];
         if (!empty($archive->parentArchiveId)) {
-            $parentArchive = $this->sdoFactory->read('recordsManagement/archive', $archive->parentArchiveId);
-            $parentArchiveId = (string) $parentArchive->archiveId;
-            array_push($result, $parentArchiveId);
-            $childrenArchiveIds = $this->getChildrenArchives($parentArchiveId);
-            $result = array_merge($result,$childrenArchiveIds);
-        } else {
-            $archiveId = (string) $archive->archiveId;
-            array_push($result, $archiveId);
+            $result = array_merge([$archive->parentArchiveId], $this->getChildrenArchives($archive->parentArchiveId));
         }
 
         return $result;
