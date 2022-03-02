@@ -46,6 +46,10 @@ css = "/presentation/css/style.css"
 displayableFormat = "['application/pdf', 'image/jpeg', 'image/png', 'text/plain']"
 
 [recordsManagement]
+
+; Allow the owner org to have access to other org units archives
+ownerIsSuperUser = true
+
 ; Profile directory for rng profile
 profilesDirectory = "%laabsDirectory%/data/maarchRM/profiles"
 refDirectory = "%laabsDirectory%/data/maarchRM/ref"
