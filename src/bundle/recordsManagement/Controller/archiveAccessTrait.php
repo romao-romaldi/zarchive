@@ -921,7 +921,7 @@ trait archiveAccessTrait
             $this->userPositionController->readDescandantService((string) $currentService->orgId)
         );
 
-        $ownerIsSuperUser = false;
+        $ownerIsSuperUser = true;
         if (isset(\laabs::configuration("recordsManagement")['ownerIsSuperUser'])) {
             $ownerIsSuperUser = (bool) \laabs::configuration("recordsManagement")['ownerIsSuperUser'];
         }
@@ -1134,7 +1134,7 @@ trait archiveAccessTrait
             $this->userPositionController->readDescandantService((string) $currentService->orgId)
         );
 
-        $ownerIsSuperUser = false;
+        $ownerIsSuperUser = true;
         if (isset(\laabs::configuration("recordsManagement")['ownerIsSuperUser'])) {
             $ownerIsSuperUser = (bool) \laabs::configuration("recordsManagement")['ownerIsSuperUser'];
         }
@@ -1379,7 +1379,7 @@ trait archiveAccessTrait
         $userServices[] = $currentUserService->registrationNumber;
 
         // OWNER access
-        $ownerIsSuperUser = false;
+        $ownerIsSuperUser = true;
 
         if (isset(\laabs::configuration("recordsManagement")['ownerIsSuperUser'])) {
             $ownerIsSuperUser = (bool) \laabs::configuration("recordsManagement")['ownerIsSuperUser'];
