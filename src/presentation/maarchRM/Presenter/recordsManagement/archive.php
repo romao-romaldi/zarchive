@@ -77,7 +77,21 @@ class archive
             $emptyRole = true;
         } else {
             $emptyRole = false;
-            $ownerOriginatorOrgs = $this->getOwnerOriginatorsOrgs($currentService);
+            // $ownerOriginatorOrgs = $this->getOwnerOriginatorsOrgs($currentService);
+
+            $orgController = \laabs::newController('organization/organization');
+            $originators = $orgController->getOriginator();
+            foreach ($originators as $originator) {
+                if (!isset($ownerOriginatorOrgs[(string) $originator->ownerOrgId])) {
+                    $ownerOriginatorOrgs[(string) $originator->ownerOrgId] = new \stdClass();
+                    $ownerOriginatorOrgs[(string) $originator->ownerOrgId]->displayName = $originator->ownerOrgName;
+                    $ownerOriginatorOrgs[(string) $originator->ownerOrgId]->originators = [];
+                }
+                if (!in_array($originator, $ownerOriginatorOrgs[(string) $originator->ownerOrgId]->originators)) {
+                    $ownerOriginatorOrgs[(string)$originator->ownerOrgId]->originators[] = $originator;
+                }
+            }
+
         }
         $descriptionSchemeNames = \laabs::callService('recordsManagement/descriptionScheme/read_name_Descriptionfields');
         $retentionRuleController = \laabs::newController('recordsManagement/retentionRule');
