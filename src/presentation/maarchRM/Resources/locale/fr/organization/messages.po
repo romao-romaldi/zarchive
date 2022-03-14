@@ -204,8 +204,8 @@ msgstr "Comptes de service"
 msgid "Submit"
 msgstr "Valider"
 
-msgid "You must use only letters, numbers and the special characters '_', '/' and '.'"
-msgstr "Vous devez utiliser uniquement les lettres, les chiffres et les caractères spéciaux '_', '/' et '.'"
+msgid "You must use only letters, numbers and the special characters ('_','-','/' and '.')"
+msgstr "Vous devez utiliser uniquement les lettres, les chiffres et les caractères spéciaux ('_','-','/' et '.')"
 
 msgid "The first and last character must be a letter. You must use only letters and the special character '_'"
 msgstr "Les premier et dernier caractères doivent être des lettres. Vous devez utiliser uniquement les lettres et le caractère spécial '_'"
