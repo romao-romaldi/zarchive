@@ -1625,6 +1625,15 @@ class organization
     {
         $currentService = \laabs::getToken("ORGANIZATION");
 
+        $transaction = false;
+        if (isset(\laabs::getConfiguration("medona")['transaction'])) {
+            $transaction = (bool) \laabs::getConfiguration("medona")['transaction'];
+        }
+        
+        if (!$transaction) {
+            return $this->todisplay();
+        }
+        
         $ownerOriginatorOrgs = $this->getOwnerOrgsByRole($currentService, 'originator');
         $originators = [];
         foreach ($ownerOriginatorOrgs as $org) {
