@@ -1624,15 +1624,11 @@ class organization
     public function getOriginator()
     {
         $currentService = \laabs::getToken("ORGANIZATION");
-        if (!$currentService) {
-            $this->view->addContentFile("recordsManagement/welcome/noWorkingOrg.html");
 
-            return $this->view->saveHtml();
-        }
         $ownerOriginatorOrgs = $this->getOwnerOrgsByRole($currentService, 'originator');
         $originators = [];
         foreach ($ownerOriginatorOrgs as $org) {
-            foreach ($org->originator as $originator) {
+            foreach ($org->originators as $originator) {
                 $originator->ownerOrgName = $org->displayName;
                 $originators[] = $originator;
             }
@@ -1650,7 +1646,18 @@ class organization
      */
     protected function getOwnerOrgsByRole($currentService, $role)
     {
-        $orgUnits = $this->getOrgsByRole($role);
+
+        $transaction = false;
+        if (isset(\laabs::getConfiguration("medona")['transaction'])) {
+            $transaction = (bool) \laabs::getConfiguration("medona")['transaction'];
+        }
+        
+        if (!$transaction) {
+            $orgUnits = $this->getOwnerOriginatorsOrgs($currentService);
+            // return $orgUnits;
+        } else {
+            $orgUnits = $this->getOrgsByRole($role);
+        }
 
         $userPositionController = \laabs::newController('organization/userPosition');
         $archivalAgreementController = \laabs::newController('medona/archivalAgreement');
@@ -1695,14 +1702,16 @@ class organization
                 || ($role == 'originator' && $orgUnit->registrationNumber == $userOrgUnit->registrationNumber)
                     // Depositor = all
                 || $role == 'depositor') {
+                    // $originators = $orgUnit->originators;
+
                     if (!isset($userOrgs[(string)$orgUnit->ownerOrgId])) {
                         $orgObject = $this->read((string)$orgUnit->ownerOrgId);
-
+                        
                         $userOrgs[(string)$orgObject->orgId] = new \stdClass();
                         $userOrgs[(string)$orgObject->orgId]->displayName = $orgObject->displayName;
-                        $userOrgs[(string)$orgObject->orgId]->{$role} = [];
+                        $userOrgs[(string)$orgObject->orgId]->originators = [];
                     }
-                    $userOrgs[(string)$orgObject->orgId]->{$role}[] = $orgUnit;
+                    $userOrgs[(string)$orgObject->orgId]->originators[] = $orgUnit;
                 }
             }
         }
