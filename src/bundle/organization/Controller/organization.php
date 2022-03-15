@@ -1624,15 +1624,6 @@ class organization
     public function getOriginator()
     {
         $currentService = \laabs::getToken("ORGANIZATION");
-
-        $transaction = false;
-        if (isset(\laabs::getConfiguration("medona")['transaction'])) {
-            $transaction = (bool) \laabs::getConfiguration("medona")['transaction'];
-        }
-        
-        if (!$transaction) {
-            return $this->todisplay();
-        }
         
         $ownerOriginatorOrgs = $this->getOwnerOrgsByRole($currentService, 'originator');
         $originators = [];
@@ -1655,18 +1646,7 @@ class organization
      */
     protected function getOwnerOrgsByRole($currentService, $role)
     {
-
-        $transaction = false;
-        if (isset(\laabs::getConfiguration("medona")['transaction'])) {
-            $transaction = (bool) \laabs::getConfiguration("medona")['transaction'];
-        }
-        
-        if (!$transaction) {
-            $orgUnits = $this->getOwnerOriginatorsOrgs($currentService);
-            // return $orgUnits;
-        } else {
-            $orgUnits = $this->getOrgsByRole($role);
-        }
+        $orgUnits = $this->getOrgsByRole($role);
 
         $userPositionController = \laabs::newController('organization/userPosition');
         $archivalAgreementController = \laabs::newController('medona/archivalAgreement');
