@@ -28,7 +28,7 @@ interface adminFormatInterface
     /**
      * Read list of formats
      *
-     * @uses digitalResource/format/readList
+     * @uses digitalResource/pronomFormat/readList
      * @return digitalResource/format/index
      */
     public function readDigitalresourceFormats();
@@ -36,7 +36,7 @@ interface adminFormatInterface
     /**
      * Get file format information
      *
-     * @uses digitalResource/format/createFileformatinformation
+     * @uses digitalResource/pronomFormat/createFileformatinformation
      * @return digitalResource/format/FileFormatInformation
      */
     public function createDigitalresourceFormatFileformatinformation();

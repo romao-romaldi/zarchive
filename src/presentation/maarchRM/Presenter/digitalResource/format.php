@@ -62,7 +62,7 @@ class format
     public function index($formats)
     {
         $this->view->addContentFile("digitalResource/format/index.html");
-        $description =  \laabs::newController("digitalResource/format")->formatDescription();
+        $description =  \laabs::newController("digitalResource/pronomFormat")->formatDescription();
         $this->view->setSource("description", $description);
         $this->view->setSource("formats", $formats);
         $dataTable = $this->view->getElementsByClass("dataTable")->item(0)->plugin['dataTable'];

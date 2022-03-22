@@ -32,10 +32,10 @@ class digitalResource
     public $hashAlgorithm;
 
     /**
-     * Cluster controller
+     * Format controller
      * @var digitalResource/Controller/format
      */
-    protected $formatController;
+    protected $pronomFormatController;
 
     /**
      * Cluster controller
@@ -70,7 +70,7 @@ class digitalResource
 
         $this->clusterController = \laabs::newController('digitalResource/cluster');
 
-        $this->formatController = \laabs::newController('digitalResource/format');
+        $this->pronomFormatController = \laabs::newController('digitalResource/pronomFormat');
 
         $this->clusters = [];
     }
@@ -504,7 +504,7 @@ class digitalResource
         }
 
         if (isset($resource->puid)) {
-            $resource->format = $this->formatController->get($resource->puid);
+            $resource->format = $this->pronomFormatController->get($resource->puid);
         }
 
         $cluster = $this->useCluster($resource->clusterId, Cluster::MODE_READ, false);
@@ -625,7 +625,7 @@ class digitalResource
         }
 
         if (isset($resource->puid)) {
-            $resource->format = $this->formatController->get($resource->puid);
+            $resource->format = $this->pronomFormatController->get($resource->puid);
         }
 
         $cluster = $this->useCluster($resource->clusterId, Cluster::MODE_READ, false);
