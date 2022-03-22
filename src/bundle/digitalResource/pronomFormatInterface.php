@@ -17,56 +17,39 @@
  * You should have received a copy of the GNU General Public License
  * along with bundle digitalResource.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace bundle\digitalResource\Message;
+namespace bundle\digitalResource;
 
 /**
- * Class message that represents a digital resource format
- *
- * @package Digitalresource
- * @author Alexis Ragot <alexis.ragot@maarch.org>
+ * API admin formats of digital resource
  */
-class format
+interface pronomFormatInterface
 {
     /**
-     * The UK National Archives PRONOM format identifier
+     * List repositories for administration
      *
-     * @var string
-     * @notempty
+     * @action digitalResource/pronomFormat/index
      */
-    public $puid;
+    public function readList();
 
     /**
-     * The format name
+     * Get the list of type
      *
-     * @var string
+     * @action digitalResource/pronomFormat/find
      */
-    public $name;
+    public function readFind_query_();
 
     /**
-     * The version
+     * Get the format by puid
+     * @param string $puid The puid
      *
-     * @var string
+     * @action digitalResource/pronomFormat/get
      */
-    public $version;
+    public function readGet($puid);
 
     /**
-     * The mime type(s)
+     * Get the list of type
      *
-     * @var tokenlist
+     * @action digitalResource/pronomFormat/getFileInformation
      */
-    public $mimetypes;
-
-    /**
-     * The extension(s)
-     *
-     * @var tokenlist
-     */
-    public $extensions;
-
-    /**
-     * The sustainability
-     *
-     * @var boolean
-     */
-    public $sustainability = true;
+    public function createFileformatinformation($contents, $extension);
 }

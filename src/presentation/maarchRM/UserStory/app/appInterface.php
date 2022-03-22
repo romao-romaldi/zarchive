@@ -149,7 +149,7 @@ interface appInterface
     /**
      * Search formats
      *
-     * @uses digitalResource/format/readFind_query_
+     * @uses digitalResource/pronomFormat/readFind_query_
      * @return digitalResource/format/find
      */
     public function readDigitalresourceFormatFind_query_();

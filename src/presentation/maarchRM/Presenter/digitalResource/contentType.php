@@ -81,10 +81,10 @@ class contentType
     {
         if ($contentType != null) {
             $contentType->puids = (array) $contentType->puids;
-            $formatController = \laabs::newController('digitalResource/format');
+            $pronomFormatController = \laabs::newController('digitalResource/pronomFormat');
 
             foreach ($contentType->puids as $key => $puid) {
-                $contentType->puids[$key] = $formatController->get($puid);
+                $contentType->puids[$key] = $pronomFormatController->get($puid);
             }
         }
 
