@@ -45,7 +45,7 @@ class format
      */
     public function list()
     {
-        return $this->sdoFactory->index('digitalResource/format');
+        return $this->sdoFactory->index('digitalResource/format', array("puid", "name", "version", "mimetypes", "extensions", "sustainability", "enabled"));
     }
 
     /**

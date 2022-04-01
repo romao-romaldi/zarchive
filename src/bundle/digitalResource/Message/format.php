@@ -69,4 +69,11 @@ class format
      * @var boolean
      */
     public $sustainability = true;
+
+    /**
+     * The status of the format
+     *
+     * @var boolean
+     */
+    public $enabled = true;
 }
