@@ -28,10 +28,49 @@ interface adminFormatInterface
     /**
      * Read list of formats
      *
-     * @uses digitalResource/pronomFormat/readList
+     * @uses digitalResource/format/readList
      * @return digitalResource/format/index
      */
     public function readDigitalresourceFormats();
+
+    /**
+     * Read list of PRONOM formats
+     *
+     * @uses digitalResource/pronomFormat/readList
+     */
+    public function readPronomformats();
+
+    /**
+     * Create a new format
+     *
+     * @uses digitalResource/format/create
+     * @return digitalResource/format/create
+     */
+    public function createFormat($format);
+
+    /**
+     * Edit a format
+     *
+     * @uses digitalResource/format/readGetbypuid
+     * @return digitalResource/format/edit
+     */
+    public function readFormat($puid);
+
+    /**
+     * Update a format
+     *
+     * @return digitalResource/format/update
+     * @uses digitalResource/format/update
+     */
+    public function updateFormat($puid, $format);
+
+    /**
+     * Delete a format
+     *
+     * @uses digitalResource/format/delete
+     * @return digitalResource/format/delete
+     */
+    public function deleteFormat($puid);
 
     /**
      * Get file format information

@@ -6,6 +6,7 @@ CREATE TABLE "digitalResource"."format"
     "mimetypes" text,
     "extensions" text,
     "sustainability" boolean DEFAULT true,
+    "enabled" boolean DEFAULT true,
 
     PRIMARY KEY ("puid")
 );
