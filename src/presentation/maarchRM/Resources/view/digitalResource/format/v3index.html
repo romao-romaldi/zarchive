@@ -227,16 +227,10 @@ file that was distributed with this source code.
         var data = new Object();
         data.format = serialize();
 
-        // var pattern = new RegExp("^[A-Za-z0-9+-/_ ]*[A-Za-z0-9]$");
-
         if(!data.format.puid) {
             gritter.show($("#message_incorrectPuid").text(), false);
             return;
         }
-
-/*         if(!pattern.test(data.format.name)) {
-            return;
-        } */
 
         if (!checkRequiredFields(data.format)) {
             gritter.show($("#message_requiredFields").text(), false);
@@ -265,12 +259,6 @@ file that was distributed with this source code.
         var data = new Object();
         data.format = serialize();
         data.puid = data.format.puid;
-
-/*         var pattern = new RegExp("^[A-Za-z0-9+-/_ ]*[A-Za-z0-9]$");
-
-        if(!pattern.test(data.format.name)) {
-            return;
-        } */
 
         if (!checkRequiredFields(data.format)) {
             gritter.show($("#message_requiredFields").text(), false);
@@ -304,10 +292,6 @@ file that was distributed with this source code.
         let formGroup = $('#fieldName').closest('.form-group');
         formGroup.removeClass('has-error');
         formGroup.removeClass('has-success');
-
-/*         $.each($("#extensionEnumList").find(".list-group-item"), function (key, item) {
-            item.remove()
-        }); */
 
         $('#mimetypeEnumList').empty();
         $('#extensionEnumList').empty();
@@ -385,30 +369,18 @@ file that was distributed with this source code.
         return field;
     }
 
-/*     $("#format_formContent").on("keyup","[name='fieldName']", function(){
-        var input = $(this);
-        var pattern = new RegExp("^[A-Za-z0-9+-/_ ]*[A-Za-z0-9]$");
-        var formGroup = input.closest('.form-group');
-
-        if(!input.val()) {
-            formGroup.removeClass('has-error');
-            formGroup.removeClass('has-success');
-        } else if (pattern.test(input.val())) {
-            formGroup.removeClass('has-error').addClass('has-success');
-        } else {
-            formGroup.removeClass('has-success').addClass('has-error');
-        }
-    }); */
-
     // initialize typeahead
 
     var formats = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('puid'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        prefetch: {url: '/pronomformats', ttl: '0'},
-        limit: 500
+        remote: {
+                wildcard: '%QUERY',
+                url: '/digitalResource/format/find?query=%QUERY',
+                rateLimitWait: 500
+            }
     });
-    formats.initialize();
+    // formats.initialize();
 
     $('#puidTypeahead').typeahead(
         {
@@ -417,38 +389,26 @@ file that was distributed with this source code.
             minLength: 2
         },
         {
-            name: 'formats',
-            displayKey: 'puid',
+            name: 'format',
             templates: {
-                empty: function() {
-                    return "<span class='well well-sm'>"+$('#noFormatFound').text()+"</span>";
+                empty: function () {
+                    return "<span class='well well-sm'>" + $('#noFormatFound').text() + "</span>";
                 },
-                suggestion: function(format) {
-                    var display;
-                    if(format.name) {
-                        display =
-                            "<span>"
-                            + "<span class='fa fa-file' >&nbsp;</span>"
-                            + "<span style='font-family:Helvetica, sans-serif;'>"
-                            + format.puid
-                            +" - "
-                            + format.name
-                            + "</span></span><br>";
-                    } else {
-                        display = this.empty();
+                suggestion: function (type) {
+                    var displayName = '[' + type.puid + '] ' + type.name;
+                    if (type.version != undefined) {
+                        displayName += ' ' + type.version;
                     }
+                    var display = "<span>"
+                            + "<span style='font-family:Helvetica, sans-serif;'>"
+                            + displayName
+                            + "</span></span><br>";
                     return display;
                 }
             },
-            source: function (query, process) {
-                formatList = [];
-                formats.search(query, function (suggestions) {
-                    formatList = suggestions;
-                });
-                process(formatList);
-            },
-            limit: 10,
-            skipCache: true
+            display: 'name',
+            source: formats,
+            limit: 100
         }
     ).on('typeahead:selected', function($event, suggestion, source) {
         $("#fieldPuid").data('puid', suggestion.puid);

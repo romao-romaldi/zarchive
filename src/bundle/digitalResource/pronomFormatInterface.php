@@ -36,7 +36,7 @@ interface pronomFormatInterface
      *
      * @action digitalResource/pronomFormat/find
      */
-    public function readFind_query_();
+    public function readFind($query);
 
     /**
      * Get the format by puid
