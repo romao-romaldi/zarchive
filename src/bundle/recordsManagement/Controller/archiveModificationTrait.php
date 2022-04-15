@@ -937,7 +937,10 @@ trait archiveModificationTrait
                 stream_copy_to_stream($handler, $tmpStream);
                 rewind($tmpStream);
                 fclose($tmpStream);
-                $fullText .= $fulltextService->getText($tmpFile, $options) . " ";
+                try {
+                    $fullText .= $fulltextService->getText($tmpFile, $options) . " ";
+                } catch (\Exception $exception) {}
+                
                 unlink($tmpFile);
             }
             $archive = $this->retrieve($archiveId);

@@ -882,7 +882,9 @@ class digitalResource
 
                 file_put_contents($srcfile, $contents);
 
-                $fullText .= $fullTextService->getText($srcfile);
+                try {
+                    $fullText .= $fullTextService->getText($srcfile);
+                } catch (\Exception $exception) {}
             }
         }
 
