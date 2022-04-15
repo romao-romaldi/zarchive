@@ -71,6 +71,17 @@ class welcome
         $userAccountController = \laabs::newController('auth/userAccount');
         $user = $userAccountController->get($accountToken->accountId);
 
+        $isArchiver = false;
+        $currentOrganization = \laabs::getToken("ORGANIZATION");
+        if (in_array('owner',$currentOrganization->orgRoleCodes)) {
+            $isArchiver = true;
+        }
+        var_dump($isArchiver);
+        $this->view->setSource("isArchiver", $isArchiver);
+
+        $orgUnitList = \laabs::callService('organization/organization/readOrgunitList');
+        $this->view->setSource("orgUnitList", $orgUnitList);
+
         // File plan tree
         $filePlanPrivileges = \laabs::callService('auth/userAccount/readHasprivilege', "archiveManagement/filePlan");
 
@@ -149,7 +160,7 @@ class welcome
         $this->view->setSource('user', $user);
         $this->view->setSource('locale', \laabs::configuration('dependency.localisation')['lang']);
         $this->view->merge();
-        
+
         return $this->view->saveHtml();
     }
 
