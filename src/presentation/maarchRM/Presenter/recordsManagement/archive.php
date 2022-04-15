@@ -79,7 +79,7 @@ class archive
             $emptyRole = false;
             // $ownerOriginatorOrgs = $this->getOwnerOriginatorsOrgs($currentService);
 
-            $orgController = \laabs::newController('organization/organization');
+            /* $orgController = \laabs::newController('organization/organization');
             $originators = $orgController->getOriginator();
             foreach ($originators as $originator) {
                 if (!isset($ownerOriginatorOrgs[(string) $originator->ownerOrgId])) {
@@ -90,7 +90,7 @@ class archive
                 if (!in_array($originator, $ownerOriginatorOrgs[(string) $originator->ownerOrgId]->originators)) {
                     $ownerOriginatorOrgs[(string)$originator->ownerOrgId]->originators[] = $originator;
                 }
-            }
+            } */
 
         }
         $descriptionSchemeNames = \laabs::callService('recordsManagement/descriptionScheme/read_name_Descriptionfields');
@@ -125,7 +125,7 @@ class archive
         $this->view->setSource("retentionRules", $retentionRules);
         $this->view->setSource("emptyRole", $emptyRole);
         $this->view->setSource("profiles", $profiles);
-        $this->view->setSource("organizationsOriginator", $ownerOriginatorOrgs);
+        // $this->view->setSource("organizationsOriginator", $ownerOriginatorOrgs);
         $this->view->setSource("deleteDescription", $deleteDescription);
         $this->view->setSource("descriptionScheme", $descriptionSchemeNames);
 
@@ -242,6 +242,7 @@ class archive
                         $archive->hasRights = false;
                     } else {
                         $archive->hasRights = $archiveController->checkRights($archive);
+                        // $archive->hasRights = true;
                     }
                 } catch (\Exception $e) {
                     $archive->hasRights = false;

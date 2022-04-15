@@ -902,11 +902,10 @@
     /* -- EDITION MODAL -- */
 
     var organizations = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('orgName'),
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('displayName'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         prefetch: {
-            //url: '/organizations/todisplay?orgUnit=true',
-            url: '/originator',
+            url: '/organizations/todisplay?orgUnit=true',
             ttl: '0'
         },
         limit: 100

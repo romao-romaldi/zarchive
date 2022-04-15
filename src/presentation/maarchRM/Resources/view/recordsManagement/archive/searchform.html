@@ -41,7 +41,7 @@
                 <div class="col-sm-8">
                     <input type="text" class="form-control orgHide" placeholder="Producer" name="originatorOwnerOrgRegNumber"
                     id="orgTypeahead" />
-                    <select class="form-control hide" name="originatorOwnerOrgId" id="originatorOwnerOrgId">
+                    <!-- <select class="form-control hide" name="originatorOwnerOrgId" id="originatorOwnerOrgId">
                         <option value="">All</option>
                         <?merge organizationsOriginator ?>
                         <div>
@@ -50,8 +50,10 @@
                                 <?merge .displayName ?>
                             </option>
                         </div>
-                    </select>
-                    <select class="form-control hide" name="originatorOrgRegNumber" id="originatorOrgRegNumber">
+                    </select> -->
+                    <input type="hidden" name="originatorOwnerOrgId" id="originatorOwnerOrgId" />
+                    <!-- <select class="form-control hide" name="originatorOrgRegNumber" id="originatorOrgRegNumber">
+                        
                         <option value="">All</option>
                         <?merge organizationsOriginator ?>
                         <div>
@@ -60,7 +62,8 @@
                                 <?merge .displayName ?>
                             </option>
                         </div>
-                    </select>
+                    </select> -->
+                    <input type="hidden" name="originatorOrgRegNumber" id="originatorOrgRegNumber" />
                 </div>
             </div>
         </div>
