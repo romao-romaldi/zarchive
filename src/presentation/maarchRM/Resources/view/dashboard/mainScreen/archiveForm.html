@@ -7,6 +7,31 @@
 #-->
 <form class="form-horizontal" id="archiveForm">
     <div class="form-group">
+        <label class="col-sm-3 control-label">Originator organization</label>
+        <div class="col-sm-9">
+            <select class="form-control archiveInput" name="orgRegNumberSelect" id="orgRegNumberSelect">
+                <?merge orgUnitList ?>
+                <option value="[?merge .registrationNumber ?]"><?merge .displayName ?></option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Archival profile</label>
+        <div class="col-sm-9">
+            <select class="form-control archiveInput" name="archivalProfileSelect" id="archivalProfileSelect">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group" id="ArchiverImportTitleForm">
+        <!-- <?merge isArchiver.bool() ?> -->
+        <h4 class="pull-left">
+            <span id="import_archivalProfile"/>
+            <br/>
+            <small id="import_isSubArchive"><span>Sub-archive of </span><span id="import_parentArchiveName"><b></b></span></small>
+        </h4>
+    </div>
+    <div class="form-group">
         <label class="col-sm-3 control-label">Name</label>
         <div class="col-sm-9">
             <input type="text" class="input-sm form-control archiveInput" name="archiveName" placeholder="Archive name"/>
@@ -88,6 +113,19 @@
             if (isWithoutProfile === undefined) {
                 isWithoutProfile = true;
             }
+
+            $('#archivalProfileSelect').prop('disabled', true);
+            console.log("toto");
+/*             var originatorOrgRegNumber = $("#archiveForm").find("[name=originatorOrgRegNumber]").val();
+            if (originatorOrgRegNumber) {
+                $('#orgRegNumberSelect').val(originatorOrgRegNumber);
+            }
+
+            var archivalProfileReference = $("#archiveForm").find("[name=archivalProfileReference]").val();
+            if (archivalProfileReference) {
+                $('#archivalProfileSelect').val(archivalProfileReference);
+            }
+ */
             if(isWithoutProfile == true) {
                 if($('#fileplanLevelDiv').is(":hidden")) {
                     $('#fileplanLevelDiv').show();
@@ -526,9 +564,60 @@
         clear : function() {
             $('#retentionRule').removeAttr("disabled");
             $('#archiveForm, #managementMetadataForm').find('.archiveInput').not('[name="filePlanPosition"],[name="originatorOrgRegNumber"]').val('').change();
+            $("#import_archivalProfile").text("");
 
             DocumentList.clear();
             Metadata.clear($('#allFields'));
         }
     }
+
+    // laisser profil d'archive vide au début
+    // on ne passera plus par sa sélection pour accéder au formulaire de nouvelle archive
+    $("#orgRegNumberSelect").on('change', function () {
+        var archivalProfileSelect = $('#archivalProfileSelect');
+        archivalProfileSelect.prop('disabled', false);
+        archivalProfileSelect.empty();
+        var option = $('<option/>')
+            .val("")
+            .text("")
+            .appendTo(archivalProfileSelect);
+            
+        var originatorOrgRegNumber = $("#archiveForm").find("[name=orgRegNumberSelect]").val();
+        $.ajax({
+            type: 'GET',
+            url: '/orgunitprofiles?orgRegNumber=' + originatorOrgRegNumber,
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (response) {
+                $.each(response, function(index, profile){
+                    addSelectProfiles(profile);
+                })
+            }
+        });
+    });
+
+    function addSelectProfiles(profile){
+        var archivalProfileSelect = $('#archivalProfileSelect');
+        if (profile === "*") {
+            var option = $('<option/>')
+            .val("Sans profil")
+            .text("Sans profil")
+            .appendTo(archivalProfileSelect);
+        } else {
+            var option = $('<option/>')
+            .val(profile.reference)
+            .text(profile.name)
+            .appendTo(archivalProfileSelect);
+        }
+    }
+
+    $("#archivalProfileSelect").on('change', function () {
+        var archivalProfileSelectValue = $("#archivalProfileSelect").val();
+        if (archivalProfileSelectValue === "") {
+            $("#import_archivalProfile").text("");
+        } else {
+            var archivalProfileSelectText = $("#archivalProfileSelect").find('option:selected').text();
+            $("#import_archivalProfile").text(archivalProfileSelectText);
+        }
+    });
 </script>
