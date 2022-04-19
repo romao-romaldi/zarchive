@@ -5,6 +5,7 @@
  - `Fixed`   Blocage du process d'extraction fulltext si un document était en erreur dans Apache Tika.
  - `Changed` Possibilité de rechercher les archives d'un service producteur appartenant à une autre organisation si la liaison du service d'archive et service producteur existe dans un accord de versement.
  - `Changed` Possibilité d'empêcher l'opérateur d'archivage d'accéder à toutes les archives du système. Voir point de configuration "ownerIsSuperUser" dans configuration.ini.default.
+ - `Fixed`   Import via connecteur Octave.
 
 ## Version 2.8.1
  - `Fixed` Impossible de modifier son mot de passe pour un utilisateur nouvellement créé
