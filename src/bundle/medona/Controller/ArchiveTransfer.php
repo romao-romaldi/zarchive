@@ -128,7 +128,7 @@ class ArchiveTransfer extends abstractMessage
                 $param = $params[$name];
             }
 
-            // $params[$name] = $value;
+            $params[$name] = $param;
 
             if ($param == "") {
                 if (isset($confParam["required"]) && $confParam["required"]) {
