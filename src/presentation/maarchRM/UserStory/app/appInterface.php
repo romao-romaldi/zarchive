@@ -199,4 +199,12 @@ interface appInterface
      * @uses organization/organization/readOrgunitprofiles
      */
     public function readOrgunitprofiles($orgRegNumber);
+
+    /**
+     * Get archival profile definition by reference
+     * @param string $reference
+     *
+     * @uses recordsManagement/archivalProfile/readByreference_reference_
+     */
+    public function readProfilebyreference_reference_();
 }

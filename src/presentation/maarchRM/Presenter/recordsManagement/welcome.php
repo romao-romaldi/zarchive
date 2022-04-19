@@ -73,10 +73,9 @@ class welcome
 
         $isArchiver = false;
         $currentOrganization = \laabs::getToken("ORGANIZATION");
-        if (in_array('owner',$currentOrganization->orgRoleCodes)) {
+        if ($currentOrganization->orgRoleCodes && in_array('owner',$currentOrganization->orgRoleCodes)) {
             $isArchiver = true;
         }
-        var_dump($isArchiver);
         $this->view->setSource("isArchiver", $isArchiver);
 
         $orgUnitList = \laabs::callService('organization/organization/readOrgunitList');
@@ -317,6 +316,7 @@ class welcome
     protected function getOrgUnitArchivalProfiles($orgUnit)
     {
         $orgUnit->archivalProfiles = \laabs::callService('organization/organization/readOrgunitprofiles', $orgUnit->registrationNumber, true);
+        // $index = \laabs::callService('recordsManagement/archivalProfile/readIndex');
 
         foreach ($orgUnit->archivalProfiles as $i => $archivalProfile) {
             if ($archivalProfile == "*") {

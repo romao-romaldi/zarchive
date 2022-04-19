@@ -6,30 +6,32 @@
     file that was distributed with this source code.
 #-->
 <form class="form-horizontal" id="archiveForm">
-    <div class="form-group">
-        <label class="col-sm-3 control-label">Originator organization</label>
-        <div class="col-sm-9">
-            <select class="form-control archiveInput" name="orgRegNumberSelect" id="orgRegNumberSelect">
-                <?merge orgUnitList ?>
-                <option value="[?merge .registrationNumber ?]"><?merge .displayName ?></option>
-            </select>
+    <?merge isArchiver.bool() ?>
+    <div  id="archiverImportTitleForm">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Originator organization</label>
+            <div class="col-sm-9">
+                <select class="form-control archiveInput" name="orgRegNumberSelect" id="orgRegNumberSelect">
+                    <?merge orgUnitList ?>
+                    <option value="[?merge .registrationNumber ?]"><?merge .displayName ?></option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label">Archival profile</label>
-        <div class="col-sm-9">
-            <select class="form-control archiveInput" name="archivalProfileSelect" id="archivalProfileSelect">
-                <option value=""></option>
-            </select>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Archival profile</label>
+            <div class="col-sm-9">
+                <select class="form-control archiveInput" name="archivalProfileSelect" id="archivalProfileSelect">
+                    <option value=""></option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="form-group" id="ArchiverImportTitleForm">
-        <!-- <?merge isArchiver.bool() ?> -->
-        <h4 class="pull-left">
-            <span id="import_archivalProfile"/>
-            <br/>
-            <small id="import_isSubArchive"><span>Sub-archive of </span><span id="import_parentArchiveName"><b></b></span></small>
-        </h4>
+        <div class="form-group">
+            <h4 class="pull-left">
+                <span id="import_archivalProfile"/>
+                <br/>
+                <small id="import_isSubArchive"><span>Sub-archive of </span><span id="import_parentArchiveName"><b></b></span></small>
+            </h4>
+        </div>
     </div>
     <div class="form-group">
         <label class="col-sm-3 control-label">Name</label>
@@ -59,7 +61,7 @@
 
     <input type="hidden" class="archiveInput" name="archivalProfileReference" id="archivalProfile"/>
     <input type="hidden" class="archiveInput" name="filePlanPosition"/>
-    <input type="hidden" class="archiveInput" name="originatorOrgRegNumber"/>
+    <input type="hidden" class="archiveInput" name="originatorOrgRegNumber" id="originatorOrgRegNumber"/>
     <input type="hidden" class="archiveInput" name="parentArchiveId"/>
     <input type="hidden" class="archiveInput" id="fileplanLevel" name="fileplanLevel" value='file'/>
 </form>
@@ -115,7 +117,6 @@
             }
 
             $('#archivalProfileSelect').prop('disabled', true);
-            console.log("toto");
 /*             var originatorOrgRegNumber = $("#archiveForm").find("[name=originatorOrgRegNumber]").val();
             if (originatorOrgRegNumber) {
                 $('#orgRegNumberSelect').val(originatorOrgRegNumber);
@@ -168,8 +169,15 @@
 
     // ARCHIVE
     $('#archivalProfile').on('change', function() {
-        ArchiveForm.loadProfile();
-        ArchiveForm.displayArchiveDescription();
+        /* ArchiveForm.loadProfile();
+        ArchiveForm.displayArchiveDescription(); */
+    });
+
+    $('#archivalProfileSelect').on('change', function() {
+        if ($("#archivalProfileSelect").val() !== "") {
+            $('#archivalProfile').val($('#archivalProfileSelect').val());
+            ArchiveForm.loadProfile();
+        }
     });
 
     $('#retentionRule').on('change', function() {
@@ -281,32 +289,47 @@
         },
 
         loadProfile : function() {
-            var value = $('#archivalProfile').val();
-            var dataJson = $('#archivalProfile').data('json');
+            var archivalProfileReference = $('#archivalProfile').val();
+            $.ajax({
+                type        : 'GET',
+                url         : "/profilebyreference/" + archivalProfileReference,
+                dataType    : 'json',
+                async       : false,
+                success     : function (response) {
+                    $("#archivalProfile").data('json', response);
+                    var dataJson = $('#archivalProfile').data('json');
 
-            var selectedProfile = "";
-            if (dataJson !== undefined && dataJson !== null && dataJson !== "") {
-                selectedProfile = dataJson;
-            }
+                    var selectedProfile = "";
+                    if (dataJson !== undefined && dataJson !== null && dataJson !== "") {
+                        selectedProfile = dataJson;
+                    }
 
-            if (value == '' || selectedProfile.retentionRuleCode == null || selectedProfile.retentionRuleCode == '' || selectedProfile.retentionRuleCode == undefined) {
-                $('#retentionRule').val('').removeAttr("disabled").change();
-            } else {
-                $('#retentionRule').val(selectedProfile.retentionRuleCode).change().attr("disabled", "disabled");
-            }
+                    if (archivalProfileReference == '' || selectedProfile.retentionRuleCode == null || selectedProfile.retentionRuleCode == '' || selectedProfile.retentionRuleCode == undefined) {
+                        $('#retentionRule').val('').removeAttr("disabled").change();
+                    } else {
+                        $('#retentionRule').val(selectedProfile.retentionRuleCode).change().attr("disabled", "disabled");
+                    }
 
-            if (value == ''
-                || selectedProfile.retentionStartDate == ''
-                || selectedProfile.retentionStartDate == null) {
-                var retentionStartDate = $("#managementMetadataForm").find("[name=retentionStartDate]");
-                if (retentionStartDate.data("datepicker")) {
-                    retentionStartDate.data("datepicker").setDate(new Date());
+                    if (archivalProfileReference == ''
+                        || selectedProfile.retentionStartDate == ''
+                        || selectedProfile.retentionStartDate == null) {
+                        var retentionStartDate = $("#managementMetadataForm").find("[name=retentionStartDate]");
+                        if (retentionStartDate.data("datepicker")) {
+                            retentionStartDate.data("datepicker").setDate(new Date());
+                        }
+                        retentionStartDate.closest(".form-group").removeClass("hide");
+
+                    } else {
+                        $("#managementMetadataForm").find("[name=retentionStartDate]").val("").closest(".form-group").addClass("hide");
+                    }
+                    ArchiveForm.displayArchiveDescription();
+                },
+                error       : function (response) {
+                    gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
                 }
-                retentionStartDate.closest(".form-group").removeClass("hide");
+            });
 
-            } else {
-                 $("#managementMetadataForm").find("[name=retentionStartDate]").val("").closest(".form-group").addClass("hide");
-            }
+            
         },
         displayArchiveDescription : function() {
             var value = $('#archivalProfile').val();
@@ -571,9 +594,11 @@
         }
     }
 
-    // laisser profil d'archive vide au début
-    // on ne passera plus par sa sélection pour accéder au formulaire de nouvelle archive
     $("#orgRegNumberSelect").on('change', function () {
+        if ($("#orgRegNumberSelect").val() !== "") {
+            $('#originatorOrgRegNumber').val($('#orgRegNumberSelect').val());
+        }
+
         var archivalProfileSelect = $('#archivalProfileSelect');
         archivalProfileSelect.prop('disabled', false);
         archivalProfileSelect.empty();
@@ -600,7 +625,7 @@
         var archivalProfileSelect = $('#archivalProfileSelect');
         if (profile === "*") {
             var option = $('<option/>')
-            .val("Sans profil")
+            .val("")
             .text("Sans profil")
             .appendTo(archivalProfileSelect);
         } else {
