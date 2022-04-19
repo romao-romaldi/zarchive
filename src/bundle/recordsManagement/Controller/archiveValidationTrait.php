@@ -253,7 +253,11 @@ trait archiveValidationTrait
             throw new \core\Exception("The deposit has been blocked because activity is disabled.");
         }
 
-        $this->checkRights($archive);
+        $currentUserService = \laabs::getToken("ORGANIZATION");
+        if (is_null($currentUserService->orgRoleCodes)
+        || !in_array('owner', $currentUserService->orgRoleCodes)) {
+            $checkRights = $this->checkRights($archive);
+        }
 
         if (isset($archive->archivalProfileReference) && !$this->sdoFactory->exists("recordsManagement/archivalProfile", ["reference"=>$archive->archivalProfileReference])) {
             throw new \core\Exception\NotFoundException("The archival profile reference not found");
