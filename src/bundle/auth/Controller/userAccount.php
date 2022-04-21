@@ -223,6 +223,11 @@ class userAccount
         $userAccount->accountId = \laabs::newId();
         $userAccount->accountType = 'user';
 
+        if (!is_null($userAccount->emailAddress) && !filter_var($userAccount->emailAddress, FILTER_VALIDATE_EMAIL)) {
+            $validationErrors = ["Email adress isn't valid"];
+            throw \laabs::newException("auth/invalidUserInformationException", $validationErrors);
+        }
+
         $organizationController = \laabs::newController('organization/organization');
         if (!is_null($organizations)) {
             $organization = $organizationController->read($organizations[0]);
