@@ -88,9 +88,7 @@ trait archiveAccessTrait
         if(is_null($originatorArchiveId)) {
             $originatorArchiveId = $archiverArchiveId;
         }
-        // var_dump($originatorArchiveId);
-        // var_dump($archiverArchiveId);
-        // exit;
+        
         $accountController = \laabs::newController('auth/userAccount');
         $accountController->isAuthorized('user');
 
