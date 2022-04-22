@@ -60,24 +60,12 @@ interface archiveTransferrequestInterface
 
     /**
      * Receive message with all contents embedded
-     * @param mixed  $messageFile The message binary contents or a filename
-     * @param string $schema      The schema of the message file
-     * @param string $filename    The message file name
+     * @param mixed  $package  The message binary contents or a filename
+     * @param string $schema   The schema of the message file
      *
-     * @action medona/ArchiveTransfer/receive
+     * @action medona/ArchiveTransferRequest/receive
      */
-    public function create($messageFile, $schema = null, $filename = null);
-
-    /**
-     * Receive message with all contents embedded
-     *
-     * @param mixed  $package  Message binary contents or a filename
-     * @param string $connector    Connector to use
-     * @param array  $params       Parameters to adapt message
-     *
-     * @action medona/ArchiveTransfer/receiveSource
-     */
-    public function createSource($package, $connector, $params = []);
+    public function create($package, $schema = null);
 
     /**
      * Validate messages against schema and rules

@@ -20,71 +20,28 @@
 namespace presentation\maarchRM\Presenter\medona;
 
 /**
- * trait html archiveDelivery
+ * trait html for transfer request
  *
  * @package medona
- * @author  Maarch Alexis Ragot <alexis.ragot@maarch.com>
+ * @author  Cyril Vazquez <cyril.vazquez@maarch.com>
  */
-trait archiveTransferTrait
+trait archiveTransferRequestTrait
 {
     /**
      * Get the message import form
      *
      * @return string
      */
-    public function messageImport()
+    public function messageRequestImport()
     {
         $packageSchemas = [];
         if (isset(\laabs::configuration('medona')['packageSchemas'])) {
             $packageSchemas = \laabs::configuration('medona')['packageSchemas'];
         }
 
-        $packageConnectors = [];
-        if (isset(\laabs::configuration('medona')['packageConnectors'])) {
-            $packageConnectors = \laabs::configuration('medona')['packageConnectors'];
-        }
-        $this->view->addContentFile("medona/archiveTransfer/messageImport.html");
+        $this->view->addContentFile("medona/archiveTransferRequest/messageImport.html");
 
         $this->view->setSource("packageSchemas", $packageSchemas);
-        $this->view->setSource("packageConnectors", $packageConnectors);
-        $this->view->merge();
-        $this->view->translate();
-
-        return $this->view->saveHtml();
-    }
-
-    /**
-     * Get the source inputs form
-     *
-     * @param string $schema The source schema
-     * @param string $source The name of the source
-     *
-     * @return string The view
-     */
-    public function getSourceInputs($schema, $source)
-    {
-        $inputs = [];
-        $notTextTypes = ['file', 'boolean', 'number', 'enum'];
-
-        if (isset(\laabs::configuration('medona')['packageConnectors'][$source]['params'])) {
-            $sourceInputs = \laabs::configuration('medona')['packageConnectors'][$source]['params'];
-            foreach ($sourceInputs as $key => $input) {
-                if (isset($input["source"]) && $input["source"] == 'input') {
-                    $input['name'] = $key;
-                    if (!isset($input['type'])) {
-                        $input['type'] = 'text';
-                    }
-                    $input['typeAccepted'] = false;
-                    if (in_array($input['type'], $notTextTypes)) {
-                        $input['typeAccepted'] = true;
-                    }
-                    $inputs[] = $input;
-                }
-            }
-        }
-
-        $this->view->addContentFile("medona/archiveTransfer/sourceInputsForm.html");
-        $this->view->setSource("inputs", $inputs);
         $this->view->merge();
         $this->view->translate();
 
@@ -97,9 +54,9 @@ trait archiveTransferTrait
      *
      * @return string The view
      */
-    public function transferIncomingList($messages)
+    public function transferRequestIncomingList($messages)
     {
-        $this->view->addContentFile('medona/archiveTransfer/transferIncomingList.html');
+        $this->view->addContentFile('medona/archiveTransferRequest/transferRequestIncomingList.html');
 
         $this->prepareMesageList($messages);
 
@@ -115,9 +72,9 @@ trait archiveTransferTrait
      *
      * @return string The view
      */
-    public function transferOutgoingList($messages)
+    public function transferRequestOutgoingList($messages)
     {
-        $this->view->addContentFile('medona/archiveTransfer/transferOutgoingList.html');
+        $this->view->addContentFile('medona/archiveTransferRequest/transferRequestOutgoingList.html');
 
         $this->prepareMesageList($messages);
 
@@ -133,9 +90,9 @@ trait archiveTransferTrait
      *
      * @return string The view
      */
-    public function transferHistory($messages)
+    public function transferRequestHistory($messages)
     {
-        $this->view->addContentFile('medona/archiveTransfer/transferHistory.html');
+        $this->view->addContentFile('medona/archiveTransferRequest/transferRequestHistory.html');
         $this->prepareMesageList($messages, true);
         $this->initHistoryForm();
 
@@ -166,7 +123,7 @@ trait archiveTransferTrait
      *
      * @return type
      */
-    public function acceptArchiveTransfer()
+    public function acceptArchiveTransferRequest()
     {
         $this->json->message = $this->translator->getText("Message accepted");
 
@@ -178,7 +135,7 @@ trait archiveTransferTrait
      *
      * @return type
      */
-    public function rejectArchiveTransfer()
+    public function rejectArchiveTransferRequest()
     {
         $this->json->message = $this->translator->getText("Message rejected");
 
@@ -190,21 +147,9 @@ trait archiveTransferTrait
      *
      * @return type
      */
-    public function validateArchiveTransfer()
+    public function validateArchiveTransferRequest()
     {
         $this->json->message = $this->translator->getText("Message validated");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for processBash method
-     *
-     * @return type
-     */
-    public function processArchiveTransfer()
-    {
-        $this->json->message = $this->translator->getText("Message processed");
 
         return $this->json->save();
     }

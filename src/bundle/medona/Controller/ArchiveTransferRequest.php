@@ -31,19 +31,19 @@ class ArchiveTransferRequest extends abstractMessage
 {
     /**
      * Receive message with all contents embedded
-     * @param mixed  $messageFile The message binary contents OR a filename
-     * @param string $schema      The message file schema
+     * @param mixed  $package The message binary contents OR a filename
+     * @param string $schema  The message file schema
      *
      * @return medona/message
      *
      * @todo Remove files from sas when error on reception
      */
-    public function receive($messageFile, $schema = null)
+    public function receive($package, $schema = null)
     {
         $message = $this->createNewMessage($schema);
 
         // Spécifique receive
-        $this->receivePackage($message, $messageFile);
+        $this->receivePackage($message, $package);
 
         if (empty($schema)) {
             $this->detectSchema($message);
@@ -72,18 +72,18 @@ class ArchiveTransferRequest extends abstractMessage
         return $message;
     }
 
-    protected function receivePackage($message, $messageFile)
+    protected function receivePackage($message, $package)
     {
-        if (is_object($messageFile)) {
-            $this->receiveObject($message, $messageFile);
+        if (is_object($package)) {
+            $this->receiveObject($message, $package);
         } else {
-            $this->receiveStream($message, $messageFile);
+            $this->receiveStream($message, $package);
         }
     }
 
-    protected function receiveObject($message, $messageFile)
+    protected function receiveObject($message, $package)
     {
-        $data = json_encode($messageFile);
+        $data = json_encode($package);
 
         $this->receiveFiles($message, $data, 'application/json');
     }
@@ -92,12 +92,9 @@ class ArchiveTransferRequest extends abstractMessage
     {
         $messageDir = $this->messageDirectory.DIRECTORY_SEPARATOR.(string) $message->messageId;
 
-        if (!$filename) {
-            $filename = (string) $message->messageId;
-
-            if ($mediatype) {
-                $filename .= '.'.\laabs\basename($mediatype);
-            }
+        $filename = (string) $message->messageId;
+        if ($mediatype) {
+            $filename .= '.'.\laabs\basename($mediatype);
         }
 
         file_put_contents($messageDir.DIRECTORY_SEPARATOR.$filename, $data);
@@ -105,21 +102,21 @@ class ArchiveTransferRequest extends abstractMessage
         $message->path = $messageDir.DIRECTORY_SEPARATOR.$filename;
     }
 
-    protected function receiveStream($message, $messageFile)
+    protected function receiveStream($message, $package)
     {
         switch (true) {
-            case is_string($messageFile)
-                && (filter_var(substr($messageFile, 0, 10), FILTER_VALIDATE_URL) || is_file($messageFile)):
-                $data = file_get_contents($messageFile);
+            case is_string($package)
+                && (filter_var(substr($package, 0, 10), FILTER_VALIDATE_URL) || is_file($package)):
+                $data = file_get_contents($package);
                 break;
 
-            case is_string($messageFile) &&
-                preg_match('%^[a-zA-Z0-9\\\\/+]*={0,2}$%', $messageFile):
-                $data = base64_decode($messageFile);
+            case is_string($package) &&
+                preg_match('%^[a-zA-Z0-9\\\\/+]*={0,2}$%', $package):
+                $data = base64_decode($package);
                 break;
 
-            case is_resource($messageFile):
-                $handler = \core\Encoding\Base64::decode($messageFile);
+            case is_resource($package):
+                $handler = \core\Encoding\Base64::decode($package);
                 $data = stream_get_contents($handler);
                 break;
         }
@@ -176,6 +173,8 @@ class ArchiveTransferRequest extends abstractMessage
                 $message,
                 false
             );
+
+            $this->sendError("000", $e->getMessage());
 
             // Remove files from sas
             $messageURI = $this->messageDirectory.DIRECTORY_SEPARATOR.$message->messageId;
