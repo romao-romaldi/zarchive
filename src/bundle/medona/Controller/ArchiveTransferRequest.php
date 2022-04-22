@@ -83,18 +83,25 @@ class ArchiveTransferRequest extends abstractMessage
 
     protected function receiveObject($message, $package)
     {
-        $data = json_encode($package);
+        $connectorService = \laabs::newService('medona/Connectors/Multiparts');
 
-        $this->receiveFiles($message, $data, 'application/json');
+        $message->path = $connectorService->receive(
+            $package,
+            $params = [],
+            $this->messageDirectory.DIRECTORY_SEPARATOR.(string) $message->messageId
+        );
     }
 
-    protected function receiveFiles($message, $data = false, $mediatype = null)
+    protected function receiveFiles($message, $data, $attachments, $filename = false, $mediatype = null)
     {
         $messageDir = $this->messageDirectory.DIRECTORY_SEPARATOR.(string) $message->messageId;
 
-        $filename = (string) $message->messageId;
-        if ($mediatype) {
-            $filename .= '.'.\laabs\basename($mediatype);
+        if (!$filename) {
+            $filename = (string) $message->messageId;
+
+            if ($mediatype) {
+                $filename .= '.'.\laabs\basename($mediatype);
+            }
         }
 
         file_put_contents($messageDir.DIRECTORY_SEPARATOR.$filename, $data);
@@ -582,7 +589,7 @@ class ArchiveTransferRequest extends abstractMessage
         $queryParts[] = "type='ArchiveTransferRequest'";
         $queryParts[] = "active=true";
         $queryParts[] = "isIncoming=true";
-        $queryParts[] = "status != 'processed'
+        $queryParts[] = "status != 'accepted'
         AND status != 'error'
         AND status != 'invalid'
         AND status !='draft'
@@ -596,6 +603,34 @@ class ArchiveTransferRequest extends abstractMessage
             implode(' and ', $queryParts),
             null,
             ">receptionDate",
+            false,
+            $maxResults
+        );
+    }
+
+    /**
+     * Get sending archive tranfer message
+     *
+     * @return array Array of medona/message object
+     */
+    public function listSending()
+    {
+        $registrationNumber = $this->getCurrentRegistrationNumber();
+        $accountToken = \laabs::getToken("AUTH");
+
+        $queryParts = [];
+        $queryParts[] = "(accountId= '$accountToken->accountId' OR senderOrgRegNumber=$registrationNumber)";
+        $queryParts[] = "type='ArchiveTransferRequest'";
+        $queryParts[] = "active=true";
+        $queryParts[] = "isIncoming=true";
+        $queryParts[] = "status=['sent', 'valid']";
+
+        $maxResults = \laabs::configuration('presentation.maarchRM')['maxResults'];
+        return $this->sdoFactory->find(
+            'medona/message',
+            implode(' and ', $queryParts),
+            null,
+            false,
             false,
             $maxResults
         );
@@ -657,6 +692,9 @@ class ArchiveTransferRequest extends abstractMessage
         }
 
         $message = $this->sdoFactory->read('medona/message', array('messageId' => $messageId));
+
+        $archiveTransferRequestReplyController = \laabs::newController('medona/ArchiveTransferRequestReply');
+        $archiveTransferRequestReplyController->send($message, [], '000');
 
         $this->lifeCycleJournalController->logEvent(
             'medona/acceptance',

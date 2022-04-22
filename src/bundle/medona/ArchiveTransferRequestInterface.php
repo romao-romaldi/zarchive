@@ -35,6 +35,14 @@ interface archiveTransferrequestInterface
      */
     public function readIncominglist();
 
+
+    /**
+     * Get outgoing transfer messages
+     *
+     * @action medona/ArchiveTransferRequest/listSending
+     */
+    public function readOutgoinglist();
+
      /**
      * Get outgoing transfer messages
      *
