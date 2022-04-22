@@ -571,6 +571,24 @@ class message
             $messageId = (string) $message->messageId;
 
             switch ($message->type) {
+                case 'ArchiveTransferRequest':
+                    if ($message->status == "received" || $message->status == "modified") {
+                        $message->validateButton = "/transferrequestValidate/" . $messageId;
+                        $message->exportButton = "/medona/message/".$messageId."/Export";
+                    } 
+                    if ($message->status == "valid") {
+                        $message->acceptButton = "/transferrequestAcceptance/".$messageId;
+                        $message->rejectButton = "/transferrequestRejection/".$messageId;
+                        $message->exportButton = "/medona/message/".$messageId."/Export";
+                    } 
+                    if ($message->status == "toBeModified") {
+                        $message->rejectButton = "/transferrequestRejection/".$messageId;
+                        $message->retryButton = "/medona/message/". $message->messageId . "/retry";
+                    } 
+                    if ($message->status == "processing") {
+                        $message->retryButton = "/medona/message/". $message->messageId . "/retry";
+                    }
+                    break;
                 case 'ArchiveTransfer':
                     if ($message->status == "received" || $message->status == "modified") {
                         if (!$message->isIncoming) {
