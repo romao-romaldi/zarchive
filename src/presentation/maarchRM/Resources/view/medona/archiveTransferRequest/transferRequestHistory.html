@@ -1,0 +1,18 @@
+<!--#
+    This file is part of the registeredMail package.
+    (c) Maarch Alexis Ragot <alexis.ragot@maarch.org>
+
+    For the full copyright and license information, please view the LICENSE
+    file that was distributed with this source code.
+#-->
+<div class="container-fluid" data-translate-catalog="medona/messages">
+    <div class="page-header">
+        <h1>
+            <i class="fa fa-history"></i>
+            Transfer history
+        </h1>
+    </div>
+    <input class="hide" id="messageType" data-url="/transfer/history" value="ArchiveTransfer"/>
+    <?hinclude medona/message/historyFilters.html ?>
+    <?hinclude medona/message/historyList.html ?>
+</div>

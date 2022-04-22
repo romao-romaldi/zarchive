@@ -149,4 +149,28 @@ trait archiveDestructionTrait
 
         return $this->view->saveHtml();
     }
+
+    /**
+     * Serializer JSON for rejectArchiveTransfer method
+     *
+     * @return type
+     */
+    public function rejectArchiveDestructionRequest()
+    {
+        $this->json->message = $this->translator->getText("Message rejected");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for rejectArchiveTransfer method
+     *
+     * @return type
+     */
+    public function validateArchiveDestructionRequest()
+    {
+        $this->json->message = $this->translator->getText("Message accepted");
+
+        return $this->json->save();
+    }
 }
