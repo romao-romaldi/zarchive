@@ -35,6 +35,9 @@ msgstr "Format pérenne"
 msgid "Format status"
 msgstr "Statut du format"
 
+msgid "Status"
+msgstr "Statut"
+
 msgid "Sustainability"
 msgstr "Pérennité"
 
@@ -85,4 +88,16 @@ msgstr "Empreinte numérique SHA256"
 
 msgid "Hash SHA512"
 msgstr "Empreinte numérique SHA512"
+
+msgid "Under observation"
+msgstr "En observation"
+
+msgid "Recommended"
+msgstr "Recommandé"
+
+msgid "Deprecated"
+msgstr "En fin de vie"
+
+msgid "Not sustainable"
+msgstr "Retiré"
 
