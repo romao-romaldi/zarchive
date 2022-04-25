@@ -339,7 +339,7 @@ FulltextSearchForm = {
                         } else if ($(this).hasClass('dateTimePicker')) {
                             var operation = ($(this).data('range') == 'start') ? ">=" : "<=";
                             // TODO fix datetime sent in params with a date conversion (done @rm/archives/search.html)
-                            value = name + operation + "'" + $(this).data('DateTimePicker').date().format('YYYY-MM-DD HH:MM:SS') + "'";
+                            value = name + operation + "'" + $(this).data('DateTimePicker').date().format('YYYY-MM-DD HH:mm:ss') + "'";
 
                             // Fill start and end values
                             if (query.description[name] == undefined) {
