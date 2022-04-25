@@ -30,9 +30,8 @@ file that was distributed with this source code.
                                     <th>Puid</th>
                                     <th>Name</th>
                                     <th>Version</th>
-                                    <th>Sustainability</th>
-                                    <th>Enabled</th>
-                                    <th style="min-width:130px"></th>
+                                    <th>Status</th>
+                                    <th style="min-width:100px"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -41,13 +40,11 @@ file that was distributed with this source code.
                                     <td name="puid"><?merge .puid ?></td>
                                     <td name="name"><?merge .name ?></td>
                                     <td name="version"><?merge .version ?></td>
-                                    <td name="sustainability">
-                                        <?merge .sustainability.not() ?><i class="fa fa-times"></i>
-                                        <?merge .sustainability.ifne(false) ?><i class="fa fa-check"></i>
-                                    </td>
-                                    <td name="enabled">
-                                        <?merge .enabled.not() ?><i class="fa fa-times"></i>
-                                        <?merge .enabled.ifne(false) ?><i class="fa fa-check"></i>
+                                    <td name="status">
+                                        <?merge .status.ifeq(1) ?><span>En observation</span>
+                                        <?merge .status.ifeq(2) ?><span>Recommandé</span>
+                                        <?merge .status.ifeq(3) ?><span>En fin de vie</span>
+                                        <?merge .status.ifeq(4) ?><span>Retiré</span>
                                     </td>
                                     <td class="action_btn">
                                         <div class="btn-group pull-right">
@@ -119,32 +116,18 @@ file that was distributed with this source code.
                             </ul>
                         </div>
                         <!-- FIN EXTENSIONS -->
-                        <div class="form-group" id="sustainabilityValue">
-                            <label class="col-md-2 control-label">Sustainable format</label>
-                            <div class="col-md-8">
-                                <input type="checkbox" data-toggle="toggle" data-on="Oui" data-off="Non" id="isSustainable">
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="recommendationValue">
-                            <label class="col-md-2 control-label">Interoperability recommendation</label>
-                            <input id="InteroperabilityRecommendation" type="text"
-                                  data-provide="slider"
-                                  data-slider-ticks="[1, 2, 3, 4]"
-                                  data-slider-ticks-labels='["En observation", "Recommandé", "En fin de vie", "Retiré"]'
-                                  data-slider-min="1"
-                                  data-slider-max="4"
-                                  data-slider-step="1"
-                                  data-slider-value="3"
-                                  data-slider-tooltip="hide" />    
-                        </div>
-
 
                         <div class="form-group" id="statusValue">
                             <label class="col-md-2 control-label">Format status</label>
                             <div class="col-md-8">
-                                <input type="checkbox" data-toggle="toggle" data-on="Activé" data-off="Désactivé" id="isEnabled">
-                            </div>
+                                <select class="form-control" name="statusSelect" id="statusSelect">
+                                    <option value="" ></option>
+                                    <option value="1">Under observation</option>
+                                    <option value="2">Recommended</option>
+                                    <option value="3">Deprecated</option>
+                                    <option value="4">Not sustainable</option>
+                                </select>
+                            </div>    
                         </div>
                     </form>
                 </div>
@@ -310,8 +293,7 @@ file that was distributed with this source code.
         $('#mimetypeEnumList').empty();
         $('#extensionEnumList').empty();
 
-        $('#isSustainable').bootstrapToggle('off');
-        $('#isEnabled').bootstrapToggle('off');
+        $('#statusSelect').val('');
 
         $('#format_formSaveBtn').removeClass('hide');
         $("#format_formModifyBtn").addClass("hide");
@@ -330,14 +312,8 @@ file that was distributed with this source code.
             $("#inputAddExtension").val(value);
             $("#btnAddExtensionField").click();
         });
-        
-        if (format.sustainability) {
-            $('#isSustainable').bootstrapToggle('on');
-        }
 
-        if (format.enabled) {
-            $('#isEnabled').bootstrapToggle('on');
-        }
+        $('#statusSelect').val(format.status);
 
         let formGroup = $('#fieldName').closest('.form-group');
         formGroup.removeClass('has-error');
@@ -377,8 +353,7 @@ file that was distributed with this source code.
             version         : $('#fieldVersion').find('input').val(),
             mimetypes       : serializeMimetypes(),
             extensions      : serializeExtensions(),
-            sustainability  : $('#isSustainable').prop("checked"),
-            enabled         : $('#isEnabled').prop("checked")
+            status          : $('#statusSelect').val(),
         };
         return field;
     }

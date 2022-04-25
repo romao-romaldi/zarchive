@@ -5,8 +5,7 @@ CREATE TABLE "digitalResource"."format"
     "version" text,
     "mimetypes" text,
     "extensions" text,
-    "sustainability" boolean DEFAULT true,
-    "enabled" boolean DEFAULT true,
+    "status" integer,
 
     PRIMARY KEY ("puid")
 );

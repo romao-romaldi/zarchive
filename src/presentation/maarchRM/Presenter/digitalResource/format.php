@@ -68,8 +68,8 @@ class format
         $dataTable = $this->view->getElementsByClass("dataTable")->item(0)->plugin['dataTable'];
         $dataTable->setPaginationType("full_numbers");
 
-        $dataTable->setUnsortableColumns(2, 3, 4, 5);
-        $dataTable->setUnsearchableColumns(2, 3, 4);
+        $dataTable->setUnsortableColumns(4);
+        $dataTable->setUnsearchableColumns(4);
 
         $this->view->translate();
         $this->view->merge();

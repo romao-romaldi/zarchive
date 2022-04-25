@@ -64,16 +64,9 @@ class format
     public $extensions;
 
     /**
-     * The sustainability
-     *
-     * @var boolean
-     */
-    public $sustainability = true;
-
-    /**
      * The status of the format
      *
-     * @var boolean
+     * @var integer
      */
-    public $enabled = true;
+    public $status;
 }
