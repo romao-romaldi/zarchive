@@ -75,14 +75,13 @@ file that was distributed with this source code.
                         <div class="form-group" id="fieldPuid">
                             <label class="col-md-2 control-label">Puid<span style="color:red">&nbsp;*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="fieldPuid" placeholder="Puid" id="puidTypeahead"/>
+                                <input type="text" class="form-control" name="fieldPuid" placeholder="Puid" id="puidTypeahead" />
                             </div>
                         </div>
                         <div class="form-group" id="fieldName">
                             <label class="col-md-2 control-label">Name<span style="color:red">&nbsp;*</span></label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control" name="fieldName" placeholder="Name"/>
-<!--                                 <small class="help-block">The first and last character must be a letter. You must use only letters and the special character '_'</small> -->
                             </div>
                         </div>
                         <div class="form-group" id="fieldVersion">
@@ -126,6 +125,21 @@ file that was distributed with this source code.
                                 <input type="checkbox" data-toggle="toggle" data-on="Oui" data-off="Non" id="isSustainable">
                             </div>
                         </div>
+
+                        <div class="form-group" id="recommendationValue">
+                            <label class="col-md-2 control-label">Interoperability recommendation</label>
+                            <input id="InteroperabilityRecommendation" type="text"
+                                  data-provide="slider"
+                                  data-slider-ticks="[1, 2, 3, 4]"
+                                  data-slider-ticks-labels='["En observation", "Recommandé", "En fin de vie", "Retiré"]'
+                                  data-slider-min="1"
+                                  data-slider-max="4"
+                                  data-slider-step="1"
+                                  data-slider-value="3"
+                                  data-slider-tooltip="hide" />    
+                        </div>
+
+
                         <div class="form-group" id="statusValue">
                             <label class="col-md-2 control-label">Format status</label>
                             <div class="col-md-8">
@@ -166,6 +180,7 @@ file that was distributed with this source code.
 </div>
 
 <script src="/public/js/bootstrap-toggle/bootstrap-toggle.js"></script>
+<script src="/public/js/bootstrap-slider/bootstrap-slider.js"></script>
 
 <script type="text/javascript">
 
@@ -174,7 +189,6 @@ file that was distributed with this source code.
         $("#format_modify").addClass('hide');
         clearForm();
     });
-
     $("#format_tableList").on('click', '.editFormat', function () {
         $('#format_create').addClass('hide');
         $("#format_modify").removeClass('hide');
@@ -406,7 +420,7 @@ file that was distributed with this source code.
                     return display;
                 }
             },
-            display: 'name',
+            display: 'puid',
             source: formats,
             limit: 100
         }
