@@ -224,7 +224,7 @@ class userAccount
         $userAccount->accountType = 'user';
 
         if (!is_null($userAccount->emailAddress) && !filter_var($userAccount->emailAddress, FILTER_VALIDATE_EMAIL)) {
-            $validationErrors = ["Email adress isn't valid"];
+            $validationErrors = ["Email malformed"];
             throw \laabs::newException("auth/invalidUserInformationException", $validationErrors);
         }
 
