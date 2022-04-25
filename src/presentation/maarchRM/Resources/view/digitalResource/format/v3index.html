@@ -116,7 +116,6 @@ file that was distributed with this source code.
                             </ul>
                         </div>
                         <!-- FIN EXTENSIONS -->
-
                         <div class="form-group" id="statusValue">
                             <label class="col-md-2 control-label">Format status</label>
                             <div class="col-md-8">
@@ -136,6 +135,42 @@ file that was distributed with this source code.
                         <button type="button" class="btn btn-default" id="format_formCancelBtn">Cancel</button>
                         <button type="button" class="btn btn-success" id="format_formSaveBtn">Save</button>
                         <button type="button" class="btn btn-warning hide" id="format_formModifyBtn">Modify</button>
+                    </div>
+                </div>
+                <!-- CHECK FILE FORMAT (DRAG AND DROP) -->
+                <div class="col-md-10">
+                    <input type="file" id="inputFormatFile" class="hide">
+                    <br/><br/>
+                    <div id="formatFileDropZone">
+                        <i class="fa fa-file-text fileIcon">&nbsp;</i>
+                        <h4>Click or drop a file<h4>
+                    </div>
+
+                    <div id="formatFileInfo" class="hide col-md-8 col-md-offset-2">
+                        <br/>
+                        <table>
+                            <tr>
+                                <td><i class="fa fa-file-text fileIcon">&nbsp;</i></td>
+                                <td>
+                                    <dl class="dl-horizontal">
+                                        <dt>File name</dt>
+                                        <dd id="formatFile_fileName"></dd>
+
+                                        <dt>Size</dt>
+                                        <dd id="formatFile_fileSize"></dd>
+                                    </dl>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <div class="row">
+                            <div class="pull-right ">
+                                <button class="btn btn-warning" id="formatFileCancel" title="Cancel"><i class='fa fa-times'>&nbsp;</i> Cancel</button>
+                                <button class="btn btn-success" id="fileCheckFormat_submit" title="Import"><i class='fa fa-level-down'>&nbsp;</i>Check format</button>
+                            </div>
+                        </div>
+                        <span class="hide" id="byte_text">byte</span>
+                        <span class="hide" id="checkFormat_text">Check format</span>
                     </div>
                 </div>
             </div>
@@ -162,8 +197,74 @@ file that was distributed with this source code.
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="formatModal" tabindex="-1" role="dialog" aria-labelledby="formatModalLabel" data-translate-catalog="digitalResource/format">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="formatModalLabel">File information</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="format-mimetype">Mimetype</label>
+                    <input type="text" class="form-control" id="format-mimetype" placeholder="Mimetype" readonly=""/>
+                </div>
+                <div class="form-group">
+                    <label for="format-puid">Puid</label>
+                    <input type="text" class="form-control" id="format-puid" placeholder="Puid" readonly=""/>
+                </div>
+                <div class="form-group">
+                    <label for="format-hashMD5">Hash MD5</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="format-hashMD5" placeholder="Hash MD5" readonly=""/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" data-hash-copy="hashMD5"><span class="fa fa-copy"></span></button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="format-hashSHA256">Hash SHA256</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="format-hashSHA256" placeholder="Hash SHA256" readonly=""/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" data-hash-copy="hashSHA256"><span class="fa fa-copy"></span></button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="format-hashSHA512">Hash SHA512</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="format-hashSHA512" placeholder="Hash SHA512" readonly=""/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" data-hash-copy="hashSHA512"><span class="fa fa-copy"></span></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="/public/js/bootstrap-toggle/bootstrap-toggle.js"></script>
 <script src="/public/js/bootstrap-slider/bootstrap-slider.js"></script>
+
+<style>
+    #formatFileDropZone {
+        border: 2px dashed grey;
+        cursor: pointer;
+        padding: 30px;
+        text-align: center;
+        color: grey;
+        opacity: 0.5;
+    }
+    .fileIcon {
+        font-size: 300%;
+    }
+</style>
 
 <script type="text/javascript">
 
@@ -483,5 +584,157 @@ file that was distributed with this source code.
 
         return extensions;
     }
+
+    /* ------ MESSAGE FILE ------ */
+
+    // Drag & drop
+    $("#formatFileDropZone").on('dragenter', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    })
+
+    $("#formatFileDropZone").on('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#formatFileDropZone').css('opacity', '1');
+    })
+
+    $("#formatFileDropZone").on('dragleave', function(e) {
+        $('#formatFileDropZone').css('opacity', '0.5');
+    })
+
+    $('#formatFileDropZone').on('drop', function(e) {
+            if(e.originalEvent.dataTransfer){
+                if(e.originalEvent.dataTransfer.files.length) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $('#formatFileDropZone').css('opacity', '0.5');
+                    uploadMessage(e.originalEvent.dataTransfer.files[0]);
+                }
+            }
+        }
+    );
+
+    // Files browser
+    $('#formatFileDropZone').on('click', function() {
+        $('#inputFormatFile').click();
+    })
+
+    $('#inputFormatFile').on('change', function() {
+        uploadMessage($(this).get(0).files[0]);
+    })
+
+    // Cancel
+    $('#formatFileCancel').on('click', function() {
+        $('#formatFileDropZone').removeClass('hide');
+        $('#formatFileInfo').addClass('hide');
+        $('#inputFormatFile').val('');
+    })
+
+    // Submit
+    $('#fileCheckFormat_submit').on('click', function() {
+        var file = serializeFile();
+        $('#fileCheckFormat_submit').prop('disabled', 'true');
+        ajax($(this), {
+            type        : 'POST',
+            url         : '/digitalResource/format/fileformatinformation',
+            /*data        : {
+                    contents  : file.contents,
+                    extension : file.extension
+            },*/
+            data : JSON.stringify({'contents'  : file.contents, 'extension' : file.extension}),
+            contentType : 'application/json',
+            dataType    : 'json',
+            success     : function (response) {
+                if(!response.status) {
+                    gritter.show(response.message, response.status, response.errors);
+                } else {
+                    $('#fileCheckFormat_submit').prop('disabled', false);
+                    $('#formatFileCancel').click();
+                    $('#format-mimetype').val(response.mimetype);
+                    $('#format-puid').val(response.puid);
+                    $('#format-hashMD5').val(response.hashMD5);
+                    $('#format-hashSHA256').val(response.hashSHA256);
+                    $('#format-hashSHA512').val(response.hashSHA512);
+                    $('#formatModal').modal();
+                }
+            },
+            error    : function(response) {
+                gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
+            }
+        });
+    })
+
+/* ------ FUNCTIONS FOR CHECK FILE FORMAT ------ */
+
+    function uploadMessage(file) {
+        oFileReader = new FileReader();
+        oFileReader.readAsDataURL(file);
+        oFileReader.onload = function() {
+            $('#inputFormatFile').data('base64', oFileReader.result.replace(/^data:.*?;base64,/, ""));
+            $('#formatFile_fileName').text(file.name);
+            $('#formatFile_fileSize').text(file.size + ' ' + $('#byte_text').html());
+            $('#formatFileDropZone').addClass('hide');
+            $('#formatFileInfo').removeClass('hide');
+        }
+    }
+
+    function serializeFile() {
+        var jsonObject = {
+            contents : $('#inputFormatFile').data('base64'),
+            extension: $('#formatFile_fileName').text().slice(($('#formatFile_fileName').text().lastIndexOf(".") - 1 >>> 0) + 2),
+        };
+
+        return jsonObject;
+    }
+
+    // Cancel
+    $('[data-hash-copy]').on('click', function() {
+        $("#format-" + $(this).attr('data-hash-copy')).select();
+        document.execCommand("copy");
+        document.getSelection().removeAllRanges();
+    })
+
+    $("#contain").on('mouseenter', '[data-format]', function() {
+        $(this).find('td').each(function() {
+            $("#" + $(this).attr('name')).text($(this).text());
+        });
+
+        switch ($("#mediatype").text()) {
+            case 'application':
+                icon = 'fa-file-code-o';
+                break;
+
+            case 'message':
+                icon = 'fa-file-envelope-o';
+                break;
+
+            case 'audio':
+                icon = 'fa-file-audio-o';
+                break;
+
+            case 'video':
+                icon = 'fa-file-video-o';
+                break;
+
+            case 'text':
+                icon = 'fa-file-text-o';
+                break;
+
+            case 'image':
+                icon = 'fa-file-image-o';
+                break;
+
+            case 'model':
+                icon = 'fa-file-cube-o';
+                break;
+
+            default:
+                icon = 'fa-file-o';
+        }
+        $("#icon").removeAttr('class');
+        $("#icon").addClass('fa ' + icon);
+
+    });
 
 </script>
