@@ -41,7 +41,7 @@ file that was distributed with this source code.
                                     <td name="name"><?merge .name ?></td>
                                     <td name="version"><?merge .version ?></td>
                                     <td name="status">
-                                        <?merge .status.ifeq(0) ?><span>Without recommendations</span>
+                                        <?merge .status.ifeq(0) ?><span>Without recommendation</span>
                                         <?merge .status.ifeq(1) ?><span>Under observation</span>
                                         <?merge .status.ifeq(2) ?><span>Recommended</span>
                                         <?merge .status.ifeq(3) ?><span>Deprecated</span>
@@ -122,7 +122,7 @@ file that was distributed with this source code.
                             <div class="col-md-8">
                                 <div class="radio">
                                     <label>
-                                        <input type="radio" name="statusInput" id="withoutRecommendations" value="0" checked>Without recommendations
+                                        <input type="radio" name="statusInput" id="withoutRecommendations" value="0" checked>Without recommendation
                                     </label>
                                 </div>
                                 <div class="radio">

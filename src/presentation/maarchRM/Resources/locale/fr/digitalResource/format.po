@@ -101,5 +101,5 @@ msgstr "En fin de vie"
 msgid "Not sustainable"
 msgstr "Retiré"
 
-msgid "Without recommendations"
-msgstr "Sans recommendations"
+msgid "Without recommendation"
+msgstr "Sans recommendation"
