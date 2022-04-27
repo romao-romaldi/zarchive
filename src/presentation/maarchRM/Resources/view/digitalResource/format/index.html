@@ -41,6 +41,7 @@ file that was distributed with this source code.
                                     <td name="name"><?merge .name ?></td>
                                     <td name="version"><?merge .version ?></td>
                                     <td name="status">
+                                        <?merge .status.ifeq(0) ?><span>Without recommendations</span>
                                         <?merge .status.ifeq(1) ?><span>Under observation</span>
                                         <?merge .status.ifeq(2) ?><span>Recommended</span>
                                         <?merge .status.ifeq(3) ?><span>Deprecated</span>
@@ -119,13 +120,31 @@ file that was distributed with this source code.
                         <div class="form-group" id="statusValue">
                             <label class="col-md-2 control-label">Format status</label>
                             <div class="col-md-8">
-                                <select class="form-control" name="statusSelect" id="statusSelect">
-                                    <option value="" ></option>
-                                    <option value="1">Under observation</option>
-                                    <option value="2">Recommended</option>
-                                    <option value="3">Deprecated</option>
-                                    <option value="4">Not sustainable</option>
-                                </select>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="withoutRecommendations" value="0" checked>Without recommendations
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="underObservation" value="1">Under observation
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="recommended" value="2">Recommended
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="deprecated" value="3">Deprecated
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="notSustainable" value="4">Not sustainable
+                                    </label>
+                                </div>
                             </div>    
                         </div>
                     </form>
@@ -393,7 +412,7 @@ file that was distributed with this source code.
         $('#mimetypeEnumList').empty();
         $('#extensionEnumList').empty();
 
-        $('#statusSelect').val('');
+        $('input[type=radio][value=0]').prop('checked', true);
 
         $('#format_formSaveBtn').removeClass('hide');
         $("#format_formModifyBtn").addClass("hide");
@@ -413,7 +432,7 @@ file that was distributed with this source code.
             $("#btnAddExtensionField").click();
         });
 
-        $('#statusSelect').val(format.status);
+        $('input[type=radio][value='+format.status+']').prop('checked', true);
 
         let formGroup = $('#fieldName').closest('.form-group');
         formGroup.removeClass('has-error');
@@ -453,7 +472,7 @@ file that was distributed with this source code.
             version         : $('#fieldVersion').find('input').val(),
             mimetypes       : serializeMimetypes(),
             extensions      : serializeExtensions(),
-            status          : $('#statusSelect').val(),
+            status          : $('input[type=radio]:checked').val(),
         };
         return field;
     }
