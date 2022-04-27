@@ -810,7 +810,7 @@ class digitalResource
         $endTime = time() + $timeout;
 
         foreach ($resources as $resource) {
-            if ($endTime >= time()) {
+            if (time() >= $endTime) {
                 $success = false;
 
                 $eventInfo['timeout'] = $timeout;
