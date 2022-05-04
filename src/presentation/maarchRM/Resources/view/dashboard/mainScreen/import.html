@@ -1,14 +1,14 @@
 <div class="hide row" id="importPanel">
     <div class="col-xs-12">
-        <?merge isArchiver.bool().not() ?>
+<!--         <?merge isArchiver.bool().not() ?>
         <div class="row" id="defaultImportTitleForm">
             <h4 class="pull-left">
-                <span id="import_archivalProfile"/>
+                <span id="import_archivalProfile">New Archive</span>
                 <br/>
                 <small id="import_isSubArchive"><span>Sub-archive of </span><span id="import_parentArchiveName"><b></b></span></small>
             </span>
             </h4>
-        </div>
+        </div> -->
         <div class="row">
             <div class="col-lg-8 col-md-12">
                 <?hinclude dashboard/mainScreen/archiveForm.html ?>
@@ -45,6 +45,7 @@
         load: function(archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName) {
             $('#archiveForm [name="originatorOrgRegNumber"]').val(orgRegNumber);
             $('#archiveForm [name="filePlanPosition"]').val(folderId);
+            console.log("toto");
 
             this.panel.removeClass('hide');
 
@@ -63,6 +64,8 @@
                 $("#archiveForm [name='parentArchiveId']").val('');
                 $('#import_isSubArchive').addClass('hide');
             } else {
+                $('#import_isSubArchive').removeClass('hide');
+                $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', true);
                 $("#archiveForm [name='parentArchiveId']").val(parentArchiveId);
                 $('#import_parentArchiveName').find('b').text(parentArchiveName);
             }
@@ -82,6 +85,8 @@
 
     $("#importPanel").onEvent('newArchiveForm.recordsManagement', function(e, archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName) {
         ImportPanel.load(archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName);
+        console.log("coucou");
+        console.log(archivalProfile);
         if(typeof archivalProfile === "undefined"){
             FilePlanLevelToggle.load(true);
         } else {
