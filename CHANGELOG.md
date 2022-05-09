@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Version 2.8.3
+ - `Fixed` Recherche par côte d'archive non fonctionnelle.
+
 ## Version 2.8.2
  - `Changed` Possibilité d'ajouter des caractères spéciaux dans les identifiants d'organisations.
  - `Fixed`   Blocage du process d'extraction fulltext si un document était en erreur dans Apache Tika.
