@@ -2,6 +2,7 @@
 
 ## Version 2.8.3
  - `Fixed` Recherche par côte d'archive non fonctionnelle.
+ - `Fixed` Vérification du pattern de l'adresse email lors de la création d'un nouvel utilisateur.
 
 ## Version 2.8.2
  - `Changed` Possibilité d'ajouter des caractères spéciaux dans les identifiants d'organisations.
