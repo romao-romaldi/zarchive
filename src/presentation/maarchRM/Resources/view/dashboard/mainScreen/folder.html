@@ -461,9 +461,7 @@
 
     $("#folderPanel").on('click', '.newArchive', function() {
         Metadata.isModification = false;
-        var profile = $(this).parent().text().trim();
-        var profileMetadata = FulltextSearchForm.loadArchivalProfile(profile);
-        NewArchive.loadImportForm($(this), profileMetadata);
+        NewArchive.loadImportForm($(this));
     });
 
     // Actions on list
