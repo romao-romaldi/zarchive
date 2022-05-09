@@ -43,13 +43,39 @@
     ImportPanel = {
         panel: $('#importPanel'),
         load: function(archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName) {
-            $('#archiveForm [name="originatorOrgRegNumber"]').val(orgRegNumber);
-            $('#archiveForm [name="filePlanPosition"]').val(folderId);
-            console.log("toto");
+            var userIsArchiver = $('#isArchiver').val();
+            if (userIsArchiver == "true") {
+                $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', false);
+            } else {
+                $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', true);
+            }
+
+            if (!parentArchiveId) {
+                $('#archiveForm [name="originatorOrgRegNumber"]').val(orgRegNumber);
+                $('#originatorOrgRegNumber').change();
+                $("#archiveForm [name='parentArchiveId']").val('');
+                $('#import_isSubArchive').addClass('hide');
+            } else {
+                $.ajax({
+                type        : 'GET',
+                url         : "/recordsmanagement/archiveinformation/" + parentArchiveId,
+                dataType    : 'json',
+                async       : false,
+                success     : function (response) {
+                    $('#archiveForm [name="originatorOrgRegNumber"]').val(response.originatorOrgRegNumber);
+                    $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', true);
+                    updateSelectProfilesFromArchivalProfileReference(response.archivalProfileReference);
+                }});
+                $('#import_isSubArchive').removeClass('hide');
+                $("#archiveForm [name='parentArchiveId']").val(parentArchiveId);
+                $('#import_parentArchiveName').find('b').text(parentArchiveName);
+            }
+
+            $('#archiveForm [name="filePlanPosition"]').val(folderId); // toujours utile?
 
             this.panel.removeClass('hide');
 
-            if (!archivalProfile) {
+            /* if (!archivalProfile) {
                 archivalProfile = "";
             }
 
@@ -58,17 +84,7 @@
                 $("#import_archivalProfile").text("");
             } else {
                 $("#import_archivalProfile").text(archivalProfile.name);
-            }
-
-            if (!parentArchiveId) {
-                $("#archiveForm [name='parentArchiveId']").val('');
-                $('#import_isSubArchive').addClass('hide');
-            } else {
-                $('#import_isSubArchive').removeClass('hide');
-                $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', true);
-                $("#archiveForm [name='parentArchiveId']").val(parentArchiveId);
-                $('#import_parentArchiveName').find('b').text(parentArchiveName);
-            }
+            } */
 
             trigger("archiveImportStarted.recordsManagement");
         },
@@ -85,13 +101,11 @@
 
     $("#importPanel").onEvent('newArchiveForm.recordsManagement', function(e, archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName) {
         ImportPanel.load(archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName);
-        console.log("coucou");
-        console.log(archivalProfile);
-        if(typeof archivalProfile === "undefined"){
+/*         if(typeof archivalProfile === "undefined"){
             FilePlanLevelToggle.load(true);
         } else {
             FilePlanLevelToggle.load(false);
-        }
+        } */
     });
 
     $('#import').on('click', function(e) {

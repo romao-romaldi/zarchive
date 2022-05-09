@@ -6,11 +6,11 @@
     file that was distributed with this source code.
 #-->
 <form class="form-horizontal" id="archiveForm">
-    <!-- <?merge isArchiver.bool() ?> -->
     <div  id="archiveImportTitleForm">
         <div class="form-group">
             <label class="col-sm-3 control-label">Originator organization</label>
             <div class="col-sm-9">
+                <!-- <?merge isArchiver.bool().not().then('disabled') @disabled ?> -->
                 <select class="form-control archiveInput" name="originatorOrgRegNumber" id="originatorOrgRegNumber">
                     <?merge orgUnitList ?>
                     <option value="[?merge .registrationNumber ?]"><?merge .displayName ?></option>
@@ -51,15 +51,16 @@
         </div>
     </div>
 
-    <div class="form-group" id="fileplanLevelDiv">
+    <div class="form-group hide" id="fileplanLevelDiv">
         <label class="col-md-3 control-label">Fileplan level</label>
         <div class="col-md-9">
             <input type="checkbox" data-width="100" class="input-sm" id="fileplanLevelToggle">
         </div>
     </div>
 
+    <input type="hidden" id="isArchiver" name="isArchiver" value="[?merge isArchiver.json() ?]" />
     <input type="hidden" class="archiveInput" name="filePlanPosition"/>
-    <input type="hidden" class="archiveInput" name="parentArchiveId"/>
+    <input type="hidden" class="archiveInput" id="parentArchiveId" name="parentArchiveId"/>
     <input type="hidden" class="archiveInput" id="fileplanLevel" name="fileplanLevel" value='file'/>
 </form>
 
@@ -112,9 +113,6 @@
             if (isWithoutProfile === undefined) {
                 isWithoutProfile = true;
             }
-
-            // $('#archivalProfile').prop('disabled', true);
-            $('#originatorOrgRegNumber').change();
 
             if(isWithoutProfile == true) {
                 if($('#fileplanLevelDiv').is(":hidden")) {
@@ -563,9 +561,8 @@
         },
         clear : function() {
             $('#retentionRule').removeAttr("disabled");
-            $('#archiveForm, #managementMetadataForm').find('.archiveInput').not('[name="filePlanPosition"],[name="originatorOrgRegNumber"]').val('').change();
+            $('#archiveForm, #managementMetadataForm').find('.archiveInput').not('[name="filePlanPosition"]').val('').change();
             $("#import_archivalProfile").text("");
-            $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', false);
 
             DocumentList.clear();
             Metadata.clear($('#allFields'));
@@ -574,26 +571,45 @@
 
     $("#originatorOrgRegNumber").on('change', function () {
         var archivalProfile = $('#archivalProfile');
-        // archivalProfile.prop('disabled', false);
         archivalProfile.empty();
-        var option = $('<option/>')
-            .val("")
-            .text("")
-            .appendTo(archivalProfile);
-            
+        var option = $('<option/>').val("").text("").appendTo(archivalProfile);
         var originatorOrgRegNumber = $("#archiveForm").find("[name=originatorOrgRegNumber]").val();
-        $.ajax({
-            type: 'GET',
-            url: '/orgunitprofiles?orgRegNumber=' + originatorOrgRegNumber,
-            dataType: 'json',
-            contentType: 'application/json',
-            success: function (response) {
-                $.each(response, function(index, profile){
-                    addSelectProfiles(profile);
-                })
-            }
-        });
+        if (originatorOrgRegNumber && !$('#parentArchiveId').val()) {
+            $.ajax({
+                type: 'GET',
+                url: '/orgunitprofiles?orgRegNumber=' + originatorOrgRegNumber,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (response) {
+                    $.each(response, function(index, profile){
+                        addSelectProfiles(profile);
+                    })
+                }
+            });
+        }
     });
+
+    function updateSelectProfilesFromArchivalProfileReference(archivalProfileReference) {
+        var archivalProfile = $('#archivalProfile');
+        archivalProfile.empty();
+        var option = $('<option/>').val("").text("").appendTo(archivalProfile);
+
+        if (archivalProfileReference) {
+            $.ajax({
+                type        : 'GET',
+                url         : "/profilebyreference/" + archivalProfileReference,
+                dataType    : 'json',
+                async       : false,
+                success     : function (response) {
+                    $.each(response.containedProfiles, function(index, profile){
+                        addSelectProfiles(profile);
+                    })
+                }   
+            });
+        } else {
+            addSelectProfiles("*");
+        }
+    };
 
     function addSelectProfiles(profile){
         var archivalProfile = $('#archivalProfile');

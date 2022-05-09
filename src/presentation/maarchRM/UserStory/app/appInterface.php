@@ -207,4 +207,11 @@ interface appInterface
      * @uses recordsManagement/archivalProfile/readByreference_reference_
      */
     public function readProfilebyreference_reference_();
+
+    /**
+     * Get archive information
+     *
+     * @uses  recordsManagement/archive/readMetadata_archiveId_
+     */
+    public function readRecordsmanagementArchiveinformation_archiveId_();
 }
