@@ -85,6 +85,10 @@ trait archiveAccessTrait
         $checkAccess = true,
         $maxResults = null
     ) {
+        if(is_null($originatorArchiveId)) {
+            $originatorArchiveId = $archiverArchiveId;
+        }
+        
         $accountController = \laabs::newController('auth/userAccount');
         $accountController->isAuthorized('user');
 
@@ -1034,6 +1038,11 @@ trait archiveAccessTrait
         if (!empty($args['archiverArchiveId'])) {
             $queryParts['archiverArchiveId'] = "archiverArchiveId= :archiverArchiveId";
             $queryParams['archiverArchiveId'] = $args['archiverArchiveId'];
+        }
+        if (!empty($args['originatorArchiveId']) && !empty($args['archiverArchiveId']) && $args['originatorArchiveId'] == $args['archiverArchiveId']) {
+            $queryParts['originatorArchiveId'] = "(archiveId= :archiveId OR originatorArchiveId= :originatorArchiveId OR archiverArchiveId= :archiverArchiveId)";
+            $queryParams['archiveId'] = $args['originatorArchiveId'];
+            unset($queryParts['archiverArchiveId']);
         }
         if (!empty($args['originatingDate'])) {
             if (!empty($args['originatingDate'][0]) && is_string($args['originatingDate'][0])) {
