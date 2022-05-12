@@ -60,12 +60,12 @@
             </button>
         </div>
         <?merge depositPrivilege.bool() ?>
-        <div class="pull-right dropdown addChildrenArchive addingNew hide">
-            <button class="btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="pull-right addChildrenArchive addingNew hide">
+            <button class="btn btn-xs btn-default newArchive">
                 <span class="fa fa-plus"></span>
             </button>
-            <ul class="dropdown-menu">
-            </ul>
+<!--             <ul class="dropdown-menu">
+            </ul> -->
         </div>
         <div class="archiveContent hide">
             <ul class="tree-l">
@@ -448,13 +448,16 @@
         }
     }
 
+    // Import new archive
     NewArchive = {
         loadImportForm: function(e, profileMetadata) {
             $('#folderContents').addClass('hide');
             if (!e) {
                 trigger('newArchiveForm.recordsManagement', [profileMetadata, ArchiveFolderList.orgRegNumber, ArchiveFolderList.folderId, null, null])
             } else {
-                trigger('newArchiveForm.recordsManagement', [profileMetadata, ArchiveFolderList.orgRegNumber, ArchiveFolderList.folderId, e.data('parent-archive-id'), e.data('parent-archive-name')]);
+                var archiveId = e.closest(".archive").attr("id");
+                var archiveName = e.closest(".archive").find(".archiveName").text();
+                trigger('newArchiveForm.recordsManagement', [profileMetadata, ArchiveFolderList.orgRegNumber, ArchiveFolderList.folderId, archiveId, archiveName]);
             }
         }
     }
@@ -462,6 +465,11 @@
     $("#folderPanel").on('click', '.newArchive', function() {
         Metadata.isModification = false;
         NewArchive.loadImportForm($(this));
+    });
+
+    $("#folderToolbarImport").on('click', function() {
+        Metadata.isModification = false;
+        NewArchive.loadImportForm();
     });
 
     // Actions on list
@@ -510,10 +518,5 @@
     $('#folderBreadcrumb').onEvent("archiveImportOver.recordsManagement", function() {
         FolderBreadcrumb.unlockNavigation();
     })
-
-    $("#folderToolbarImport").on('click', function() {
-        Metadata.isModification = false;
-        NewArchive.loadImportForm();
-    });
 
 </script>

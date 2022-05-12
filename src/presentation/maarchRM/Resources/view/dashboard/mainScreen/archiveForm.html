@@ -10,7 +10,6 @@
         <div class="form-group">
             <label class="col-sm-3 control-label">Originator organization</label>
             <div class="col-sm-9">
-                <!-- <?merge isArchiver.bool().not().then('disabled') @disabled ?> -->
                 <select class="form-control archiveInput" name="originatorOrgRegNumber" id="originatorOrgRegNumber">
                     <?merge orgUnitList ?>
                     <option value="[?merge .registrationNumber ?]"><?merge .displayName ?></option>
