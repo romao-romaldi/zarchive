@@ -454,7 +454,7 @@
                 trigger('newArchiveForm.recordsManagement', [profileMetadata, ArchiveFolderList.orgRegNumber, ArchiveFolderList.folderId, null, null])
             } else {
                 var archiveId = e.closest(".archive").attr("id");
-                var archiveName = e.closest(".archive").find(".archiveName").text();
+                var archiveName = e.closest(".archive").find(".archiveName").first().text();
                 trigger('newArchiveForm.recordsManagement', [profileMetadata, ArchiveFolderList.orgRegNumber, ArchiveFolderList.folderId, archiveId, archiveName]);
             }
         }
