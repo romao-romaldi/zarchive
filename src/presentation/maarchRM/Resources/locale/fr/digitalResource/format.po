@@ -102,4 +102,4 @@ msgid "Not sustainable"
 msgstr "Retiré"
 
 msgid "Without recommendation"
-msgstr "Sans recommendation"
+msgstr "Sans recommandation"
