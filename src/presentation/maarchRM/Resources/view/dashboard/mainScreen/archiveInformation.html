@@ -589,14 +589,11 @@
 
     $('#editMetadata').on('click', function(){
         $("#documentForm").hide();
-        var profile = $(this).parent().text().trim();
-        var profileMetadata = FulltextSearchForm.loadArchivalProfile(profile);
-
         originatingDateField = $("#archiveForm").find('[name="originatingDate"]');
         originatingDateField.datepicker('setDate', $('#archiveInformation').find('.originatingDate').val());
         archiveId = $(".archiveInformationId").val();
         Metadata.isModification = true;
-        NewArchive.loadImportForm($(this), profileMetadata);
+        NewArchive.loadImportForm($(this));
         Metadata.fillInMetadata(archiveId);
     });
 
