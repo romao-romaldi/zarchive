@@ -568,7 +568,9 @@
         }
     }
 
-    $("#originatorOrgRegNumber").on('change', function () {
+    $("#originatorOrgRegNumber").on('change', changeOriginator());
+
+    function changeOriginator() {
         var archivalProfile = $('#archivalProfile');
         archivalProfile.empty();
         var option = $('<option/>').val("").text("").appendTo(archivalProfile);
@@ -587,7 +589,7 @@
                 }
             });
         }
-    });
+    }
 
     function updateSelectProfilesFromArchivalProfileReference(archivalProfileReference) {
         var archivalProfile = $('#archivalProfile');
