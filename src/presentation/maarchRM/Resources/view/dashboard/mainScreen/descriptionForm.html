@@ -915,6 +915,7 @@ input:invalid {
                 async       : false,
                 success     : function (response) {
                     Metadata.archive = response;
+                    // console.log(response);
                     Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
                 },
                 error       : function (response) {
@@ -953,6 +954,18 @@ input:invalid {
                     }
                 });
             } else if ($.isPlainObject(data)) {
+                if (data.originatorOrgRegNumber) {
+                    if (data.parentArchiveId) {
+                        // console.log("je suis une sous-archive");
+                    }
+                    target.find("[name=originatorOrgRegNumber]").first().val(data.originatorOrgRegNumber).change();
+                    console.log(target.find("[name=archivalProfileReference]").first());
+                    $('#archivalProfile').find("option:selected").prop("selected",false);
+                    $('#archivalProfile').val(data.archivalProfileReference).change();
+                    console.log($('#archivalProfile'));
+                    // target.find("[name=archivalProfileReference]").first().find("option[value='"+data.archivalProfileReference+"']");
+                    // console.log(target.find("[name=archivalProfileReference]").first().find("option[value='NOTSER']"));
+                }
                 $.each(data, function(property, value) {
                     if (property == "description") {
                         if (value) {
@@ -974,7 +987,7 @@ input:invalid {
                                 }
                             });
                         }
-                    } else if (property == "descriptionObject") {
+                    } else if ((property == "descriptionObject") || (property == "archivalProfileReference") || (property == "originatorOrgRegNumber") || (property == "parentArchiveId")) {
                         return true;
                     } else {
                         objectTarget = target.find("[name="+property+"]").first();

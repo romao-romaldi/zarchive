@@ -579,6 +579,7 @@
                 url: '/orgunitprofiles?orgRegNumber=' + originatorOrgRegNumber,
                 dataType: 'json',
                 contentType: 'application/json',
+                async: false,
                 success: function (response) {
                     $.each(response, function(index, profile){
                         addSelectProfiles(profile);
