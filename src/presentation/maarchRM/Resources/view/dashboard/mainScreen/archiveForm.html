@@ -21,6 +21,7 @@
             <div class="col-sm-9">
                 <select class="form-control archiveInput" name="archivalProfileReference" id="archivalProfile">
                 </select>
+                <input type="hidden" id="archivalProfileToEdit" />
             </div>
         </div>
         <div class="form-group">
@@ -568,13 +569,12 @@
         }
     }
 
-    $("#originatorOrgRegNumber").on('change', changeOriginator());
-
-    function changeOriginator() {
+    $("#originatorOrgRegNumber").on('change', function() {
         var archivalProfile = $('#archivalProfile');
         archivalProfile.empty();
         var option = $('<option/>').val("").text("").appendTo(archivalProfile);
         var originatorOrgRegNumber = $("#archiveForm").find("[name=originatorOrgRegNumber]").val();
+        var archivalProfileToEdit = $('#archivalProfileToEdit').val();
         if (originatorOrgRegNumber && !$('#parentArchiveId').val()) {
             $.ajax({
                 type: 'GET',
@@ -582,14 +582,15 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 async: false,
-                success: function (response) {
+                success: function (response) {    
                     $.each(response, function(index, profile){
                         addSelectProfiles(profile);
                     })
+                    archivalProfile.val(archivalProfileToEdit).change();
                 }
             });
-        }
-    }
+        };
+    });
 
     function updateSelectProfilesFromArchivalProfileReference(archivalProfileReference) {
         var archivalProfile = $('#archivalProfile');
