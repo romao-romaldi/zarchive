@@ -959,12 +959,7 @@ input:invalid {
                         // console.log("je suis une sous-archive");
                     }
                     target.find("[name=originatorOrgRegNumber]").first().val(data.originatorOrgRegNumber).change();
-                    console.log(target.find("[name=archivalProfileReference]").first());
-                    $('#archivalProfile').find("option:selected").prop("selected",false);
                     $('#archivalProfile').val(data.archivalProfileReference).change();
-                    console.log($('#archivalProfile'));
-                    // target.find("[name=archivalProfileReference]").first().find("option[value='"+data.archivalProfileReference+"']");
-                    // console.log(target.find("[name=archivalProfileReference]").first().find("option[value='NOTSER']"));
                 }
                 $.each(data, function(property, value) {
                     if (property == "description") {
