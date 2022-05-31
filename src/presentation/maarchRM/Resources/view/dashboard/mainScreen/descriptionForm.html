@@ -918,6 +918,7 @@ input:invalid {
                     $('#originatorOrgRegNumber').val(Metadata.archive.originatorOrgRegNumber);
                     $('#originatorOrgRegNumber').prop('disabled', true);
                     selectOriginatorOrgRegNumber();
+                    $('#archivalProfile').prop('disabled', true);
                 },
                 error       : function (response) {
                     gritter.show(response.responseText, false);
