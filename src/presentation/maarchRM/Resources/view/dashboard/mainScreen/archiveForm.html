@@ -563,7 +563,9 @@
         },
         clear : function() {
             $('#retentionRule').removeAttr("disabled");
+            console.log("debug clear");
             $('#archiveForm, #managementMetadataForm').find('.archiveInput').not('[name="filePlanPosition"]').val('').change();
+            $('#archivalProfile').prop('disabled', false);
 
             DocumentList.clear();
             Metadata.clear($('#allFields'));
