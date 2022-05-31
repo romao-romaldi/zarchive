@@ -915,8 +915,9 @@ input:invalid {
                 async       : false,
                 success     : function (response) {
                     Metadata.archive = response;
-                    // console.log(response);
-                    Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
+                    $('#originatorOrgRegNumber').val(Metadata.archive.originatorOrgRegNumber);
+                    $('#originatorOrgRegNumber').prop('disabled', true);
+                    selectOriginatorOrgRegNumber();
                 },
                 error       : function (response) {
                     gritter.show(response.responseText, false);
@@ -954,15 +955,6 @@ input:invalid {
                     }
                 });
             } else if ($.isPlainObject(data)) {
-                if (data.originatorOrgRegNumber) {
-                    if (data.parentArchiveId) {
-                        // console.log("je suis une sous-archive");
-                    }
-                    $('#archivalProfileToEdit').val(data.archivalProfileReference);
-                    target.find("[name=originatorOrgRegNumber]").first().val(data.originatorOrgRegNumber).change();
-                    // $('#archivalProfile').val(data.archivalProfileReference).change();
-                    
-                }
                 $.each(data, function(property, value) {
                     if (property == "description") {
                         if (value) {
