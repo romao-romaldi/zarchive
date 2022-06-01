@@ -241,7 +241,7 @@
                 contentType : 'application/json',
                 dataType    : 'json',
                 success     : function (response) {
-                    console.log("debug");
+                    console.log("debug profil d'archive");
                     gritter.show(response.message, response.status, response.errors);
 
                     if (response.status) {
@@ -563,12 +563,12 @@
         },
         clear : function() {
             $('#retentionRule').removeAttr("disabled");
-            console.log("debug clear");
             $('#archiveForm, #managementMetadataForm').find('.archiveInput').not('[name="filePlanPosition"]').val('').change();
             $('#archivalProfile').prop('disabled', false);
 
             DocumentList.clear();
             Metadata.clear($('#allFields'));
+            Metadata.archive = null;
         }
     }
 
@@ -584,12 +584,16 @@
         if (Metadata.archive) {
             if (Metadata.archive.archivalProfileReference) {
                 var archivalProfileReference = Metadata.archive.archivalProfileReference;
+            } else {
+                console.log(archivalProfile.find('option:selected'));
             }
             if (Metadata.archive.parentArchiveId) {
                 var parentArchiveId = Metadata.archive.parentArchiveId;
             }
-
         }
+
+        console.log(originatorOrgRegNumber);
+        console.log(parentArchiveId);
         
         if (originatorOrgRegNumber && !parentArchiveId) {
             $.ajax({
