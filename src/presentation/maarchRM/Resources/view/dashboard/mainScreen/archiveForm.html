@@ -241,7 +241,6 @@
                 contentType : 'application/json',
                 dataType    : 'json',
                 success     : function (response) {
-                    console.log("debug profil d'archive");
                     gritter.show(response.message, response.status, response.errors);
 
                     if (response.status) {
@@ -258,7 +257,6 @@
                     }
                 },
                 error       : function (response) {
-                    console.log("ceci est une erreur");
                     gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
                 }
             });
@@ -591,9 +589,6 @@
                 var parentArchiveId = Metadata.archive.parentArchiveId;
             }
         }
-
-        console.log(originatorOrgRegNumber);
-        console.log(parentArchiveId);
         
         if (originatorOrgRegNumber && !parentArchiveId) {
             $.ajax({
