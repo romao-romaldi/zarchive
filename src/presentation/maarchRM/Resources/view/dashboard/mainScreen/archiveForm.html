@@ -604,6 +604,8 @@
                     if (archivalProfileReference) {
                         archivalProfile.val(archivalProfileReference);
                         selectArchivalProfile();
+                    } else {
+                        Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
                     }
                     
                 }
