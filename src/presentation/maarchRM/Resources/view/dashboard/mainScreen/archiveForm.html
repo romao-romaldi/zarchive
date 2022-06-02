@@ -575,21 +575,21 @@
     });
 
     function selectOriginatorOrgRegNumber() {
-        var archivalProfile = $('#archivalProfile');
-        archivalProfile.empty();
-        var option = $('<option/>').val("").text("").appendTo(archivalProfile);
         var originatorOrgRegNumber = $("#archiveForm").find("[name=originatorOrgRegNumber]").val();
+        var archivalProfile = $('#archivalProfile');
+
         if (Metadata.archive) {
             if (Metadata.archive.archivalProfileReference) {
-                var archivalProfileReference = Metadata.archive.archivalProfileReference;
+                var archivalProfileModificationReference = Metadata.archive.archivalProfileReference;
             } else {
-                console.log(archivalProfile.find('option:selected'));
+                var archivalProfileModificationReference = "withoutProfile";
             }
+
             if (Metadata.archive.parentArchiveId) {
                 var parentArchiveId = Metadata.archive.parentArchiveId;
             }
         }
-        
+
         if (originatorOrgRegNumber && !parentArchiveId) {
             $.ajax({
                 type: 'GET',
@@ -597,22 +597,29 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 async: false,
-                success: function (response) {    
+                success: function (response) {
+                    cleanSelectArchivalProfile();
+
                     $.each(response, function(index, profile){
                         addSelectProfiles(profile);
                     })
-                    if (archivalProfileReference) {
-                        archivalProfile.val(archivalProfileReference);
-                        selectArchivalProfile();
+
+                    if (archivalProfileModificationReference) {
+                        if  (archivalProfileModificationReference == "withoutProfile") {
+                            $("#archivalProfile").find('option[id="withoutProfile"]').prop('selected', true);
+                            selectArchivalProfile();
+                            Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
+                        } else {
+                            $("#archivalProfile").val(archivalProfileModificationReference);
+                            selectArchivalProfile();
+                        }
                     } else {
                         Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
                     }
                     
                 }
             });
-        };
-
-        if (originatorOrgRegNumber && parentArchiveId) {
+        } else if (originatorOrgRegNumber && parentArchiveId) {
             $.ajax({
                 url         : "/archive/"+parentArchiveId,
                 type        : "GET",
@@ -632,14 +639,18 @@
                             dataType    : 'json',
                             async       : false,
                             success     : function (response) {
+                                cleanSelectArchivalProfile();
+
                                 $.each(response.containedProfiles, function(index, profile){
                                     addSelectProfiles(profile);
                                 })
-                                archivalProfile.val(archivalProfileReference);
+
+                                $("#archivalProfile").val(archivalProfileModificationReference);
                                 selectArchivalProfile();
                             }   
                         });
                     } else {
+                        archivalProfile.empty();
                         addSelectProfiles("*");
                     }
                 },
@@ -650,10 +661,14 @@
         }
     }
 
-    function updateSelectProfilesFromArchivalProfileReference(archivalProfileReference) {
+    function cleanSelectArchivalProfile() {
         var archivalProfile = $('#archivalProfile');
         archivalProfile.empty();
-        var option = $('<option/>').val("").text("").appendTo(archivalProfile);
+        $('<option/>').prop('id',"selectProfile").val("").text("").appendTo(archivalProfile);
+    }
+
+    function updateSelectProfilesFromArchivalProfileReference(archivalProfileReference) {
+        cleanSelectArchivalProfile();
 
         if (archivalProfileReference) {
             $.ajax({
@@ -676,11 +691,13 @@
         var archivalProfile = $('#archivalProfile');
         if (profile === "*") {
             var option = $('<option/>')
+            .prop('id',"withoutProfile")
             .val("")
             .text("Sans profil")
             .appendTo(archivalProfile);
         } else {
             var option = $('<option/>')
+            .prop('id',profile.reference)
             .val(profile.reference)
             .text(profile.name)
             .appendTo(archivalProfile);
@@ -691,8 +708,8 @@
         selectArchivalProfile();
     });
 
+    // load profile according to selectArchivalProfile value
     function selectArchivalProfile() {
-        var archivalProfileText = $("#archivalProfile").find('option:selected').text();
         var archivalProfileValue = $("#archivalProfile").val();
         if (archivalProfileValue === "") {
             $('#archivalProfileFields').empty();
