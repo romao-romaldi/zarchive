@@ -1261,6 +1261,20 @@ class archive
             $archive->archivalProfileName = $archivalProfile->name;
         }
 
+        if (!empty($archive->filePlanPosition)) {
+            $filePlanController = \laabs::newController("filePlan/filePlan");
+
+            $folder = $filePlanController->read($archive->filePlanPosition);
+            $path = $folder->name;
+
+            while (!empty($folder->parentFolderId)) {
+                $folder = $filePlanController->read($folder->parentFolderId);
+                $path = $folder->name.'/'.$path;
+            }
+
+            $archive->filePlanPosition = $path;
+        }
+
         $archive->visible = \laabs::newController("recordsManagement/archive")->accessVerification($archive->archiveId);
         $archive->statusDesc = $this->view->translator->getText($archive->status, false, "recordsManagement/messages");
         $archive->finalDispositionDesc = $this->view->translator->getText($archive->finalDisposition, false, "recordsManagement/messages");
