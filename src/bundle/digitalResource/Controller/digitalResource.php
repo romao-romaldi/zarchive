@@ -735,6 +735,126 @@ class digitalResource
     }
 
     /**
+     * Verify completeness of resource
+     * @param digitalResource/digitalResource $resource The digital resource
+     * @param string                          $mode     The mode
+     *
+     * @return boolean The digitalResource verify
+     *
+     * @throws digitalResource/resourceNotFoundException
+     */
+    public function isStored($resource, $mode = Cluster::MODE_READ)
+    {
+        if (!$resource) {
+            throw \laabs::newException("digitalResource/resourceNotFoundException");
+        }
+
+        if ($this->currentCluster && ($this->currentCluster->clusterId == $resource->clusterId)) {
+            $cluster = $this->currentCluster;
+        } else {
+            $cluster = $this->useCluster($resource->clusterId, $mode, false);
+        }
+
+        return $this->clusterController->checkResource($cluster, $resource);
+    }
+
+    /**
+     * Launch a completeness test for a sample of resources
+     * @param integer $samplingFrequency check frequency in days
+     * @param integer $timeout time limit for completeness check in seconds
+     *
+     */
+    public function completenessSampling($samplingFrequency, $timeout)
+    {
+        $lifeCycleJournalController = \laabs::newController("lifeCycle/journal");
+    
+        $sortBy = "<created,<resId";
+        $resCount = $this->sdoFactory->count("digitalResource/digitalResource");
+        $resourcesToCheck = (int) ceil($resCount/$samplingFrequency);
+        $checkedResources = 0;
+
+        $lastCheckedResId = null;
+        $lastCheckedResCreated = null;
+
+        // last checked resource
+        $lastEvent = $lifeCycleJournalController->searchEvent("recordsManagement/completenessCheck");
+        if (!empty($lastEvent)) {
+            $lastEventInfo = json_decode($lastEvent[0]->eventInfo);
+            $lastCheckedResId = $lastEventInfo[0];
+            $lastCheckedResCreated = $lastEventInfo[1];
+        }
+
+        // check resources
+        $queryParts = array();
+        $queryParams = array();
+
+        if ($lastCheckedResId) {
+            $queryParams['lastCheckedResId'] = $lastCheckedResId;
+            $queryParts['resId'] = "resId > :lastCheckedResId";
+        }
+
+        $queryString = implode(' AND ', $queryParts);
+
+        $resources = $this->sdoFactory->find("digitalResource/digitalResource", $queryString, $queryParams, $sortBy, 0, $resourcesToCheck);
+        if (count($resources) < $resourcesToCheck) {
+            $oldResources = $this->sdoFactory->find('digitalResource/digitalResource', null, null, $sortBy, 0, $resourcesToCheck - count($resources));
+            $resources = array_merge($resources,$oldResources);
+        }
+
+        $success = true;
+        $nbFailed = 0;
+        $eventInfo = [];
+        $eventInfo['lastCheckedResId'] = $lastCheckedResId;
+        $eventInfo['lastCheckedResCreated'] = $lastCheckedResCreated;
+
+        $endTime = time() + $timeout;
+
+        foreach ($resources as $resource) {
+            if (time() >= $endTime) {
+                $success = false;
+
+                $eventInfo['timeout'] = $timeout;
+                $eventInfo['timeoutError'] = "Le délai maximal de contrôle est expiré";
+
+                $logMessage = ["message" => "Time limit reached"];
+                \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
+                break;
+            }
+
+            $completenessResult = $this->isStored($resource);
+            $checkedResources++;
+            $eventInfo['lastCheckedResId'] = $resource->resId;
+            $eventInfo['lastCheckedResCreated'] = $resource->created;
+
+            if (!$completenessResult) {
+                $nbFailed++;
+                $success = false;
+            }
+
+        }
+        $eventInfo['resourcesToCheck'] = $resourcesToCheck;
+        $eventInfo['checkedResources'] = $checkedResources;
+        $eventInfo['failed'] = $nbFailed;
+
+        $event = $lifeCycleJournalController->logEvent('recordsManagement/completenessCheck', 'recordsManagement/archive', 'system', $eventInfo, $success);
+
+        $logMessage = ["message" => "%s resource(s) to check", "variables"=> $resourcesToCheck];
+        \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
+
+        $logMessage = ["message" => "%s checked resource(s)", "variables"=> $checkedResources];
+        \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
+
+        $logMessage = ["message" => "%s failed resource(s)", "variables"=> $nbFailed];
+        \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
+
+        $logMessage = ["message" => "Last checked resource identifier : %s", "variables"=> $eventInfo['lastCheckedResId']];
+        \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
+
+        $logMessage = ["message" => "Creation date of the last checked resource : %s", "variables"=> $eventInfo['lastCheckedResCreated']];
+        \laabs::notify(\bundle\audit\AUDIT_ENTRY_OUTPUT, $logMessage);
+    }
+
+    /**
      * Convert resource to another format
      * @param object $digitalResource
      *

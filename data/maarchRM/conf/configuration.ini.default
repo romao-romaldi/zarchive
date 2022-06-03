@@ -557,6 +557,10 @@ servicePrivileges = "[
         'description' : 'Extraction et indexation plein texte'
     },
     {
+        'serviceURI' : 'digitalResource/digitalResource/readCompleteness',
+        'description' : 'Contrôler l\'exhaustivité des ressources'
+    },
+    {
         'serviceURI': '*',
         'description' : 'Tous les droits'
     }
@@ -747,6 +751,11 @@ tasks = "[
        'taskId': '13',
        'route' : 'recordsManagement/archives/readExtractfulltext',
        'description' : 'Extraction plein texte'
+    },
+    {
+       'taskId': '14',
+       'route' : 'digitalResource/digitalResource/readCompleteness',
+       'description' : 'Contrôle d\'exhaustivité de ressources'
     }
 ]"
 
