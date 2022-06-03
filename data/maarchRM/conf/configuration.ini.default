@@ -816,6 +816,9 @@ containerSignatureFile = "%laabsDirectory%/data/maarchRM/droidSignatureFiles/con
 ;libreOfficeExecutable = "c:\Program Files (x86)\LibreOffice 5\program\soffice"
 libreOfficeExecutable = "/usr/bin/libreoffice"
 
+; Command name of Maarch converting system using with MS Office
+; MSOconvertExecutable = "%laabsDirectory%\data\maarchRM\batch\MaarchConvertFiles.ps1"
+
 ; Conversion paths
 conversionServices = "[
     {
@@ -835,6 +838,46 @@ conversionServices = "[
         }
     }
 ]"
+ 
+; {
+;     'serviceName'     : 'dependency/fileSystem/plugins/MSOfficeWord',
+;     'softwareName'    : 'MS Office Word',
+;     'softwareVersion' : '2204',
+;     'inputFormats'    : ['fmt/412'],
+;     'outputFormats'   : {
+;         'fmt/95' : {
+;             'extension' : 'pdf',
+;             'filter'    : 'writer_pdf_Export',
+;             'options'   : 'SelectPdfVersion=1'
+;         }
+;     }
+; },
+; {
+;     'serviceName'     : 'dependency/fileSystem/plugins/MSOfficeExcel',
+;     'softwareName'    : 'MS Office Excel',
+;     'softwareVersion' : '2204',
+;     'inputFormats'    : ['fmt/214'],
+;     'outputFormats'   : {
+;         'fmt/95' : {
+;             'extension' : 'pdf',
+;             'filter'    : 'writer_pdf_Export',
+;             'options'   : 'SelectPdfVersion=1'
+;         }
+;     }
+; },
+; {
+;     'serviceName'     : 'dependency/fileSystem/plugins/MSOfficePpt',
+;     'softwareName'    : 'MS Office PowerPoint',
+;     'softwareVersion' : '2204',
+;     'inputFormats'    : ['fmt/215'],
+;     'outputFormats'   : {
+;         'fmt/95' : {
+;             'extension' : 'pdf',
+;             'filter'    : 'writer_pdf_Export',
+;             'options'   : 'SelectPdfVersion=1'
+;         }
+;    }
+; }
 
 ;Configuration of fulltextservices
 ;serviceName : path to dependency file
