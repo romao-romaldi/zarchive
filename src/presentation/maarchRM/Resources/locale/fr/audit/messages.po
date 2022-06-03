@@ -1046,16 +1046,16 @@ msgstr "Modification d'une règle de conversion"
 msgid "digitalResource/conversionRule/delete_conversionRuleId_"
 msgstr "Suppression d'une règle de conversion"
 
-msgid "digitalResource/format/readList"
+msgid "digitalResource/pronomFormat/readList"
 msgstr "Lecture de tous les formats"
 
-msgid "digitalResource/format/readFind_query_"
+msgid "digitalResource/pronomFormat/readFind_query_"
 msgstr "Recherche de formats"
 
-msgid "digitalResource/format/readGet"
+msgid "digitalResource/pronomFormat/readGet"
 msgstr "Lecture d'un format en fonction du PuID"
 
-msgid "digitalResource/format/createFileformatinformation"
+msgid "digitalResource/pronomFormat/createFileformatinformation"
 msgstr "Informations sur le format d'un document"
 
 msgid "digitalResource/repository/readList"

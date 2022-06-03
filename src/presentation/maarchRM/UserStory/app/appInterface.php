@@ -149,10 +149,10 @@ interface appInterface
     /**
      * Search formats
      *
-     * @uses digitalResource/format/readFind_query_
+     * @uses digitalResource/pronomFormat/readFind
      * @return digitalResource/format/find
      */
-    public function readDigitalresourceFormatFind_query_();
+    public function readDigitalresourceFormatFind($query);
 
     /**
      * Get the organizations' list

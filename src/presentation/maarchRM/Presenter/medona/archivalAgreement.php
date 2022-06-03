@@ -88,11 +88,11 @@ class archivalAgreement
             $formatsList = explode(' ', trim($archivalAgreement->allowedFormats));
             $archivalAgreement->allowedFormats = array();
 
-            $formatController = \laabs::newController('digitalResource/format');
+            $pronomFormatController = \laabs::newController('digitalResource/pronomFormat');
 
             foreach ($formatsList as $format) {
                 if ($format) {
-                    array_push($archivalAgreement->allowedFormats, $formatController->get($format));
+                    array_push($archivalAgreement->allowedFormats, $pronomFormatController->get($format));
                 }
             }
         }

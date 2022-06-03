@@ -417,7 +417,7 @@ trait archiveValidationTrait
 
         $formatDetection = strrpos($this->currentServiceLevel->control, "formatDetection") === false ? false : true;
         if ($formatDetection) {
-            $format = $this->formatController->identifyFormat($filename);
+            $format = $this->pronomFormatController->identifyFormat($filename);
 
             if ($format) {
                 $digitalResource->puid = $format->puid;
@@ -426,7 +426,7 @@ trait archiveValidationTrait
 
         $formatValidation = strrpos($this->currentServiceLevel->control, "formatValidation") === false ? false : true;
         if ($formatValidation) {
-            $validation = $this->formatController->validateFormat($filename);
+            $validation = $this->pronomFormatController->validateFormat($filename);
             if (!$validation !== true && is_array($validation)) {
                 unlink($filename);
                 throw new \core\Exception\BadRequestException("Invalid format attachments for %s", 404, null, [$digitalResource->fileName]);
