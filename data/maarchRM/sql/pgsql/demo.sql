@@ -159,7 +159,8 @@ INSERT INTO "batchProcessing"."scheduling" ("schedulingId","name","taskId","freq
 ('integrity', 'Intégrité', '03', '00;01;;;;4;H;00;20', NULL, 'System', '2019-03-14 17:17:41.825506', '2019-03-14 21:17:41.825513', 'scheduled'),
 ('processdestruction', 'Traiter les destructions', '04', '00;04;;;;;;;', NULL, 'System', NULL, NULL, 'paused'),
 ('purge', 'Purge', '05', '00;08;;;;;;;', NULL, 'System', NULL, NULL, 'paused'),
-('extractionAndIndexation', 'Extraction et Indexation plein texte', '13', '30;01;;;;;;;', NULL, 'System', NULL, '2021-06-02 10:12:42', 'paused')
+('extractionAndIndexation', 'Extraction et Indexation plein texte', '13', '30;01;;;;;;;', NULL, 'System', NULL, '2021-06-02 10:12:42', 'paused'),
+('completeness', 'Exhaustivité', '14', '00;08;;;;;;;', '30 3600', 'System', NULL, NULL, 'paused')
 ;
 
 INSERT INTO "contact"."communicationMean" ("code","name","enabled") VALUES
@@ -227,8 +228,8 @@ INSERT INTO "lifeCycle"."eventFormat" ("type","format","message","notification")
 ('recordsManagement/resourceDestruction', 'resId hashAlgorithm hash address originatorOrgRegNumber archiverOrgRegNumber originatorArchiveId', 'Destruction de la ressource %9$s', false),
 ('recordsManagement/restitution', 'resId hashAlgorithm hash address originatorOrgRegNumber archiverOrgRegNumber size originatorArchiveId', 'Restitution de l''archive %6$s', false),
 ('recordsManagement/retentionRuleModification', 'resId hashAlgorithm hash address retentionStartDate retentionDuration finalDisposition previousStartDate previousDuration previousFinalDisposition originatorOrgRegNumber archiverOrgRegNumber originatorArchiveId', 'Modification de la règle de conservation de l''archive %6$s', false),
-('recordsManagement/unfreeze', 'resId hashAlgorithm hash address originatorOrgRegNumber archiverOrgRegNumber originatorArchiveId', 'Dégel de l''archive %6$s', false)
-;
+('recordsManagement/unfreeze', 'resId hashAlgorithm hash address originatorOrgRegNumber archiverOrgRegNumber originatorArchiveId', 'Dégel de l''archive %6$s', false),
+('recordsManagement/completenessCheck', 'lastCheckedResId lastCheckedResCreated repositoryReference resourcesToCheck checkedResources failed timeout timeoutError', 'Contrôle d''exhaustivité des ressources', false);
 
 INSERT INTO "organization"."orgType" ("code","name") VALUES ('Collectivite', 'Collectivité'),
 ('Direction', 'Direction d''une entreprise ou d''une collectivité'),
