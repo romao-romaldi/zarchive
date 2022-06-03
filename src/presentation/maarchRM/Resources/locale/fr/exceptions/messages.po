@@ -32,6 +32,9 @@ msgstr "Une erreur est survenue durant le traitement de votre requête. Veuillez
 msgid "The format identification failed."
 msgstr "Le format du fichier n'a pas pu être identifié."
 
+msgid "The format with the puid %s already exists."
+msgstr "Le puid %s est déjà défini pour un format."
+
 msgid "Invalid archive profile"
 msgstr "Profil d'archive invalide"
 

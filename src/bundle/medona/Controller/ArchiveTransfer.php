@@ -119,15 +119,16 @@ class ArchiveTransfer extends abstractMessage
 
         foreach ($confParams as $name => $confParam) {
             // Default value
+            $param = "";
             if (isset($confParam["default"])) {
-                $value = $confParam["default"];
+                $param = $confParam["default"];
             }
 
             if (isset($params[$name]) && $params[$name] !== "") {
-                $value = $params[$name];
+                $param = $params[$name];
             }
 
-            $params[$name] = $value;
+            $params[$name] = $param;
 
             if ($param == "") {
                 if (isset($confParam["required"]) && $confParam["required"]) {

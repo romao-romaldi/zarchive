@@ -85,6 +85,10 @@ trait archiveAccessTrait
         $checkAccess = true,
         $maxResults = null
     ) {
+        if(is_null($originatorArchiveId)) {
+            $originatorArchiveId = $archiverArchiveId;
+        }
+        
         $accountController = \laabs::newController('auth/userAccount');
         $accountController->isAuthorized('user');
 
@@ -921,11 +925,16 @@ trait archiveAccessTrait
             $this->userPositionController->readDescandantService((string) $currentService->orgId)
         );
 
+        $ownerIsSuperUser = true;
+        if (isset(\laabs::configuration("recordsManagement")['ownerIsSuperUser'])) {
+            $ownerIsSuperUser = (bool) \laabs::configuration("recordsManagement")['ownerIsSuperUser'];
+        }
+
         foreach ($userServiceOrgRegNumbers as $userServiceOrgRegNumber) {
             $userService = $this->organizationController->getOrgByRegNumber($userServiceOrgRegNumber);
 
             // User orgUnit is owner
-            if (isset($userService->orgRoleCodes) && (strpos((string) $userService->orgRoleCodes, 'owner') !== false)) {
+            if (isset($userService->orgRoleCodes) && (strpos((string) $userService->orgRoleCodes, 'owner') !== false) && $ownerIsSuperUser) {
                 return true;
             }
 
@@ -1030,6 +1039,11 @@ trait archiveAccessTrait
             $queryParts['archiverArchiveId'] = "archiverArchiveId= :archiverArchiveId";
             $queryParams['archiverArchiveId'] = $args['archiverArchiveId'];
         }
+        if (!empty($args['originatorArchiveId']) && !empty($args['archiverArchiveId']) && $args['originatorArchiveId'] == $args['archiverArchiveId']) {
+            $queryParts['originatorArchiveId'] = "(archiveId= :archiveId OR originatorArchiveId= :originatorArchiveId OR archiverArchiveId= :archiverArchiveId)";
+            $queryParams['archiveId'] = $args['originatorArchiveId'];
+            unset($queryParts['archiverArchiveId']);
+        }
         if (!empty($args['originatingDate'])) {
             if (!empty($args['originatingDate'][0]) && is_string($args['originatingDate'][0])) {
                 $args['originatingDate'][0] = \laabs::newDate($args['originatingDate'][0]);
@@ -1129,9 +1143,14 @@ trait archiveAccessTrait
             $this->userPositionController->readDescandantService((string) $currentService->orgId)
         );
 
+        $ownerIsSuperUser = true;
+        if (isset(\laabs::configuration("recordsManagement")['ownerIsSuperUser'])) {
+            $ownerIsSuperUser = (bool) \laabs::configuration("recordsManagement")['ownerIsSuperUser'];
+        }
+
         foreach ($userServiceOrgRegNumbers as $userServiceOrgRegNumber) {
             $userService = $this->organizationController->getOrgByRegNumber($userServiceOrgRegNumber);
-            if (isset($userService->orgRoleCodes) && $userService->orgRoleCodes->contains('owner')) {
+            if (isset($userService->orgRoleCodes) && $userService->orgRoleCodes->contains('owner') && $ownerIsSuperUser) {
                 return;
             }
         }
@@ -1362,7 +1381,6 @@ trait archiveAccessTrait
         if (!$currentUserService) {
             return false;
         }
-
         $userPositionController = \laabs::newController('organization/userPosition');
         $org = $this->organizationController->getOrgByRegNumber($archive->originatorOrgRegNumber);
         $positionAncestors = $this->organizationController->readParentOrg($this->organizationController->getOrgByRegNumber($archive->originatorOrgRegNumber)->orgId);
@@ -1370,9 +1388,16 @@ trait archiveAccessTrait
         $userServices[] = $currentUserService->registrationNumber;
 
         // OWNER access
+        $ownerIsSuperUser = true;
+
+        if (isset(\laabs::configuration("recordsManagement")['ownerIsSuperUser'])) {
+            $ownerIsSuperUser = (bool) \laabs::configuration("recordsManagement")['ownerIsSuperUser'];
+        }
+
         if (
             !is_null($currentUserService->orgRoleCodes)
             && \laabs\in_array('owner', $currentUserService->orgRoleCodes)
+            && $ownerIsSuperUser
         ) {
             return true;
         }

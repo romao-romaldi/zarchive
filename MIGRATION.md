@@ -1,3 +1,9 @@
+# Migration 2.8.2
+
+## Modification dans la configuration :
+### Ajout
+Dans la section [recordsManagement], ajout de la directive `ownerIsSuperUser` qui permet de définir si les utilisateurs appartenant au service d'opérateur d'archvivage ont le droit ou non d'accéder à toutes les archives du système. Si `true`, alors les opérateurs ont accès à toutes les archives du système. Si `false`, l'opérateur d'archivage sera considéré comme n'importe quel autre service producteur et aura accès uniquement à ses propres archives dont il est déclaré comme producteur.
+
 # Migration 2.7 vers 2.8
 
 ## Vhost :

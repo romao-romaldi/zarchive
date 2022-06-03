@@ -64,8 +64,8 @@ class conversionRule
         $this->view->addContentFile('digitalResource/conversionRule/index.html');
 
         foreach ( $conversionRules as $conversionRule ) {
-            $conversionRule->puidName = \laabs::callService('digitalResource/format/readGet', $conversionRule->puid)->name;
-            $conversionRule->targetPuidName = \laabs::callService('digitalResource/format/readGet', $conversionRule->targetPuid)->name;
+            $conversionRule->puidName = \laabs::callService('digitalResource/pronomFormat/readGet', $conversionRule->puid)->name;
+            $conversionRule->targetPuidName = \laabs::callService('digitalResource/pronomFormat/readGet', $conversionRule->targetPuid)->name;
 
             foreach ($conversionServices as $conversionService) {
                 if ($conversionService['serviceName'] == $conversionRule->conversionService) {
@@ -99,14 +99,14 @@ class conversionRule
         for ($i = 0, $count = count($conversionServices); $i < $count; $i++) {
             $formats = [];
             foreach ($conversionServices[$i]["inputFormats"] as $inputformat) {
-                $formats['input'][] = \laabs::callService('digitalResource/format/readGet', $inputformat);
+                $formats['input'][] = \laabs::callService('digitalResource/pronomFormat/readGet', $inputformat);
             }
             $inputFormats = array_merge($formats['input'], $inputFormats);
             $conversionServices[$i]["inputFormats"] = $inputFormats;
 
             $outputFormats = array_keys($conversionServices[$i]["outputFormats"]);
             foreach ($outputFormats as $outputFormat) {
-                $formats['output'][$outputFormat] = \laabs::callService('digitalResource/format/readGet', $outputFormat);
+                $formats['output'][$outputFormat] = \laabs::callService('digitalResource/pronomFormat/readGet', $outputFormat);
             }
 
             $conversionServices[$i]["outputFormats"] = $formats['output'];

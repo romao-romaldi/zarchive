@@ -71,7 +71,7 @@ msgstr "Profils d'archivage"
 msgctxt "model"
 
 msgid "disposalDate"
-msgstr "Date d'élimination"
+msgstr "Fin de DUA"
 msgctxt "model"
 
 msgid "archive"
@@ -319,7 +319,7 @@ msgid "Final disposition"
 msgstr "Sort final"
 
 msgid "Disposal date"
-msgstr "Date d'élimination"
+msgstr "Fin de DUA"
 
 msgid "Originator identifier"
 msgstr "Identifiant producteur"

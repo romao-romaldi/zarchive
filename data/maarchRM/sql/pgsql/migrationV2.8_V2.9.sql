@@ -3,3 +3,15 @@ INSERT INTO "lifeCycle"."eventFormat" ("type","format","message","notification")
 
 INSERT INTO "batchProcessing"."scheduling" ("schedulingId","name","taskId","frequency","parameters","executedBy","lastExecution","nextExecution","status") VALUES
 ('completeness', 'Exhaustivité', '14', '00;08;;;;;;;', '30 3600', 'System', NULL, NULL, 'paused');
+
+CREATE TABLE "digitalResource"."format" 
+(
+    "puid" text NOT NULL,
+    "name" text,
+    "version" text,
+    "mimetypes" text,
+    "extensions" text,
+    "status" integer,
+
+    PRIMARY KEY ("puid")
+);
