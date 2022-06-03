@@ -817,7 +817,7 @@ containerSignatureFile = "%laabsDirectory%/data/maarchRM/droidSignatureFiles/con
 libreOfficeExecutable = "/usr/bin/libreoffice"
 
 ; Command name of Maarch converting system using with MS Office
-; MSOconvertExecutable = "C:\wamp64\www\laabs\data\maarchRM\batch\MaarchConvertFiles.ps1"
+; MSOconvertExecutable = "%laabsDirectory%\data\maarchRM\batch\MaarchConvertFiles.ps1"
 
 ; Conversion paths
 conversionServices = "[
