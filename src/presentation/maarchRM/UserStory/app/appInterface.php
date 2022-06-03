@@ -191,4 +191,27 @@ interface appInterface
      * @uses recordsManagement/descriptionRef/read_name__key_
      */
     public function readDescriptionref_name__key_();
+
+    /**
+     * Get org unit's archival profiles
+     * @param string $orgRegNumber orgUnit's registration number
+     *
+     * @uses organization/organization/readOrgunitprofiles
+     */
+    public function readOrgunitprofiles($orgRegNumber);
+
+    /**
+     * Get archival profile definition by reference
+     * @param string $reference
+     *
+     * @uses recordsManagement/archivalProfile/readByreference_reference_
+     */
+    public function readProfilebyreference_reference_();
+
+    /**
+     * Get archive information
+     *
+     * @uses  recordsManagement/archive/readMetadata_archiveId_
+     */
+    public function readRecordsmanagementArchiveinformation_archiveId_();
 }

@@ -6,6 +6,30 @@
     file that was distributed with this source code.
 #-->
 <form class="form-horizontal" id="archiveForm">
+    <div  id="archiveImportTitleForm">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Originator organization</label>
+            <div class="col-sm-9">
+                <select class="form-control archiveInput" name="originatorOrgRegNumber" id="originatorOrgRegNumber">
+                    <?merge orgUnitList ?>
+                    <option value="[?merge .registrationNumber ?]"><?merge .displayName ?></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Archival profile</label>
+            <div class="col-sm-9">
+                <select class="form-control archiveInput" name="archivalProfileReference" id="archivalProfile">
+                </select>
+            </div>
+        </div>
+        <div class="form-group" id="import_isSubArchive">
+            <label class="col-sm-3 control-label">Sub-archive of</label>
+            <div class="col-sm-9">
+                <input type="text" class="input-sm form-control archiveInput" id="import_parentArchiveName" disabled>
+            </div>
+        </div>
+    </div>
     <div class="form-group">
         <label class="col-sm-3 control-label">Name</label>
         <div class="col-sm-9">
@@ -25,17 +49,16 @@
         </div>
     </div>
 
-    <div class="form-group" id="fileplanLevelDiv">
+    <div class="form-group hide" id="fileplanLevelDiv">
         <label class="col-md-3 control-label">Fileplan level</label>
         <div class="col-md-9">
             <input type="checkbox" data-width="100" class="input-sm" id="fileplanLevelToggle">
         </div>
     </div>
 
-    <input type="hidden" class="archiveInput" name="archivalProfileReference" id="archivalProfile"/>
+    <input type="hidden" id="isArchiver" name="isArchiver" value="[?merge isArchiver.json() ?]" />
     <input type="hidden" class="archiveInput" name="filePlanPosition"/>
-    <input type="hidden" class="archiveInput" name="originatorOrgRegNumber"/>
-    <input type="hidden" class="archiveInput" name="parentArchiveId"/>
+    <input type="hidden" class="archiveInput" id="parentArchiveId" name="parentArchiveId"/>
     <input type="hidden" class="archiveInput" id="fileplanLevel" name="fileplanLevel" value='file'/>
 </form>
 
@@ -88,6 +111,7 @@
             if (isWithoutProfile === undefined) {
                 isWithoutProfile = true;
             }
+
             if(isWithoutProfile == true) {
                 if($('#fileplanLevelDiv').is(":hidden")) {
                     $('#fileplanLevelDiv').show();
@@ -129,11 +153,6 @@
     });
 
     // ARCHIVE
-    $('#archivalProfile').on('change', function() {
-        ArchiveForm.loadProfile();
-        ArchiveForm.displayArchiveDescription();
-    });
-
     $('#retentionRule').on('change', function() {
         ArchiveForm.displayRetentionRulesInfo();
     });
@@ -175,15 +194,15 @@
                         gritter.show(response.message, response.status, response.errors);
 
                         if (response.status) {
-                            trigger("archiveImportOver.recordsManagement", [archive.parentArchiveId]);
+                            // trigger("archiveImportOver.recordsManagement", [archive.parentArchiveId]); //
                             ImportPanel.cancel();
                             var folder = archive.originatorOrgRegNumber;
                             if (archive.filePlanPosition) {
                                 folder = archive.filePlanPosition;
                             }
-                            trigger('loadFolder.filePlan', [folder]);
+                            trigger('loadFolder.filePlan', [folder]); //
 
-                            $("#documentForm").show();
+                            // $("#documentForm").show();
                         }
                     },
                     error       : function (response) {
@@ -211,7 +230,8 @@
                 originatorArchiveId : archive.originatorArchiveId,
                 archiveName         : archive.archiveName,
                 originatingDate     : archive.originatingDate,
-                description         : archive.descriptionObject
+                description         : archive.descriptionObject,
+                archivalProfileReference : archive.archivalProfileReference
             };
 
             $.ajax({
@@ -243,32 +263,48 @@
         },
 
         loadProfile : function() {
-            var value = $('#archivalProfile').val();
-            var dataJson = $('#archivalProfile').data('json');
+            var archivalProfileReference = $('#archivalProfile').val();
+            $.ajax({
+                type        : 'GET',
+                url         : "/profilebyreference/" + archivalProfileReference,
+                dataType    : 'json',
+                async       : false,
+                success     : function (response) {
+                    $("#archivalProfile").data('json', response);
+                    var dataJson = $('#archivalProfile').data('json');
 
-            var selectedProfile = "";
-            if (dataJson !== undefined && dataJson !== null && dataJson !== "") {
-                selectedProfile = dataJson;
-            }
+                    var selectedProfile = "";
+                    if (dataJson !== undefined && dataJson !== null && dataJson !== "") {
+                        selectedProfile = dataJson;
+                    }
 
-            if (value == '' || selectedProfile.retentionRuleCode == null || selectedProfile.retentionRuleCode == '' || selectedProfile.retentionRuleCode == undefined) {
-                $('#retentionRule').val('').removeAttr("disabled").change();
-            } else {
-                $('#retentionRule').val(selectedProfile.retentionRuleCode).change().attr("disabled", "disabled");
-            }
+                    if (archivalProfileReference == '' || selectedProfile.retentionRuleCode == null || selectedProfile.retentionRuleCode == '' || selectedProfile.retentionRuleCode == undefined) {
+                        $('#retentionRule').val('').removeAttr("disabled").change();
+                    } else {
+                        $('#retentionRule').val(selectedProfile.retentionRuleCode).change().attr("disabled", "disabled");
+                    }
 
-            if (value == ''
-                || selectedProfile.retentionStartDate == ''
-                || selectedProfile.retentionStartDate == null) {
-                var retentionStartDate = $("#managementMetadataForm").find("[name=retentionStartDate]");
-                if (retentionStartDate.data("datepicker")) {
-                    retentionStartDate.data("datepicker").setDate(new Date());
+                    if (archivalProfileReference == ''
+                        || selectedProfile.retentionStartDate == ''
+                        || selectedProfile.retentionStartDate == null) {
+                        var retentionStartDate = $("#managementMetadataForm").find("[name=retentionStartDate]");
+                        if (retentionStartDate.data("datepicker")) {
+                            retentionStartDate.data("datepicker").setDate(new Date());
+                        }
+                        retentionStartDate.closest(".form-group").removeClass("hide");
+
+                    } else {
+                        $("#managementMetadataForm").find("[name=retentionStartDate]").val("").closest(".form-group").addClass("hide");
+                    }
+                    ArchiveForm.displayArchiveDescription();
+                    Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
+                },
+                error       : function (response) {
+                    gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
                 }
-                retentionStartDate.closest(".form-group").removeClass("hide");
+            });
 
-            } else {
-                 $("#managementMetadataForm").find("[name=retentionStartDate]").val("").closest(".form-group").addClass("hide");
-            }
+            
         },
         displayArchiveDescription : function() {
             var value = $('#archivalProfile').val();
@@ -525,10 +561,161 @@
         },
         clear : function() {
             $('#retentionRule').removeAttr("disabled");
-            $('#archiveForm, #managementMetadataForm').find('.archiveInput').not('[name="filePlanPosition"],[name="originatorOrgRegNumber"]').val('').change();
+            $('#archiveForm, #managementMetadataForm').find('.archiveInput').not('[name="filePlanPosition"]').val('').change();
+            $('#archivalProfile').prop('disabled', false);
 
             DocumentList.clear();
             Metadata.clear($('#allFields'));
+            Metadata.archive = null;
+        }
+    }
+
+    $("#originatorOrgRegNumber").on('change', function() {
+        selectOriginatorOrgRegNumber();
+    });
+
+    function selectOriginatorOrgRegNumber() {
+        var originatorOrgRegNumber = $("#archiveForm").find("[name=originatorOrgRegNumber]").val();
+        var archivalProfile = $('#archivalProfile');
+
+        if (Metadata.archive) {
+            if (Metadata.archive.archivalProfileReference) {
+                var archivalProfileModificationReference = Metadata.archive.archivalProfileReference;
+            } else {
+                var archivalProfileModificationReference = "withoutProfile";
+            }
+
+            if (Metadata.archive.parentArchiveId) {
+                var parentArchiveId = Metadata.archive.parentArchiveId;
+            }
+        }
+
+        if (originatorOrgRegNumber && !parentArchiveId) {
+            $.ajax({
+                type: 'GET',
+                url: '/orgunitprofiles?orgRegNumber=' + originatorOrgRegNumber,
+                dataType: 'json',
+                contentType: 'application/json',
+                async: false,
+                success: function (response) {
+                    cleanSelectArchivalProfile();
+
+                    $.each(response, function(index, profile){
+                        addSelectProfiles(profile);
+                    })
+
+                    if (archivalProfileModificationReference) {
+                        if  (archivalProfileModificationReference == "withoutProfile") {
+                            $("#archivalProfile").find('option[id="withoutProfile"]').prop('selected', true);
+                            selectArchivalProfile();
+                            Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
+                        } else {
+                            $("#archivalProfile").val(archivalProfileModificationReference);
+                            selectArchivalProfile();
+                        }
+                    } else {
+                        Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
+                    }
+                    
+                }
+            });
+        } else if (originatorOrgRegNumber && parentArchiveId) {
+            $.ajax({
+                url         : "/archive/"+parentArchiveId,
+                type        : "GET",
+                headers     : {"Accept":"application/json"},
+                async       : false,
+                success     : function (response) {
+                    var parentArchivalProfileReference = response.archivalProfileReference;
+                    var parentArchiveName = response.archiveName;
+                    $('#import_isSubArchive').removeClass('hide');
+                    $("#archiveForm [name='parentArchiveId']").val(parentArchiveId);
+                    $('#import_parentArchiveName').val(parentArchiveName);
+
+                    if (parentArchivalProfileReference) {
+                        $.ajax({
+                            type        : 'GET',
+                            url         : "/profilebyreference/" + parentArchivalProfileReference,
+                            dataType    : 'json',
+                            async       : false,
+                            success     : function (response) {
+                                cleanSelectArchivalProfile();
+
+                                $.each(response.containedProfiles, function(index, profile){
+                                    addSelectProfiles(profile);
+                                })
+
+                                $("#archivalProfile").val(archivalProfileModificationReference);
+                                selectArchivalProfile();
+                            }   
+                        });
+                    } else {
+                        archivalProfile.empty();
+                        addSelectProfiles("*");
+                    }
+                },
+                error       : function (response) {
+                    gritter.show(response.responseText, false);
+                }
+            });
+        }
+    }
+
+    function cleanSelectArchivalProfile() {
+        var archivalProfile = $('#archivalProfile');
+        archivalProfile.empty();
+        $('<option/>').prop('id',"selectProfile").val("").text("").appendTo(archivalProfile);
+    }
+
+    function updateSelectProfilesFromArchivalProfileReference(archivalProfileReference) {
+        cleanSelectArchivalProfile();
+
+        if (archivalProfileReference) {
+            $.ajax({
+                type        : 'GET',
+                url         : "/profilebyreference/" + archivalProfileReference,
+                dataType    : 'json',
+                async       : false,
+                success     : function (response) {
+                    $.each(response.containedProfiles, function(index, profile){
+                        addSelectProfiles(profile);
+                    })
+                }   
+            });
+        } else {
+            addSelectProfiles("*");
+        }
+    };
+
+    function addSelectProfiles(profile){
+        var archivalProfile = $('#archivalProfile');
+        if (profile === "*") {
+            var option = $('<option/>')
+            .prop('id',"withoutProfile")
+            .val("")
+            .text("Sans profil")
+            .appendTo(archivalProfile);
+        } else {
+            var option = $('<option/>')
+            .prop('id',profile.reference)
+            .val(profile.reference)
+            .text(profile.name)
+            .appendTo(archivalProfile);
+        }
+    }
+
+    $("#archivalProfile").on('change', function() {
+        selectArchivalProfile();
+    });
+
+    // load profile according to selectArchivalProfile value
+    function selectArchivalProfile() {
+        var archivalProfileValue = $("#archivalProfile").val();
+        if (archivalProfileValue === "") {
+            $('#archivalProfileFields').empty();
+        } else if (archivalProfileValue != null) {
+            $('#archivalProfile').val(archivalProfileValue);
+            ArchiveForm.loadProfile();
         }
     }
 </script>

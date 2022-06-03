@@ -1,21 +1,13 @@
 <div class="hide row" id="importPanel">
     <div class="col-xs-12">
         <div class="row">
-            <h4 class="pull-left">
-                <span id="import_archivalProfile"/>
-                <br/>
-                <small id="import_isSubArchive"><span>Sub-archive of </span><span id="import_parentArchiveName"><b></b></span></small>
-            </span>
-        </h4>
-    </div>
-    <div class="row">
-        <div class="col-lg-8 col-md-12">
-            <?hinclude dashboard/mainScreen/archiveForm.html ?>
+            <div class="col-lg-8 col-md-12">
+                <?hinclude dashboard/mainScreen/archiveForm.html ?>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <?hinclude dashboard/mainScreen/documentForm.html ?>
+            </div>
         </div>
-        <div class="col-lg-4 col-md-12">
-            <?hinclude dashboard/mainScreen/documentForm.html ?>
-        </div>
-    </div>
         <div class="pull-right">
             <a href="#" class="btn btn-sm btn-success hide" id="modifyArchive"><i class="fa fa-paper-plane-o">&nbsp;</i>Modify</a>
             <i>&nbsp;</i>
@@ -42,29 +34,40 @@
     ImportPanel = {
         panel: $('#importPanel'),
         load: function(archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName) {
-            $('#archiveForm [name="originatorOrgRegNumber"]').val(orgRegNumber);
-            $('#archiveForm [name="filePlanPosition"]').val(folderId);
-
-            this.panel.removeClass('hide');
-
-            if (!archivalProfile) {
-                archivalProfile = "";
-            }
-
-            $("#archiveForm [name='archivalProfileReference']").val(archivalProfile.reference).data("json", archivalProfile).change();
-            if(typeof archivalProfile.name === "undefined") {
-                $("#import_archivalProfile").text("");
+            // if user is archiver
+            var userIsArchiver = $('#isArchiver').val();
+            if (userIsArchiver == "true") {
+                $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', false);
             } else {
-                $("#import_archivalProfile").text(archivalProfile.name);
+                $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', true);
             }
 
             if (!parentArchiveId) {
+                $('#archiveForm [name="originatorOrgRegNumber"]').val(orgRegNumber);
+                $('#originatorOrgRegNumber').change();
                 $("#archiveForm [name='parentArchiveId']").val('');
                 $('#import_isSubArchive').addClass('hide');
             } else {
+                // get archival profile of parent archive to load contained profiles
+                // for addChildrenArchive
+                $.ajax({
+                type        : 'GET',
+                url         : "/recordsmanagement/archiveinformation/" + parentArchiveId,
+                dataType    : 'json',
+                async       : false,
+                success     : function (response) {
+                    $('#archiveForm [name="originatorOrgRegNumber"]').val(response.originatorOrgRegNumber);
+                    $('#archiveForm [name="originatorOrgRegNumber"]').prop('disabled', true);
+                    updateSelectProfilesFromArchivalProfileReference(response.archivalProfileReference);
+                }});
+                $('#import_isSubArchive').removeClass('hide');
                 $("#archiveForm [name='parentArchiveId']").val(parentArchiveId);
-                $('#import_parentArchiveName').find('b').text(parentArchiveName);
+                $('#import_parentArchiveName').val(parentArchiveName);
             }
+
+            $('#archiveForm [name="filePlanPosition"]').val(folderId); // toujours utile?
+
+            this.panel.removeClass('hide');
 
             trigger("archiveImportStarted.recordsManagement");
         },
@@ -81,11 +84,6 @@
 
     $("#importPanel").onEvent('newArchiveForm.recordsManagement', function(e, archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName) {
         ImportPanel.load(archivalProfile, orgRegNumber, folderId, parentArchiveId, parentArchiveName);
-        if(typeof archivalProfile === "undefined"){
-            FilePlanLevelToggle.load(true);
-        } else {
-            FilePlanLevelToggle.load(false);
-        }
     });
 
     $('#import').on('click', function(e) {
