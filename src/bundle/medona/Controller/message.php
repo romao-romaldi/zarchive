@@ -720,6 +720,7 @@ class message
     {
         $count = [];
 
+        $count['depositRequest'] = \laabs::newController('medona/ArchiveTransferRequest')->count();
         $count['deposit'] = \laabs::newController('medona/ArchiveTransfer')->count();
         $count['notification'] = \laabs::newController('medona/ArchiveNotification')->count();
         $count['communication'] = \laabs::newController('medona/ArchiveDeliveryRequest')->count();
@@ -1055,6 +1056,7 @@ class message
             || $message->type == 'ArchiveDeliveryRequestReply'
             || $message->type == 'ArchiveModificationNotification'
             || $message->type == 'ArchiveDestructionNotification'
+            || $message->type == 'ArchiveTransferRequestReply'
         ) {
             $archive->archiverOrgRegNumber = $archive->depositorOrgRegNumber = (string) $message->senderOrgRegNumber;
             $archive->originatorOrgRegNumber = (string) $message->recipientOrgRegNumber;

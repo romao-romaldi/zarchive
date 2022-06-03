@@ -81,4 +81,76 @@ trait archiveAuthorizationTrait
 
         return $this->view->saveHtml();
     }
+
+        /**
+     * Serializer JSON for sendAuthorizationOriginatingAgencyRequest method
+     *
+     * @return type
+     */
+    public function sendAuthorizationOriginatingAgencyRequest()
+    {
+        $this->json->message = $this->translator->getText("Authorization request send to originator agency");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for sendAuthorizationControlAuthorityRequest method
+     *
+     * @return type
+     */
+    public function sendAuthorizationControlAuthorityRequest()
+    {
+        $this->json->message = $this->translator->getText("Authorization request send to control authority");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for acceptAuthorizationOriginatingAgencyRequest method
+     *
+     * @return type
+     */
+    public function acceptAuthorizationOriginatingAgencyRequest()
+    {
+        $this->json->message = $this->translator->getText("Authorization accepted");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for rejectAuthorizationOriginatingAgencyRequest method
+     *
+     * @return type
+     */
+    public function rejectAuthorizationOriginatingAgencyRequest()
+    {
+        $this->json->message = $this->translator->getText("Authorization rejected");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for acceptAuthorizationControlAuthorityRequest method
+     *
+     * @return type
+     */
+    public function acceptAuthorizationControlAuthorityRequest()
+    {
+        $this->json->message = $this->translator->getText("Authorization accepted");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for rejectAuthorizationControlAuthorityRequest method
+     *
+     * @return type
+     */
+    public function rejectAuthorizationControlAuthorityRequest()
+    {
+        $this->json->message = $this->translator->getText("Authorization rejected");
+
+        return $this->json->save();
+    }
 }
