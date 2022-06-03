@@ -202,7 +202,7 @@ class archive
 
         $this->digitalResourceController = \laabs::newController("digitalResource/digitalResource");
 
-        $this->formatController = \laabs::newController("digitalResource/pronomFormat");
+        $this->pronomFormatController = \laabs::newController("digitalResource/pronomFormat");
 
         $this->archiveRelationshipController = \laabs::newController("recordsManagement/archiveRelationship");
 
