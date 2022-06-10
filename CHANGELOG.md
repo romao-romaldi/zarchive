@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Version 2.8.4
+ - `Added` Ajout de la feature et point de configuration pour la conversion de documents avec outils Microsoft Office.
+ - `Fixed` Accès à l'écran de registre si accord de versement sans service producteur déclaré.
 ## Version 2.8.3
  - `Fixed` Recherche par côte d'archive non fonctionnelle.
  - `Fixed` Vérification du pattern de l'adresse email lors de la création d'un nouvel utilisateur.
