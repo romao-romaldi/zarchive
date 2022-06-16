@@ -1173,10 +1173,10 @@ trait archiveAccessTrait
             $discoverableProfiles
         );
 
-        $queryParts['accessRule'] = "(originatorOwnerOrgId = '" . $currentService->ownerOrgId
-            . "' AND (
-                (accessRuleComDate <= '$currentDateString')
-                OR (archivalProfileReference = [" .  \laabs\implode(", ", $discoverableProfilesIdentifiers) . "])
+        $queryParts['accessRule'] = "(
+            originatorOwnerOrgId = '" . $currentService->ownerOrgId . "' AND (
+                accessRuleComDate <= '$currentDateString'
+                OR archivalProfileReference = [" .  \laabs\implode(", ", $discoverableProfilesIdentifiers) . "]
             )
         )";
 
