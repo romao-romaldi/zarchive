@@ -2,9 +2,15 @@
 <rng:grammar xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:10" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:qdt="fr:gouv:culture:archivesdefrance:seda:v2.1:QualifiedDataType:1" xmlns:ccts="urn:un:unece:uncefact:documentation:standard:CoreComponentsTechnicalSpecification:2" xmlns="fr:gouv:culture:archivesdefrance:seda:v2.1" ns="fr:gouv:culture:archivesdefrance:seda:v2.1" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
     <rng:start combine="choice">
         <rng:ref name="ArchiveTransfer"/>
+        <rng:ref name="ArchiveTransferRequest"/>
     </rng:start>
     <rng:define name="ArchiveTransfer">
         <rng:element name="ArchiveTransfer">
+            <rng:ref name="ArchiveTransfer_N65537"/>
+        </rng:element>
+    </rng:define>
+	<rng:define name="ArchiveTransferRequest">
+        <rng:element name="ArchiveTransferRequest">
             <rng:ref name="ArchiveTransfer_N65537"/>
         </rng:element>
     </rng:define>
