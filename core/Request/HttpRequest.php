@@ -52,14 +52,7 @@ class HttpRequest
 
         $this->getAuthentication();
 
-        $this->body = fopen('php://temp', 'w+');
-        $input = fopen('php://input', 'r');
-        $length = stream_copy_to_stream($input, $this->body);
-        rewind($this->body);
-        if ($length == 0) {
-            $this->body = null;
-        }
-
+        $this->getBody();
 
         $this->query = urldecode($_SERVER['QUERY_STRING']);
 
@@ -177,13 +170,65 @@ class HttpRequest
         return $this->queryType;
     }
 
-    protected function parseUrlBody()
+    protected function getBody()
     {
-        if ($this->type == 'url' && !empty($this->body)) {
-            $bodyArguments = array();
-            \parse_str($this->body, $bodyArguments);
-            $this->arguments = array_merge($bodyArguments, $this->arguments);
+        if ($this->contentType == 'url') {
+            $this->body = array_merge_recursive($_POST, $this->getFiles());
+        } else {
+            $this->body = fopen('php://temp', 'w+');
+            $input = fopen('php://input', 'r');
+            $length = stream_copy_to_stream($input, $this->body);
+            rewind($this->body);
+
+            if ($length == 0) {
+                $this->body = null;
+            }
         }
+    }
+
+    protected function getFiles()
+    {
+        $files = [];
+
+        $keys = ['name', 'type', 'tmp_name', 'error', 'size'];
+
+        foreach ($_FILES as $name => $item) {
+            // Standard form-data files at root level
+            if (is_string($item['name'])) {
+                $files[$name] = $item;
+                continue;
+            }
+
+            // Merged array of file values
+            // root-level name =>
+            //   'name' => array of subfile names
+            //   'type' => array of subfile types
+            //   ...
+            foreach ($item['name'] as $fname => $value) {
+                // 2nd level files
+                if (is_string($value)) {
+                    $file = [];
+                    foreach ($keys as $key) {
+                        $file[$key] = $item[$key][$fname];
+                    }
+                    $files[$name][$fname] = $file;
+                    continue;
+                }  
+
+                // 3rd level : multiple files with one name
+                if (is_array($value)) {
+                    foreach ($value as $index => $svalue) {
+                        $file = [];
+                        foreach ($keys as $key) {
+                            $file[$key] = $item[$key][$fname][$index];
+                        }
+                        $files[$name][$fname][$index] = $file;
+                    } 
+                }           
+            }
+        }
+
+        return $files;
     }
 
     protected function parseUrl()
