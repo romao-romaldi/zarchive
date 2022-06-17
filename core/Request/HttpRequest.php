@@ -195,7 +195,11 @@ class HttpRequest
         foreach ($_FILES as $name => $item) {
             // Standard form-data files at root level
             if (is_string($item['name'])) {
-                $files[$name] = $item;
+                $file = $item;
+                if ($file['error'] == 0) {
+                    $file['handler'] = fopen($file['tmp_name'], 'r');
+                }
+                $files[$name] = $file;            
                 continue;
             }
 
@@ -211,7 +215,11 @@ class HttpRequest
                     foreach ($keys as $key) {
                         $file[$key] = $item[$key][$fname];
                     }
+                    if ($file['error'] == 0) {
+                        $file['handler'] = fopen($file['tmp_name'], 'r');
+                    }
                     $files[$name][$fname] = $file;
+
                     continue;
                 }  
 
@@ -221,6 +229,9 @@ class HttpRequest
                         $file = [];
                         foreach ($keys as $key) {
                             $file[$key] = $item[$key][$fname][$index];
+                        }
+                        if ($file['error'] == 0) {
+                            $file['handler'] = fopen($file['tmp_name'], 'r');
                         }
                         $files[$name][$fname][$index] = $file;
                     } 
