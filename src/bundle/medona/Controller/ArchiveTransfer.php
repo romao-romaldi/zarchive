@@ -71,7 +71,9 @@ class ArchiveTransfer extends abstractMessage
      */
     public function receiveSource($package, $connector, $params = [])
     {
-        if (!isset($this->packageConnectors[$connector]) || empty($this->packageConnectors[$connector])) {
+        if (!isset($this->packageConnectors[$connector])
+            || empty($this->packageConnectors[$connector])
+            || !isset($this->packageConnectors[$connector]['service'])) {
             throw \laabs::newException('medona/invalidMessageException', "Invalid message: unknown connector", 400);
         }
 
@@ -87,19 +89,10 @@ class ArchiveTransfer extends abstractMessage
         $params = $this->checkParamsConstraints($confParams, $params);
 
         $message = $this->createNewMessage($schema);
+        $messageDirectory = $this->messageDirectory.DIRECTORY_SEPARATOR.(string) $message->messageId;
 
-        if (isset($connectorConf['service'])) {
-            $connectorService = \laabs::newService($connectorConf['service']);
-            $message->path = $connectorService->receive(
-                $package,
-                $params,
-                $this->messageDirectory.DIRECTORY_SEPARATOR.(string) $message->messageId
-            );
-        } else {
-            $messageFile = $package;
-            $attachments = [];
-        }
-
+        $connectorService = \laabs::newService($connectorConf['service']);
+        $message->path = $connectorService->receive($package, $params, $messageDirectory);
 
         // Traiter le schéma spécifique
         $this->receiveMessage($message);
