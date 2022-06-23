@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 2.9
+- `Added` Possibilité d'effectuer un contrôle d'exhaustivité sur le fonds d'archives depuis le planificateur de tâches.
+- `Added` Possibilité de gérer son propre référentiel de formats.
+- `Changed` La liste des formats est basée sur le Référentiel Général d'Interopérabilité (RGI).
+
 ## Version 2.8.5
  - `Fixed` Possibilité de verser des paquets de plus de 1go.
 
