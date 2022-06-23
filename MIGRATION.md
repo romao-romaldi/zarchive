@@ -1,3 +1,118 @@
+# Migration 2.9
+
+## Schéma SQL
+
+Voir le fichier spécifique
+
+    laabs/data/maarchRM/sql/pgsql/migrationV2.8_V2.9.sql
+
+## Configuration
+
+### Ajout d'une nouvelle tâche planifiée
+
+La tâche planifiée "Contrôler l'exhaustivité des ressources" a été ajoutée.
+Il faut donc ajouter le privilège associé comme ci-dessous :
+
+    servicePrivileges = "[
+        {
+            'serviceURI': 'audit/event/createChainjournal',
+            'description' : 'Chaîner le journal de l\'application'
+        },
+        {
+            'serviceURI': 'batchProcessing/scheduling/updateProcess',
+            'description' : 'Exécution automatique des tâches planifiées'
+        },
+        {
+            'serviceURI': 'lifeCycle/journal/createChainjournal',
+            'description' : 'Chaîner le journal du cycle de vie'
+        },
+        {
+            'serviceURI': 'recordsManagement/archiveCompliance/readPeriodic',
+            'description' : 'Valider l\'intégrité des archives'
+        },
+        {
+            'serviceURI': 'recordsManagement/archives/deleteDisposablearchives',
+            'description' : 'Détruire les archives'
+        },
+        {
+            'serviceURI': 'recordsManagement/archives/updateIndexfulltext',
+            'description' : 'Extraction plein texte'
+        },
+        {
+            'serviceURI': 'recordsManagement/archive/create',
+            'description' : 'Création d\'une archive'
+        },
+        {
+            'serviceURI': 'recordsManagement/archive/createArchiveBatch',
+            'description' : 'Création par batch d\'archive(s)'
+        },
+        {
+            'serviceURI' : 'recordsManagement/archives/updateArchivesretentionrule',
+            'description' : 'Mise à jour de la durée d\'utilité administrative'
+        },
+        {
+            'serviceURI' : 'recordsManagement/archive/read_archiveId_Digitalresource_resId_Contents',
+            'description' : 'Récupérer directement le contenu d\'une ressource d\'archive'
+        },
+        {
+            'serviceURI' : 'recordsManagement/archives/readExtractfulltext',
+            'description' : 'Extraction et indexation plein texte'
+        },
+        {
+            'serviceURI' : 'digitalResource/digitalResource/readCompleteness',
+            'description' : 'Contrôler l\'exhaustivité des ressources'
+        },
+        {
+            'serviceURI': '*',
+            'description' : 'Tous les droits'
+        }
+    ]"
+
+ainsi que la tâche comme ci-dessous :
+
+    tasks = "[
+        {
+            'taskId': '01',
+            'route' : 'audit/event/createChainjournal',
+            'description' : 'Chainer le journal de l\'application'
+        },
+        {
+            'taskId': '02',
+            'route' : 'lifeCycle/journal/createChainjournal',
+            'description' : 'Chainer le journal du cycle de vie'
+        },
+        {
+            'taskId': '03',
+            'route' : 'recordsManagement/archiveCompliance/readPeriodic',
+            'description' : 'Intégrité périodique'
+        },
+        {
+            'taskId': '04',
+            'route' : 'recordsManagement/archives/deleteDisposablearchives',
+            'description' : 'Détruire les archives'
+        },
+        {
+            'taskId': '05',
+            'route' : 'medona/message/deleteMessageDirectoryPurge',
+            'description' : 'Purge des bordereaux'
+        },
+        {
+        'taskId': '13',
+        'route' : 'recordsManagement/archives/readExtractfulltext',
+        'description' : 'Extraction plein texte'
+        },
+        {
+        'taskId': '14',
+        'route' : 'digitalResource/digitalResource/readCompleteness',
+        'description' : 'Contrôle d\'exhaustivité de ressources'
+        }
+    ]"
+
+NB : La tâche planifiée prend 2 paramètres en entrée : le premier correspond à la fréquence de contrôle (en jours), tandis que le second correspond au délai maximal de contrôle (en secondes).
+
+[Documentation](https://labs.maarch.org/maarch/maarchRM.doc/blob/b5ff8d2a3c3ad5669eeb01b0ec56f33184ee474e/conf/scheduling.md)
+
+
 # Migration 2.8.2
 
 ## Modification dans la configuration :

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Version 2.9
+- `Added` Possibilité d'effectuer un contrôle d'exhaustivité sur le fonds d'archives depuis le planificateur de tâches.
+- `Added` Possibilité de gérer son propre référentiel de formats.
+- `Changed` La liste des formats est basée sur le Référentiel Général d'Interopérabilité (RGI).
+
+## Version 2.8.4
+ - `Added` Ajout de la feature et point de configuration pour la conversion de documents avec outils Microsoft Office.
+ - `Fixed` Accès à l'écran de registre si accord de versement sans service producteur déclaré.
+
 ## Version 2.8.3
  - `Fixed` Recherche par côte d'archive non fonctionnelle.
  - `Fixed` Vérification du pattern de l'adresse email lors de la création d'un nouvel utilisateur.
