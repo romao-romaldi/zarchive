@@ -73,7 +73,7 @@ class welcome
 
         $isArchiver = false;
         $currentOrganization = \laabs::getToken("ORGANIZATION");
-        if ($currentOrganization->orgRoleCodes && in_array('owner',$currentOrganization->orgRoleCodes)) {
+        if ($currentOrganization->orgRoleCodes && in_array('archiver',$currentOrganization->orgRoleCodes)) {
             $isArchiver = true;
         }
         $this->view->setSource("isArchiver", $isArchiver);
