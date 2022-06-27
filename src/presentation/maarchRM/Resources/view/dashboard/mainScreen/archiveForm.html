@@ -297,7 +297,9 @@
                         $("#managementMetadataForm").find("[name=retentionStartDate]").val("").closest(".form-group").addClass("hide");
                     }
                     ArchiveForm.displayArchiveDescription();
-                    Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
+                    if (Metadata.archive) {
+                        Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
+                    }
                 },
                 error       : function (response) {
                     gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
@@ -715,7 +717,7 @@
             $('#archivalProfileFields').empty();
         } else if (archivalProfileValue != null) {
             $('#archivalProfile').val(archivalProfileValue);
-            ArchiveForm.loadProfile();
+            ArchiveForm.loadProfile(); // ICI
         }
     }
 </script>
