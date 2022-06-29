@@ -81,7 +81,7 @@
             <div class="col-md-6">
             </div>
 
-            <span class="hide" id="byte_text">byte</span>
+            <span class="hide" id="byte_text">bytes</span>
             <span class="hide" id="import_text">Import</span>
             <span class="hide" id="validation_text">Validation</span>
             <span class="hide" id="remove_text">Remove</span>
@@ -136,7 +136,7 @@ var zipContent = "";
                     e.preventDefault();
                     e.stopPropagation();
                     $('#packageDropZone').css('opacity', '0.5');
-                    uploadMessage(e.originalEvent.dataTransfer.files[0]);
+                    selectPackageFile();
                 }
             }
         }
@@ -149,7 +149,7 @@ var zipContent = "";
 
 
     $('#packagefileBrowser').on('change', function() {
-        uploadMessage($(this).get(0).files[0]);
+        selectPackageFile();
     })
 
     // Cancel
@@ -162,122 +162,57 @@ var zipContent = "";
         $('#userInputs').empty();
     })
 
-    function isMissingRequiredParams() {
-        if ($('input[required]').filter(function() { return $(this).val() == ""; }).length != 0) {
-            return true;
-        }
-        return false;
-    }
-
     $('#messageImport_form').on('submit', function(e) {
         e.preventDefault();
     });
 
     // Submit
     $('#messageImport_submit').on('click', function() {
+        submit();
+    });
+
+/* ------ FUNCTION ------ */
+    function isMissingRequiredParams() {
+        if ($('input[required]').filter(function() { return $(this).val() == ""; }).length != 0) {
+            return true;
+        }
+        return false;
+    }
+    
+    function selectPackageFile()
+    {
+        let file = $('#packagefileBrowser').get(0).files[0];
+
+        $('#packageFileName').html(file.name);
+        $('#packageFileSize').html(file.size + ' ' + $('#byte_text').html());
+        $('#packageFileType').html(file.type);
+        $('#packageDropZone').addClass('hide');
+        $('#packageFileInfo').removeClass('hide');
+    }
+
+    function submit() {
         if (isMissingRequiredParams()) {
             return;
         }
+
         let source = $("#messageImport_source").val();
-        if (source != "" && source !== null) {
-            var url = '/transfer/source';
-            var data = JSON.stringify(serializeSource())
-            var contentType = 'application/json';
-        } else {
+        if (source == "" && source == null) {
             gritter.show($('#empty_connectory_text').html(), false);
             return;
         }
 
-        $(this).attr('disabled',true);
+        $(this).attr('disabled', true);
         $('#messageImport_cancel').attr('disabled', true);
 
-        ajax($('#messageImport_submit'), {
-            type        : 'POST',
-            url         : url,
-            data        : data,
-            contentType : contentType,
-            dataType    : 'json',
-            success     : function (response) {
-                if (response.status != false) {
-                    gritter.show(response.message, response.status, response.errors);
-                    validateMessage(response.messageId);
-                } else {
-                    gritter.show(response.message, response.status);
-                    var arg = "";
-                    $.each(response.errors,function (key,error) {
-                        arg += "<br/>";
-                        if (error.variables != null && error.variables.property != null) {
-                            arg += error.variables.property + ': ';
-                        }
-                        arg += error.message;
-                    });
+        let file = $('#packagefileBrowser').get(0).files[0];
 
-                    $('#messageImport_errorTitle').html(response.message);
-                    $('#messageImport_errorDetail').html(arg);
-                    $('#messageImport_erreur').removeClass('hide');
-                    $('#messageImport_submit').attr('disabled',false);
-                    $('#messageImport_cancel').attr('disabled',false);
-                }
+        var formData = new FormData();
+        formData.append("package", file);
+        formData.append("connector", source);
 
-
-            },
-            error       : function (response) {
-                gritter.show(response.responseJSON.message, response.responseJSON.status);
-
-                var arg = "";
-                $.each(response.responseJSON.errors,function (key,error) {
-                    arg += "<br/>";
-                    if (error.variables != null && error.variables.property != null) {
-                        arg += error.variables.property + ': ';
-                    }
-                    arg += error.message;
-                });
-                $('#messageImport_errorTitle').text(response.responseJSON.message);
-                $('#messageImport_errorDetail').html(arg);
-                $('#messageImport_erreur').removeClass('hide');
-                $('#messageImport_cancel').click();
-                $('#messageImport_submit').attr('disabled',false);
-                $('#messageImport_cancel').attr('disabled',false);
-
-
-            }
-        });
-    })
-
-/* ------ FUNCTION ------ */
-
-    function uploadMessage(file) {
-        oFileReader = new FileReader();
-        if ( file.type == "application/x-zip-compressed" || file.type == "application/zip") {
-            oFileReader.readAsDataURL(file);
-        } else {
-            oFileReader.readAsText(file);
-        }
-        oFileReader.onload = function() {
-            if ( file.type == "application/x-zip-compressed" || file.type == "application/zip") {
-                $('#packagefileBrowser').data('base64', oFileReader.result.replace(/^data:.*?;base64,/, ""));
-                $('#packagefileBrowser').data('filename', file.name);
-                $('#packagefileBrowser').data('size', file.size);
-
-            } else {
-                $('#packagefileBrowser').data('base64', btoa(unescape(encodeURIComponent(oFileReader.result))));
-                $('#packagefileBrowser').data('filename', file.name);
-                $('#packagefileBrowser').data('size', file.size);
-                $('#packagefileBrowser').data('type', file.type);
-            }
-
-            $('#packageFileName').html(file.name);
-            $('#packageFileSize').html(file.size + ' ' + $('#byte_text').html());
-
-            if (!file.type || file.type == "") {
-                gritter.show($('#empty_file_type_text').html(), false);
-                $('#messageImport_submit').attr('disabled',true);
-            } else {
-                $('#packageFileType').html(file.type);
-            }
-            $('#packageDropZone').addClass('hide');
-            $('#packageFileInfo').removeClass('hide');
-        };
+        serializeParams(formData);
+        
+        sendPackage(formData);
     }
 
     function validateMessage(messageId) {
@@ -336,102 +271,50 @@ var zipContent = "";
         });
     }
 
-    function serialize() {
-        var jsonObject = {
-            package : {
-                data : $('#packagefileBrowser').data('base64'),
-                encoding : 'base64'
-            },
-            attachments : [],
-            schema : $('#messageImport_schema option:selected').val(),
-            filename : $('#packagefileBrowser').data('filename')
-        };
+    function serializeParams(formData) {
+        
+        var paramsInputs = $('#userInputs').find('input');
+        var paramsSelects = $('#userInputs').find('select');
 
-        var attachments = $('#attachmentsContainer').find('input');
-
-        $.each(attachments, function() {
-            var attachment = {
-                filename : $(this).val(),
-                data     : $(this).data('base64')
-            };
-            jsonObject.attachments.push(attachment);
-        })
-
-        return jsonObject;
-    }
-
-    function serializeSource() {
-        var jsonObject = {
-            package : {
-                data : $('#packagefileBrowser').data('base64'),
-                encoding : 'base64',
-                type : $('#packagefileBrowser').data('type'),
-                size: $('#packagefileBrowser').data('size')
-            },
-            connector : $('#messageImport_source').val(),
-            params : {}
-        };
-
-        var sourceInputs = $('#userInputs').find('input');
-        var sourceSelects = $('#userInputs').find('select');
-
-        $.each(sourceInputs, function() {
+        $.each(paramsInputs, function() {
             var name = $(this).attr("name");
             if (!name) {
                 return;
             }
+            name = 'params['+name+']';
+
             let value;
 
             switch($(this).attr("type")) {
                 case 'file':
                     if ($(this).attr("multiple")) {
-                        jsonObject.params[name] = [];
                         for (var i = 0; i < $(this).get(0).files.length; i++) {
-                            jsonObject.params[name].push(serializeFile($(this).get(0).files[i], $(this).data('readers')[i]));
+                            var file = $(this).get(0).files[i];
+                            var fname = name+'[]';
+                            formData.append(fname, file);
                         }
                     } else {
                         var file = $(this).get(0).files[0];
-                        var reader = $(this).data('readers')[0];
-                        jsonObject.params[name] = serializeFile(file, reader);
+                        formData.append(name, file);
                     }
                     break;
                 case 'checkbox':
                     value = $(this).is(":checked");
-                    jsonObject.params[name] = value;
+                    formData.append(name, value);
                     break;
                 case 'text':
                 default:
                     value = $(this).val();
-                    jsonObject.params[name] = value;
+                    formData.append(name, value);
             }
         });
 
-        $.each(sourceSelects, function() {
+        $.each(paramsSelects, function() {
             let value = $(this).val();
             let name = $(this).attr("name");
-            jsonObject.params[name] = value;
+            formData.append(name, value);
         });
-
-        return jsonObject;
     }
-
-    function serializeFile(file, reader) {
-        return {
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            encoding: 'base64',
-            data: reader.result.replace(/^data:.*?;base64,/, "")
-        };
-    }
-
-    /*$("#messageImport_schema").on("change", (event) => {
-        let schema = $(event.target).val();
-        $(".source_option").addClass('hide');
-        $(".source_schema_" + schema).removeClass('hide');
-        $("#messageImport_source").val("default");
-        $('#userInputs').empty();
-    });*/
 
     $("#messageImport_source").on("change", (event) => {
         let source = $(event.target).val();
@@ -440,7 +323,7 @@ var zipContent = "";
             return;
         }
         let schema = $('#messageImport_source').val()
-        // let schema = $("#messageImport_schema").val();
+
         $.ajax({
             type        : "GET",
             url         : "/transfer/"+schema+"/inputs/"+source,
@@ -452,5 +335,62 @@ var zipContent = "";
             }
         });
     });
+
+    function sendPackage(payload) {
+        ajax($('#messageImport_submit'), {
+            type        : 'POST',
+            url         : '/transfer/source',
+            data        : payload,
+            // Prevent JQuery jQuery from trying to convert the formData into a string
+            processData : false,
+            // Force jQuery not to add a Content-Type header otherwise the boundary string will be missing.
+            contentType : false,
+            enctype     : 'multipart/form-data',
+            mimeType    : 'multipart/form-data',
+            dataType    : 'json',
+            success     : function (response) {
+                if (response.status != false) {
+                    gritter.show(response.message, response.status, response.errors);
+                    validateMessage(response.messageId);
+                } else {
+                    gritter.show(response.message, response.status);
+                    var arg = "";
+                    $.each(response.errors,function (key,error) {
+                        arg += "<br/>";
+                        if (error.variables != null && error.variables.property != null) {
+                            arg += error.variables.property + ': ';
+                        }
+                        arg += error.message;
+                    });
+
+                    $('#messageImport_errorTitle').html(response.message);
+                    $('#messageImport_errorDetail').html(arg);
+                    $('#messageImport_erreur').removeClass('hide');
+                    $('#messageImport_submit').attr('disabled',false);
+                    $('#messageImport_cancel').attr('disabled',false);
+                }
+
+
+            },
+            error       : function (response) {
+                gritter.show(response.responseJSON.message, response.responseJSON.status);
+
+                var arg = "";
+                $.each(response.responseJSON.errors,function (key,error) {
+                    arg += "<br/>";
+                    if (error.variables != null && error.variables.property != null) {
+                        arg += error.variables.property + ': ';
+                    }
+                    arg += error.message;
+                });
+                $('#messageImport_errorTitle').text(response.responseJSON.message);
+                $('#messageImport_errorDetail').html(arg);
+                $('#messageImport_erreur').removeClass('hide');
+                $('#messageImport_cancel').click();
+                $('#messageImport_submit').attr('disabled',false);
+                $('#messageImport_cancel').attr('disabled',false);
+            }
+        });
+    }
 
 </script>

@@ -50,10 +50,6 @@ class Multiparts
      */
     public function receive($package, $params, $messageDirectory)
     {
-        if (!isset($package->data) || empty($package->data)) {
-            throw new \core\Exception\BadRequestException("Package data is mandatory", 400);
-        }
-
         if (isset($messageDirectory) && !empty($messageDirectory)) {
             if (!is_dir($messageDirectory)) {
                 throw new \core\Exception\BadRequestException("MessageDirectory is not a directory", 400);
@@ -61,14 +57,18 @@ class Multiparts
             $this->messageDirectory = $messageDirectory;
         }
 
-        if (is_resource($package->data)) {
-            $data = stream_get_contents(\core\Encoding\Base64::decode($package->data));
-        } elseif (filter_var($package->data, FILTER_VALIDATE_URL)) {
-            // TODO verify
-        } elseif (preg_match('%^[a-zA-Z0-9\\\\/+]*={0,2}$%', $package->data)) {
-            $data = \core\Encoding\Base64::decode($package->data);
-        } elseif (is_file($package->data)) {
-            $data = file_get_contents($package->data);
+        if (is_object($package)) {
+            if (is_resource($package->data)) {
+                $data = stream_get_contents(\core\Encoding\Base64::decode($package));
+            } elseif (filter_var($package->data, FILTER_VALIDATE_URL)) {
+                // TODO verify
+            } elseif (preg_match('%^[a-zA-Z0-9\\\\/+]*={0,2}$%', $package->data)) {
+                $data = \core\Encoding\Base64::decode($package->data);
+            } elseif (is_file($package->data)) {
+                $data = file_get_contents($package->data);
+            }
+        } elseif(is_array($package)) {
+            $data = stream_get_contents($package['handler']);
         }
 
         // to use to modify xml, replace namespace for seda2
@@ -88,45 +88,50 @@ class Multiparts
 
         if (!empty($params['attachments'])) {
             foreach ($params['attachments'] as $key => $attachment) {
-                if (empty($attachment->name)) {
-                    throw new \core\Exception\BadRequestException("Attachment name is mandatory", 400);
-                }
-                $attachmentFileName = $messageDirectory . DIRECTORY_SEPARATOR . $attachment->name;
-                if ($attachment->encoding == 'base64') {
-                    switch (true) {
-                        case is_resource($attachment->data):
-                        case is_string($attachment->data) &&
-                            (
-                                filter_var(substr($attachment->data, 0, 10), FILTER_VALIDATE_URL) ||
-                                is_file($attachment->data)
-                            ):
-                            $handler = \core\Encoding\Base64::decode($attachment->data);
-                            file_put_contents($attachmentFileName, stream_get_contents($handler));
-                            break;
-                        case is_string($attachment->data):
-                            file_put_contents($attachmentFileName, \core\Encoding\Base64::decode($attachment->data));
-                            break;
-                        default:
-                            throw new \core\Exception\BadRequestException("Data attachment format is not valid", 400);
-                            break;
+                if (is_object($attachment)) {
+                    if (empty($attachment->name)) {
+                        throw new \core\Exception\BadRequestException("Attachment name is mandatory", 400);
                     }
-                } else {
-                    switch (true) {
-                        case is_resource($attachment->data):
-                        case is_string($attachment->data) &&
-                            (
-                                filter_var(substr($attachment->data, 0, 10), FILTER_VALIDATE_URL) ||
-                                is_file($attachment->data)
-                            ):
-                            file_put_contents($attachmentFileName, file_get_contents($attachment->data));
-                            break;
-                        case is_string($attachment->data):
-                            file_put_contents($attachmentFileName, $attachment->data);
-                            break;
-                        default:
-                            throw new \core\Exception\BadRequestException("Data attachment format is not valid", 400);
-                            break;
+                    $attachmentFileName = $messageDirectory . DIRECTORY_SEPARATOR . $attachment->name;
+                    if ($attachment->encoding == 'base64') {
+                        switch (true) {
+                            case is_resource($attachment->data):
+                            case is_string($attachment->data) &&
+                                (
+                                    filter_var(substr($attachment->data, 0, 10), FILTER_VALIDATE_URL) ||
+                                    is_file($attachment->data)
+                                ):
+                                $handler = \core\Encoding\Base64::decode($attachment->data);
+                                file_put_contents($attachmentFileName, stream_get_contents($handler));
+                                break;
+                            case is_string($attachment->data):
+                                file_put_contents($attachmentFileName, \core\Encoding\Base64::decode($attachment->data));
+                                break;
+                            default:
+                                throw new \core\Exception\BadRequestException("Data attachment format is not valid", 400);
+                                break;
+                        }
+                    } else {
+                        switch (true) {
+                            case is_resource($attachment->data):
+                            case is_string($attachment->data) &&
+                                (
+                                    filter_var(substr($attachment->data, 0, 10), FILTER_VALIDATE_URL) ||
+                                    is_file($attachment->data)
+                                ):
+                                file_put_contents($attachmentFileName, file_get_contents($attachment->data));
+                                break;
+                            case is_string($attachment->data):
+                                file_put_contents($attachmentFileName, $attachment->data);
+                                break;
+                            default:
+                                throw new \core\Exception\BadRequestException("Data attachment format is not valid", 400);
+                                break;
+                        }
                     }
+                } elseif (is_array($attachment)) {
+                    $attachmentFileName = $messageDirectory . DIRECTORY_SEPARATOR . $attachment['name'];
+                    file_put_contents($attachmentFileName, stream_get_contents($attachment['handler']));
                 }
 
                 $this->attachments[] = $attachmentFileName;
