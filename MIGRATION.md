@@ -1,8 +1,8 @@
 # Migration 2.8.5
 
-## Modification dans le ficheir vhost :
+## Modification dans le fichier vhost :
 ### Ajout
-Dans la directive [LAABS_CONTENT_TYPES], ajout du content-type multipart/form-data.
+Dans la directive [LAABS_CONTENT_TYPES], ajout du content-type "multipart/form-data".
 
 Avant : 
 ```
