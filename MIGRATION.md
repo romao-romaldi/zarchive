@@ -1,3 +1,24 @@
+# Migration 2.8.5
+
+## Modification dans le fichier vhost :
+### Ajout
+Dans la directive [LAABS_CONTENT_TYPES], ajout du content-type "multipart/form-data".
+
+Avant : 
+```
+SetEnv LAABS_CONTENT_TYPES "url:application/x-www-form-urlencoded;html:text/html,application/xhtml+xml;xml:application/xml;json:application/json,application/javascript;soap:application/soap+xml;csv:text/csv"  
+```    
+
+Après :  
+```  
+SetEnv LAABS_CONTENT_TYPES "url:application/x-www-form-urlencoded,multipart/form-data;html:text/html,application/xhtml+xml;xml:application/xml;json:application/json,application/javascript;soap:application/soap+xml;csv:text/csv"  
+```
+
+Adapter également les directives suviantes dans le php.ini du serveur : 
+**upload_max_filesize**  
+**post_max_size**  
+  
+
 # Migration 2.8.2
 
 ## Modification dans la configuration :

@@ -58,20 +58,6 @@
         $('.fileBrowser').val('');
     })
 
-
-    // Add
-    $('.fileBrowser').on('change', function() {
-        $(this).data('readers', []);
-
-        for (var i = 0; i < $(this).get(0).files.length; i++) {
-            file = $(this).get(0).files[i];
-            var oFileReader = new FileReader();
-            oFileReader.readAsDataURL(file);
-
-            $(this).data('readers').push(oFileReader);
-        }
-    });
-
     $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();
     });
