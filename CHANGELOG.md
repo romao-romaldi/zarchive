@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## Version 2.9
+- `Fixed` Le format de l'identifiant d'un utilisateur est moins restrictif. L'identifiant peut commencer par un caractère alphabétique, numérique ou par un symbole (tiret, arobase etc) .
 - `Added` Possibilité d'effectuer un contrôle d'exhaustivité sur le fonds d'archives depuis le planificateur de tâches.
 - `Added` Possibilité de gérer son propre référentiel de formats.
 - `Changed` La liste des formats est basée sur le Référentiel Général d'Interopérabilité (RGI).
