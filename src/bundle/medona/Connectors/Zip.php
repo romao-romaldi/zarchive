@@ -51,6 +51,9 @@ class Zip
         } elseif (is_array($package)) {
             $data = $package['handler'];
             $encoding = null;
+        } else if (is_string($package)) {
+            $data = $package;
+            $encoding = null;
         }
 
 
