@@ -136,7 +136,7 @@ var zipContent = "";
                     e.preventDefault();
                     e.stopPropagation();
                     $('#packageDropZone').css('opacity', '0.5');
-                    selectPackageFile();
+                    selectPackageFile(e.originalEvent.dataTransfer);
                 }
             }
         }
@@ -179,9 +179,12 @@ var zipContent = "";
         return false;
     }
     
-    function selectPackageFile()
+    function selectPackageFile(source)
     {
-        let file = $('#packagefileBrowser').get(0).files[0];
+        if (!source) {
+            source = $('#packagefileBrowser').get(0);
+        }
+        let file = source.files[0];
 
         $('#packageFileName').html(file.name);
         $('#packageFileSize').html(file.size + ' ' + $('#byte_text').html());
