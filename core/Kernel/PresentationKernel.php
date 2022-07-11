@@ -154,8 +154,7 @@ class PresentationKernel
             if (!is_null($this->request->body)) {
                 switch ($this->request->contentType) {
                     case 'url':
-                        $contents = stream_get_contents($this->request->body);
-                        $bodyArguments = \core\Encoding\url::decode($contents);
+                        $bodyArguments = $this->request->body;
                         break;
 
                     case 'json':

@@ -27,19 +27,6 @@ class Zip
     protected $messageDirectory;
 
     /**
-     *
-     *
-     * @param string $messageDirectory [description]
-     */
-    public function __construct($messageDirectory)
-    {
-        $this->messageDirectory = \laabs::configuration("medona")['messageDirectory'];
-        if (!is_dir($this->messageDirectory)) {
-            mkdir($this->messageDirectory, 0777, true);
-        }
-    }
-
-    /**
      * Get archive transfer transformed by connector
      *
      * @param mixed $package The source of the message
@@ -49,21 +36,29 @@ class Zip
      */
     public function receive($package, $params, $messageDirectory)
     {
-        if (!isset($package->data) || empty($package->data)) {
+        if (is_object($package) && (!isset($package->data) || empty($package->data))) {
             throw new \core\Exception\BadRequestException("Package data is mandatory", 400);
         }
 
-        if (isset($messageDirectory) && !empty($messageDirectory)) {
-            if (!is_dir($messageDirectory)) {
-                throw new \core\Exception\BadRequestException("MessageDirectory is not a directory", 400);
-            }
-            $this->messageDirectory = $messageDirectory;
+        if (!is_dir($messageDirectory)) {
+            throw new \core\Exception\BadRequestException("MessageDirectory is not a directory", 400);
+        }
+        $this->messageDirectory = $messageDirectory;
+
+        if (is_object($package)) {
+            $data = $package->data;
+            $encoding = $package->encoding;
+        } elseif (is_array($package)) {
+            $data = $package['handler'];
+            $encoding = null;
+        } else if (is_string($package)) {
+            $data = $package;
+            $encoding = null;
         }
 
-        $packageName = $package->name ?? (string) \laabs::newId();
 
         $zipTmpFile = \laabs\tempnam();
-        $this->receiveFile($package->data, $zipTmpFile, $package->encoding);
+        $this->receiveFile($data, $zipTmpFile, $encoding);
 
         $tmpDir = \laabs\tempdir();
 
@@ -108,6 +103,9 @@ class Zip
         } else {
             switch (true) {
                 case is_resource($data):
+                    file_put_contents($zipTmpFile, stream_get_contents($data));
+                    break;
+
                 case is_string($data) &&
                     (
                         filter_var(substr($data, 0, 10), FILTER_VALIDATE_URL) ||
