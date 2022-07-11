@@ -50,7 +50,7 @@ class format
         $this->json = $json;
         $this->json->status = true;
         $this->translator = $translator;
-        $this->translator->setCatalog('digitalResource/conversionRule');
+        $this->translator->setCatalog('digitalResource/format');
     }
 
     /**
@@ -62,11 +62,12 @@ class format
     public function index($formats)
     {
         $this->view->addContentFile("digitalResource/format/index.html");
-        $description =  \laabs::newController("digitalResource/format")->formatDescription();
-        $this->view->setSource("description", $description);
         $this->view->setSource("formats", $formats);
         $dataTable = $this->view->getElementsByClass("dataTable")->item(0)->plugin['dataTable'];
         $dataTable->setPaginationType("full_numbers");
+
+        $dataTable->setUnsortableColumns(4);
+        $dataTable->setUnsearchableColumns(4);
 
         $this->view->translate();
         $this->view->merge();
@@ -95,5 +96,57 @@ class format
         $fileInformation->status = true;
 
         return json_encode($fileInformation);
+    }
+
+    /**
+     * The create response
+     *
+     * @return string The JSON result with with a status and message parameters
+     */
+    public function create()
+    {
+        $this->json->message = "Format created";
+        $this->json->message = $this->translator->getText($this->json->message);
+
+        return $this->json->save();
+    }
+
+    /**
+     * Get a format
+     * @param digitalResource/format $format The format object
+     *
+     * @return string The JSON result with a status and the description field parameters
+     */
+    public function edit($format)
+    {
+        $this->json->format = $format;
+
+        return $this->json->save();
+    }
+
+    /**
+     * The update response
+     *
+     * @return string The JSON result with a status and message parameters
+     */
+    public function update()
+    {
+        $this->json->message = "Format updated";
+        $this->json->message = $this->translator->getText($this->json->message);
+
+        return $this->json->save();
+    }
+
+    /**
+     * The delete response
+     *
+     * @return string The JSON result with a status and message parameters
+     */
+    public function delete()
+    {
+        $this->json->message = "Format deleted";
+        $this->json->message = $this->translator->getText($this->json->message);
+
+        return $this->json->save();
     }
 }

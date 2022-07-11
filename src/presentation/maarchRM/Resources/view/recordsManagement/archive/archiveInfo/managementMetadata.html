@@ -20,6 +20,16 @@
                 <td><strong>Archive name</strong></td>
                 <td><?merge archive.archiveName ?></td>
             </tr>
+            <?merge archive.archiveName.bool() ?>
+            <tr>
+                <td><strong>Archive name</strong></td>
+                <td><?merge archive.archiveName ?></td>
+            </tr>
+            <?merge archive.filePlanPosition.bool() ?>
+            <tr>
+                <td><strong>Fileplan position</strong></td>
+                <td><?merge archive.filePlanPosition ?></td>
+            </tr>
             <?merge archive.archivalAgreementReference.bool() ?>
             <tr>
                 <td><strong>Archival agreement</strong></td>

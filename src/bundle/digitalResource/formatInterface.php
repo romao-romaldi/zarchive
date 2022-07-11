@@ -25,31 +25,43 @@ namespace bundle\digitalResource;
 interface formatInterface
 {
     /**
-     * List repositories for administration
+     * List formats
      *
-     * @action digitalResource/format/index
+     * @action digitalResource/format/list
      */
     public function readList();
 
     /**
-     * Get the list of type
+     * Get format by puid
+     * @param string $puid The puid of the format
      *
-     * @action digitalResource/format/find
+     * @action digitalResource/format/getByPuid
      */
-    public function readFind_query_();
+    public function readGetbypuid($puid);
 
     /**
-     * Get the format by puid
-     * @param string $puid The puid
+     * Create a new format
+     * @param digitalResource/format $format The format object
      *
-     * @action digitalResource/format/get
+     * @action digitalResource/format/create
      */
-    public function readGet($puid);
+    public function create($format);
 
     /**
-     * Get the list of type
+     * Update a format
+     * @param string                 $puid   The format puid
+     * @param digitalResource/format $format The format object
      *
-     * @action digitalResource/format/getFileInformation
+     * @action digitalResource/format/update
      */
-    public function createFileformatinformation($contents, $extension);
+    public function update($puid, $format);
+    
+    /**
+     * Delete the format
+     * @param string $puid The puid of the format
+     *
+     * @action digitalResource/format/delete
+     */
+    public function delete($puid);
+
 }

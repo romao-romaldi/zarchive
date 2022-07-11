@@ -311,7 +311,7 @@ class ArchiveTransfer extends abstractMessage implements \bundle\medona\Controll
             $serviceLevel = $serviceLevelController->readDefault();
         }
 
-        $formatController = \laabs::newController("digitalResource/format");
+        $pronomFormatController = \laabs::newController("digitalResource/pronomFormat");
         if ($archivalAgreement) {
             $allowedFormats = \laabs\explode(' ', $archivalAgreement->allowedFormats);
         } else {
@@ -341,7 +341,7 @@ class ArchiveTransfer extends abstractMessage implements \bundle\medona\Controll
             $fileInfo = new \stdClass();
 
             if (strpos($serviceLevel->control, 'formatDetection') !== false) {
-                $format = $formatController->identifyFormat($filepath);
+                $format = $pronomFormatController->identifyFormat($filepath);
                 if (!$format) {
                     $this->sendError(
                         "205",
@@ -363,7 +363,7 @@ class ArchiveTransfer extends abstractMessage implements \bundle\medona\Controll
 
             // Validate format
             if (strpos($serviceLevel->control, 'formatValidation') !== false) {
-                $validation = $formatController->validateFormat($filepath);
+                $validation = $pronomFormatController->validateFormat($filepath);
                 if (!$validation !== true && is_array($validation)) {
                     $this->sendError(
                         "307",

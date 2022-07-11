@@ -144,4 +144,28 @@ trait archiveDeliveryTrait
 
         return $this->view->saveHtml();
     }
+
+    /**
+     * Serializer JSON for derogationDeliveryRequest method
+     *
+     * @return type
+     */
+    public function derogationDeliveryRequest()
+    {
+        $this->json->message = $this->translator->getText("Message sent to derogation");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for rejectArchiveTransfer method
+     *
+     * @return type
+     */
+    public function rejectDeliveryRequest()
+    {
+        $this->json->message = $this->translator->getText("Message rejected");
+
+        return $this->json->save();
+    }
 }

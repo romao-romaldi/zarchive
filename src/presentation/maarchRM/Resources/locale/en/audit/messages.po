@@ -802,16 +802,16 @@ msgstr "Update conversion rule"
 msgid "digitalResource/conversionRule/delete_conversionRuleId_"
 msgstr "Delete conversion rule"
 
-msgid "digitalResource/format/readList"
+msgid "digitalResource/pronomFormat/readList"
 msgstr "Read all formats"
 
-msgid "digitalResource/format/readFind_query_"
+msgid "digitalResource/pronomFormat/readFind_query_"
 msgstr "Search formats"
 
-msgid "digitalResource/format/readGet"
+msgid "digitalResource/pronomFormat/readGet"
 msgstr "Read format according to PuID"
 
-msgid "digitalResource/format/createFileformatinformation"
+msgid "digitalResource/pronomFormat/createFileformatinformation"
 msgstr "Informations on document's format"
 
 msgid "digitalResource/repository/readList"

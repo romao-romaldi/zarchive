@@ -159,7 +159,8 @@ INSERT INTO "batchProcessing"."scheduling" ("schedulingId","name","taskId","freq
 ('integrity', 'Intégrité', '03', '00;01;;;;4;H;00;20', NULL, 'System', '2019-03-14 17:17:41.825506', '2019-03-14 21:17:41.825513', 'scheduled'),
 ('processdestruction', 'Traiter les destructions', '04', '00;04;;;;;;;', NULL, 'System', NULL, NULL, 'paused'),
 ('purge', 'Purge', '05', '00;08;;;;;;;', NULL, 'System', NULL, NULL, 'paused'),
-('extractionAndIndexation', 'Extraction et Indexation plein texte', '13', '30;01;;;;;;;', NULL, 'System', NULL, '2021-06-02 10:12:42', 'paused')
+('extractionAndIndexation', 'Extraction et Indexation plein texte', '13', '30;01;;;;;;;', NULL, 'System', NULL, '2021-06-02 10:12:42', 'paused'),
+('completeness', 'Exhaustivité', '14', '00;08;;;;;;;', '30 3600', 'System', NULL, NULL, 'paused')
 ;
 
 INSERT INTO "contact"."communicationMean" ("code","name","enabled") VALUES
@@ -227,8 +228,8 @@ INSERT INTO "lifeCycle"."eventFormat" ("type","format","message","notification")
 ('recordsManagement/resourceDestruction', 'resId hashAlgorithm hash address originatorOrgRegNumber archiverOrgRegNumber originatorArchiveId', 'Destruction de la ressource %9$s', false),
 ('recordsManagement/restitution', 'resId hashAlgorithm hash address originatorOrgRegNumber archiverOrgRegNumber size originatorArchiveId', 'Restitution de l''archive %6$s', false),
 ('recordsManagement/retentionRuleModification', 'resId hashAlgorithm hash address retentionStartDate retentionDuration finalDisposition previousStartDate previousDuration previousFinalDisposition originatorOrgRegNumber archiverOrgRegNumber originatorArchiveId', 'Modification de la règle de conservation de l''archive %6$s', false),
-('recordsManagement/unfreeze', 'resId hashAlgorithm hash address originatorOrgRegNumber archiverOrgRegNumber originatorArchiveId', 'Dégel de l''archive %6$s', false)
-;
+('recordsManagement/unfreeze', 'resId hashAlgorithm hash address originatorOrgRegNumber archiverOrgRegNumber originatorArchiveId', 'Dégel de l''archive %6$s', false),
+('recordsManagement/completenessCheck', 'lastCheckedResId lastCheckedResCreated repositoryReference resourcesToCheck checkedResources failed timeout timeoutError', 'Contrôle d''exhaustivité des ressources', false);
 
 INSERT INTO "organization"."orgType" ("code","name") VALUES ('Collectivite', 'Collectivité'),
 ('Direction', 'Direction d''une entreprise ou d''une collectivité'),
@@ -531,3 +532,49 @@ INSERT INTO "recordsManagement"."serviceLevel" ("serviceLevelId","reference","di
 ('ServiceLevel_001', 'serviceLevel_001', 'archives', 'formatDetection formatValidation virusCheck convertOnDeposit', false, 2, 50),
 ('ServiceLevel_002', 'serviceLevel_002', 'archives', NULL, true, 2, 50)
 ;
+
+INSERT INTO "digitalResource".format (puid,name,"version",mimetypes,extensions,status) VALUES
+('fmt/276','Acrobat PDF 1.7 - Portable Document Format','1.7','application/pdf','pdf',2),
+('fmt/18','Acrobat PDF 1.4 - Portable Document Format','1.4','application/pdf','pdf',2),
+('fmt/19','Acrobat PDF 1.5 - Portable Document Format','1.5','application/pdf','pdf',2),
+('fmt/20','Acrobat PDF 1.6 - Portable Document Format','1.6','application/pdf','pdf',2),
+('fmt/95','Acrobat PDF/A - Portable Document Format','1a','application/pdf','pdf',2),
+('fmt/354','Acrobat PDF/A - Portable Document Format','1b','application/pdf','pdf',2),
+('fmt/476','Acrobat PDF/A - Portable Document Format','2a','application/pdf','pdf',0),
+('fmt/477','Acrobat PDF/A - Portable Document Format','2b','application/pdf','pdf',0),
+('fmt/478','Acrobat PDF/A - Portable Document Format','2u','application/pdf','pdf',0),
+('fmt/479','Acrobat PDF/A - Portable Document Format','3a','application/pdf','pdf',4),
+('fmt/480','Acrobat PDF/A - Portable Document Format','3b','application/pdf','pdf',4),
+('fmt/481','Acrobat PDF/A - Portable Document Format','3u','application/pdf','pdf',4),
+('fmt/136','OpenDocument Text','1.0','application/vnd.oasis.opendocument.text','odt ott',2),
+('fmt/290','OpenDocument Text','1.1','application/vnd.oasis.opendocument.text','odt ott',2),
+('fmt/291','OpenDocument Text','1.2','application/vnd.oasis.opendocument.text','odt ott',2),
+('fmt/137','OpenDocument Spreadsheet','1.0','application/vnd.oasis.opendocument.spreadsheet','ods ots',2),
+('fmt/294','OpenDocument Spreadsheet','1.1','application/vnd.oasis.opendocument.spreadsheet','ods ots',2),
+('fmt/295','OpenDocument Spreadsheet','1.2','application/vnd.oasis.opendocument.spreadsheet','ods ots',2),
+('fmt/138','OpenDocument Presentation','1.0','application/vnd.oasis.opendocument.presentation','odp otp',2),
+('fmt/292','OpenDocument Presentation','1.1','application/vnd.oasis.opendocument.presentation','odp otp',2),
+('fmt/293','OpenDocument Presentation','1.2','application/vnd.oasis.opendocument.presentation','odp otp',2),
+('fmt/412','Microsoft Word for Windows','2007 onwards','application/vnd.openxmlformats-officedocument.wordprocessingml.document','docx wbk',1),
+('fmt/214','Microsoft Excel for Windows','2007 onwards','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','xlsx',1),
+('fmt/629','Microsoft PowerPoint Show','2007','application/vnd.openxmlformats-officedocument.presentationml.slideshow','ppsx',1),
+('x-fmt/111','Plain Text File','','text/plain','txt',3),
+('fmt/483','ePub format','','application/epub+zip','epub',1),
+('fmt/101','Extensible Markup Language','1.0','application/xml text/xml','xml',2),
+('x-fmt/263','ZIP Format','','application/zip','zip',2),
+('fmt/484','7Zip format','',NULL,'7z',2),
+('fmt/353','Tagged Image File Format','','image/tiff','tif tiff',2),
+('x-fmt/387','Exchangeable Image File Format (Uncompressed)','2.2','image/tiff','tif tiff',2),
+('x-fmt/388','Exchangeable Image File Format (Uncompressed)','2.1','image/tiff','tif tiff',2),
+('x-fmt/399','Exchangeable Image File Format (Uncompressed)','2.0','image/tiff','tif tiff',2),
+('fmt/11','Portable Network Graphics','1.0','image/png','png',2),
+('fmt/12','Portable Network Graphics','1.1','image/png','png',2),
+('fmt/13','Portable Network Graphics','1.2','image/png','png',2),
+('x-fmt/392','JP2 (JPEG 2000 part 1)','','image/jp2','jp2',4),
+('fmt/151','JPX (JPEG 2000 part 2)','','image/jpx','jpf jpx',4),
+('fmt/463','JPM (JPEG 2000 part 6)','','image/jpm','jpm',4),
+('fmt/42','JPEG File Interchange Format','1.00','image/jpeg','jpe jpeg jpg',2),
+('fmt/43','JPEG File Interchange Format','1.01','image/jpeg','jpe jpeg jpg',2),
+('fmt/44','JPEG File Interchange Format','1.02','image/jpeg','jpe jpeg jpg',2),
+('fmt/278','Internet Message Format','','message/rfc822','eml',0),
+('fmt/950','MIME Email','1.0','message/rfc822','eml',0);

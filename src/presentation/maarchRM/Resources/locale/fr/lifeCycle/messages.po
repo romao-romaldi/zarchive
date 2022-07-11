@@ -185,6 +185,34 @@ msgid "resId"
 msgstr "Identifiant de la ressource"
 msgctxt "eventInfo"
 
+msgid "lastCheckedResId"
+msgstr "Identifiant de la dernière ressource vérifiée"
+msgctxt "eventInfo"
+
+msgid "lastCheckedResCreated"
+msgstr "Date de création de la dernière ressource vérifiée"
+msgctxt "eventInfo"
+
+msgid "resourcesToCheck"
+msgstr "Nombre de ressources à vérifier"
+msgctxt "eventInfo"
+
+msgid "checkedResources"
+msgstr "Nombre de ressources vérifiées"
+msgctxt "eventInfo"
+
+msgid "failed"
+msgstr "Nombre de ressources échouées"
+msgctxt "eventInfo"
+
+msgid "timeout"
+msgstr "Délai maximal de contrôle (en secondes)"
+msgctxt "eventInfo"
+
+msgid "timeoutError"
+msgstr "Erreur de délai"
+msgctxt "eventInfo"
+
 msgid "type"
 msgstr "Type"
 msgctxt "eventInfo"
@@ -435,6 +463,9 @@ msgstr "Aucune organisation ou service correspondant"
 # ---------------------------------------------------------
 # Event types
 # ---------------------------------------------------------
+
+msgid "recordsManagement/completenessCheck"
+msgstr "Contrôle d'exhaustivité"
 
 msgid "digitalResource/integrityCheck"
 msgstr "Contrôle d'intégrité du support de stockage"

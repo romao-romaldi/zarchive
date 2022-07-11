@@ -53,6 +53,12 @@ msgstr "Le type support de stockage est vide"
 msgid "Repository Uri is empty"
 msgstr "L'URI du support de stockage est vide"
 
+msgid "No error found on the address."
+msgstr "Aucune erreur détectée pour cette adresse."
+
+msgid "The address is still flawed."
+msgstr "Cette adresse est toujours invalide."
+
 msgid "Reference"
 msgstr "Référence"
 

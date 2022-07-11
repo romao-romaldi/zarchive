@@ -31,7 +31,6 @@ class newUserAccount
 {
     /**
      * @var string
-     * @pattern #^[A-Za-z][A-Za-z0-9_.@-]*$#
      * @notempty
      */
     public $accountName;

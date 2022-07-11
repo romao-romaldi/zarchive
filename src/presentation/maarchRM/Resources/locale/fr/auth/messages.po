@@ -332,6 +332,26 @@ msgstr "Initier les transferts sortants"
 msgctxt "userStory"
 
 # ---------------------------------------------------------
+# Transfer Request 
+# ---------------------------------------------------------
+
+msgid "transferRequestImport"
+msgstr "Importer un bordereau de demande"
+msgctxt "userStory"
+
+msgid "transferRequestHistory"
+msgstr "Historique des demandes de versement"
+msgctxt "userStory"
+
+msgid "processTransferRequest"
+msgstr "Traiter les demandes de versement"
+msgctxt "userStory"
+
+msgid "transferRequestSend"
+msgstr "Demandes en attente de traitement"
+msgctxt "userStory"
+
+# ---------------------------------------------------------
 # Search/retrieve
 # ---------------------------------------------------------
 

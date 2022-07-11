@@ -56,6 +56,15 @@ msgstr "Transferts à traiter"
 msgid "Transfer outgoing list"
 msgstr "Transferts en attente de traitement"
 
+msgid "Transfer request incoming list"
+msgstr "Demandes de transfert à traiter"
+
+msgid "Transfer request outgoing list"
+msgstr "Demandes de transfert en attente de traitement"
+
+msgid "Transfer request history"
+msgstr "Historique des demandes de transfert"
+
 msgid "Delivery incoming list"
 msgstr "Demandes de communication"
 

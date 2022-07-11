@@ -31,6 +31,7 @@ class format
      * The UK National Archives PRONOM format identifier
      *
      * @var string
+     * @notempty
      */
     public $puid;
 
@@ -51,22 +52,21 @@ class format
     /**
      * The mime type(s)
      *
-     * @var array
+     * @var tokenlist
      */
     public $mimetypes;
 
     /**
      * The extension(s)
      *
-     * @var array
+     * @var tokenlist
      */
     public $extensions;
 
     /**
-     * The mediatype
+     * The status of the format
      *
-     * @var string
-     * @enumeration [message, text, audio, video, image, application, multipart, model]
+     * @var integer
      */
-    public $mediatype;
+    public $status;
 }
