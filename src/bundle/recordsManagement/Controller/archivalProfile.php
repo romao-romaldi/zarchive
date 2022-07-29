@@ -619,4 +619,14 @@ class archivalProfile
             
         return $archivalProfile->archivalProfileId;
     }
+
+    /**
+     * Get identifiers of used archival profiles
+     * 
+     * @return recordsManagement/archivalProfile[] Array of archival profiles
+     */
+    public function getUsedArchivalProfileIds() {
+        var_dump($this->sdoFactory->summarise("organization/archivalProfileAccess","archivalProfileReference"));
+        return;
+    }
 }

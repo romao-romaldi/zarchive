@@ -71,6 +71,7 @@ class archivalProfile
         $this->view->translate();
 
         $this->view->setSource("profile", $archivalProfiles);
+        var_dump($archivalProfiles);
         $this->view->merge();
 
         return $this->view->saveHtml();

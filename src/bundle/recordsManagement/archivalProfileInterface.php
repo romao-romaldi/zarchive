@@ -129,4 +129,11 @@ interface archivalProfileInterface
      */
     public function readArchivalprofileExport_profileReference_();
 
+    /**
+     * Get used archival profiles
+     *
+     * @action recordsManagement/archivalProfile/getUsedArchivalProfileIds
+     */
+    public function readUsedArchivalProfileIds();
+
 }
