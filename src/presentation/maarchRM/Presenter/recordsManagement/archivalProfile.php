@@ -61,7 +61,6 @@ class archivalProfile
     public function index()
     {
         $archivalProfiles = \laabs::callService('recordsManagement/archivalProfile/readIndex');
-        $usedArchivalProfilesReference = \laabs::callService('recordsManagement/archivalProfile/readUsedArchivalProfiles');
 
         $this->view->addContentFile('recordsManagement/archivalProfile/index.html');
 
@@ -70,12 +69,6 @@ class archivalProfile
         $dataTable->setUnsortableColumns(3);
 
         $this->view->translate();
-
-        foreach($archivalProfiles as $key => $archivalProfile) {
-            if (in_array($archivalProfile->reference, $usedArchivalProfilesReference)) {
-                $archivalProfile->used = true;
-            }
-        }
         $this->view->setSource("profile", $archivalProfiles);
         $this->view->merge();
 

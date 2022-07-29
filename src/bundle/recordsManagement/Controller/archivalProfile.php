@@ -359,14 +359,27 @@ class archivalProfile
      */
     public function isUsed($archivalProfile)
     {
+        $archivalProfileReference = $archivalProfile->reference;
         $archivalAgreementController = \laabs::newController('medona/archivalAgreement');
         $archivalAgreement = $archivalAgreementController->getByProfileReference($archivalProfile->reference);
-
         if (!empty($archivalAgreement)) {
-            return false;
+            return true;
         }
 
-        return (bool) $this->sdoFactory->count('recordsManagement/archive', "archivalProfileReference = '$archivalProfile->reference'");
+        $archivalProfileAccessController = \laabs::newController('organization/organization');
+        $archivalProfileAccess = $archivalProfileAccessController->getArchivalProfileAccess(null,$archivalProfileReference);
+        if (!empty($archivalProfileAccess)) {
+            return true;
+        }
+
+        if((bool) $this->sdoFactory->count('recordsManagement/archivalProfileContents', "containedProfileId = '$archivalProfile->archivalProfileId'")) {
+            return true;
+        }                
+
+        if((bool) $this->sdoFactory->count('recordsManagement/archive', "archivalProfileReference = '$archivalProfileReference'")) {
+            return true;
+        }
+        return false; 
     }
 
     /**
@@ -618,21 +631,5 @@ class archivalProfile
         }
             
         return $archivalProfile->archivalProfileId;
-    }
-
-    /**
-     * Get identifiers of used archival profiles
-     * 
-     * @return recordsManagement/archivalProfile[] Array of archival profiles
-     */
-    public function getUsedArchivalProfilesReference() {
-        $usedArchivalProfilesReference = [];
-        $archivalProfileUses = $this->sdoFactory->summarise("organization/archivalProfileAccess","archivalProfileReference");
-        foreach($archivalProfileUses as $archivalProfileReference => $uses) {
-            if (($uses > 0) && ($archivalProfileReference!='*')) {
-                $usedArchivalProfilesReference[] = $archivalProfileReference;
-            }
-        }
-        return $usedArchivalProfilesReference;
     }
 }
