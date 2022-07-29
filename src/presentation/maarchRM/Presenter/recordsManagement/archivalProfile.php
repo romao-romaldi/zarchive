@@ -69,7 +69,6 @@ class archivalProfile
         $dataTable->setUnsortableColumns(3);
 
         $this->view->translate();
-
         $this->view->setSource("profile", $archivalProfiles);
         $this->view->merge();
 
