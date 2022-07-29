@@ -625,8 +625,14 @@ class archivalProfile
      * 
      * @return recordsManagement/archivalProfile[] Array of archival profiles
      */
-    public function getUsedArchivalProfileIds() {
-        var_dump($this->sdoFactory->summarise("organization/archivalProfileAccess","archivalProfileReference"));
-        return;
+    public function getUsedArchivalProfilesReference() {
+        $usedArchivalProfilesReference = [];
+        $archivalProfileUses = $this->sdoFactory->summarise("organization/archivalProfileAccess","archivalProfileReference");
+        foreach($archivalProfileUses as $archivalProfileReference => $uses) {
+            if (($uses > 0) && ($archivalProfileReference!='*')) {
+                $usedArchivalProfilesReference[] = $archivalProfileReference;
+            }
+        }
+        return $usedArchivalProfilesReference;
     }
 }

@@ -132,8 +132,8 @@ interface archivalProfileInterface
     /**
      * Get used archival profiles
      *
-     * @action recordsManagement/archivalProfile/getUsedArchivalProfileIds
+     * @action recordsManagement/archivalProfile/getUsedArchivalProfilesReference
      */
-    public function readUsedArchivalProfileIds();
+    public function readUsedArchivalProfiles();
 
 }
