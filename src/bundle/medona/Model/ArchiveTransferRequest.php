@@ -1,7 +1,7 @@
 <?php
 namespace bundle\medona\Model;
 /**
- * The archive transfer message
+ * The archive transfer request message
  * 
  * @package Medona
  * @author  Alexandre MORIN (Maarch) <alexandre.morin@maarch.org>
@@ -23,7 +23,7 @@ class ArchiveTransferRequest
      * @var date
      * @xpath medona:TransfertDate
      */
-    public $transfertDate;   
+    public $transfertDate;
     
     /**
      * @var medona/Organization

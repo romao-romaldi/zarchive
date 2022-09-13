@@ -9,11 +9,9 @@ file that was distributed with this source code.
     <div class="container-fluid" data-translate-catalog="digitalResource/format">
         <div class="page-header">
             <h1>
-                <i class="fa fa-files-o"></i>
-                Format list
+                <i class="fa fa-cubes"></i>
+                Formats
             </h1>
-                Version PRONOM :  <?merge description[0] ?> |
-                Date :   <?merge description[1] ?>
         </div>
     </div>
     <div class="container-fluid" data-translate-catalog="digitalResource/format">
@@ -22,104 +20,199 @@ file that was distributed with this source code.
                 <div class="panel panel-primary">
                     <div class="panel-heading clearfix">
                         <div class="pull-left">
-                            <h4><?merge formats.count() ?> format(s)</h4>
-
+                            <h4><span id='tableItemNumber'><?merge formats.count() ?></span> format(s)</h4>
                         </div>
                     </div>
                     <div class="panel-body" style="padding: 0;">
-                        <table class="table dataTable table-hover" >
+                        <table class="table dataTable" id="format_tableList">
                             <thead>
                                 <tr>
                                     <th>Puid</th>
                                     <th>Name</th>
                                     <th>Version</th>
-                                    <th class="hidden"></th>
-                                    <th class="hidden"></th>
-                                    <th class="hidden"></th>
+                                    <th>Status</th>
+                                    <th style="min-width:100px"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?merge formats ?>
-                                <tr data-format="">
+                                <tr>
                                     <td name="puid"><?merge .puid ?></td>
                                     <td name="name"><?merge .name ?></td>
                                     <td name="version"><?merge .version ?></td>
-                                    <td class="hidden" name="mediatype"><?merge .mediatype ?></td>
-                                    <td class="hidden" name="mimetype"><?merge .mimetype.implode(', ') ?></td>
-                                    <td class="hidden" name="extension"><?merge .extension.implode(', ') ?></td>
+                                    <td name="status">
+                                        <?merge .status.ifeq(0) ?><span>Without recommendation</span>
+                                        <?merge .status.ifeq(1) ?><span>Under observation</span>
+                                        <?merge .status.ifeq(2) ?><span>Recommended</span>
+                                        <?merge .status.ifeq(3) ?><span>Deprecated</span>
+                                        <?merge .status.ifeq(4) ?><span>Not sustainable</span>
+                                    </td>
+                                    <td class="action_btn">
+                                        <div class="btn-group pull-right">
+                                            <button type="button" data-formatPuid="[?merge .puid ?]" class="editFormat btn btn-warning" title="Edit">
+                                                <span class="fa fa-fw fa-edit"></span>
+                                            </button>
+                                            <button type="button" data-formatPuid="[?merge .puid ?]" class="deleteFormat btn btn-danger" title="Delete">
+                                                <span class="fa fa-fw fa-trash"></span>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <div class="col-md-5 col-sm-12">
-                <div class="well ">
-                    <h3>Format information</h3>
-                    <table class="table table-striped">
-                        <tbody>
-                            <tr>
-                                <td class="col-sm-3"><b>Puid</b></td>
-                                <td id="puid"></td>
-                            </tr>
-                            <tr>
-                                <td><b>Name</b></td>
-                                <td id="name"></td>
-                            </tr>
-                            <tr>
-                                <td ><b>Version</b></td>
-                                <td id="version"></td>
-                            </tr>
-                            <tr>
-                                <td ><b>Mimetype</b></td>
-                                <td id="mimetype"></td>
-                            </tr>
-                            <tr>
-                                <td><b>Extension</b></td>
-                                <td id="extension"></td>
-                            </tr>
-                            <tr>
-                                <td><b>Media</b></td>
-                                <td><i id="icon" class=""></i>&nbsp;<span id="mediatype"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    <h3 id="format_create">Format creation</h3>
+                    <h3 id="format_modify" class="hide">Update format</h3>
                 </div>
-                <input type="file" id="inputFormatFile" class="hide">
-                <br/>
-                <div id="formatFileDropZone">
-                    <i class="fa fa-file-text fileIcon">&nbsp;</i>
-                    <h4>Click or drop a file<h4>
-                </div>
-
-                <div id="formatFileInfo" class="hide col-md-8 col-md-offset-2">
-                    <br/>
-                    <table>
-                        <tr>
-                            <td><i class="fa fa-file-text fileIcon">&nbsp;</i></td>
-                            <td>
-                                <dl class="dl-horizontal">
-                                    <dt>File name</dt>
-                                    <dd id="formatFile_fileName"></dd>
-
-                                    <dt>Size</dt>
-                                    <dd id="formatFile_fileSize"></dd>
-                                </dl>
-                            </td>
-                        </tr>
-                    </table>
-                    <br/>
-                    <div class="row">
-                        <div class="pull-right ">
-                            <button class="btn btn-warning" id="formatFileCancel" title="Cancel"><i class='fa fa-times'>&nbsp;</i> Cancel</button>
-                            <button class="btn btn-success" id="fileCheckFormat_submit" title="Import"><i class='fa fa-level-down'>&nbsp;</i>Check format</button>
+                <div class="col-md-12" id="format_formContent">
+                    <form class="form-horizontal">
+                        <div class="form-group" id="fieldPuid">
+                            <label class="col-md-2 control-label">Puid<span style="color:red">&nbsp;*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="fieldPuid" placeholder="Puid" id="puidTypeahead" />
+                            </div>
                         </div>
+                        <div class="form-group" id="fieldName">
+                            <label class="col-md-2 control-label">Name<span style="color:red">&nbsp;*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="fieldName" placeholder="Name"/>
+                            </div>
+                        </div>
+                        <div class="form-group" id="fieldVersion">
+                            <label class="col-md-2 control-label">Version</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="fieldVersion" placeholder="Version"/>
+                            </div>
+                        </div>
+                        <!-- MIMEMTYPES -->
+                        <div class="form-group" id="mimetypeEnumForm">
+                            <label class="col-md-2 control-label">Mimetypes</label>
+                            <div class="col-md-8">
+                                <div class="input-group" style="border-radius: 4px 0 0 4px;">
+                                    <input type='text' id="inputAddMimetype" class="form-control col-md-6" name="mimetypeEnumField" placeholder="Identifier" style="border-radius: 4px 0 0 4px;" />
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-success" id="btnAddMimetypeField"><span class="fa fa-plus"></span></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="col-md-offset-2 col-md-8" id="mimetypeEnumList">
+                            </ul>
+                        </div>
+                        <!-- EXTENSIONS -->
+                        <div class="form-group" id="extensionEnumForm">
+                            <label class="col-md-2 control-label">Extensions</label>
+                            <div class="col-md-8">
+                                <div class="input-group" style="border-radius: 4px 0 0 4px;">
+                                    <input type='text' id="inputAddExtension" class="form-control col-md-6" name="extensionEnumField" placeholder="Identifier" style="border-radius: 4px 0 0 4px;" />
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-success" id="btnAddExtensionField"><span class="fa fa-plus"></span></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="col-md-offset-2 col-md-8" id="extensionEnumList">
+                            </ul>
+                        </div>
+                        <!-- FIN EXTENSIONS -->
+                        <div class="form-group" id="statusValue">
+                            <label class="col-md-2 control-label">Format status</label>
+                            <div class="col-md-8">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="withoutRecommendations" value="0" checked>Without recommendation
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="underObservation" value="1">Under observation
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="recommended" value="2">Recommended
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="deprecated" value="3">Deprecated
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="statusInput" id="notSustainable" value="4">Not sustainable
+                                    </label>
+                                </div>
+                            </div>    
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-10">
+                    <div class="pull-right" id="format_formBtn">
+                        <button type="button" class="btn btn-default" id="format_formCancelBtn">Cancel</button>
+                        <button type="button" class="btn btn-success" id="format_formSaveBtn">Save</button>
+                        <button type="button" class="btn btn-warning hide" id="format_formModifyBtn">Modify</button>
                     </div>
-                    <span class="hide" id="byte_text">byte</span>
-                    <span class="hide" id="checkFormat_text">Check format</span>
+                </div>
+                <!-- CHECK FILE FORMAT (DRAG AND DROP) -->
+                <div class="col-md-10">
+                    <input type="file" id="inputFormatFile" class="hide">
+                    <br/><br/>
+                    <div id="formatFileDropZone">
+                        <i class="fa fa-file-text fileIcon">&nbsp;</i>
+                        <h4>Click or drop a file<h4>
+                    </div>
+
+                    <div id="formatFileInfo" class="hide col-md-8 col-md-offset-2">
+                        <br/>
+                        <table>
+                            <tr>
+                                <td><i class="fa fa-file-text fileIcon">&nbsp;</i></td>
+                                <td>
+                                    <dl class="dl-horizontal">
+                                        <dt>File name</dt>
+                                        <dd id="formatFile_fileName"></dd>
+
+                                        <dt>Size</dt>
+                                        <dd id="formatFile_fileSize"></dd>
+                                    </dl>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <div class="row">
+                            <div class="pull-right ">
+                                <button class="btn btn-warning" id="formatFileCancel" title="Cancel"><i class='fa fa-times'>&nbsp;</i> Cancel</button>
+                                <button class="btn btn-success" id="fileCheckFormat_submit" title="Import"><i class='fa fa-level-down'>&nbsp;</i>Check format</button>
+                            </div>
+                        </div>
+                        <span class="hide" id="byte_text">byte</span>
+                        <span class="hide" id="checkFormat_text">Check format</span>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="hide">
+        <li class="list-group-item" id="extensionEnumTemplate" style="padding: 6px 15px;">
+            <strong class="extensionEnumeration"></strong>
+            <span class="deleteExtensionEnum pull-right" title="Delete"><i class="fa fa-times"></i></span>
+        </li>
+
+        <li class="list-group-item" id="mimetypeEnumTemplate" style="padding: 6px 15px;">
+            <strong class="mimetypeEnumeration"></strong>
+            <span class="deleteMimetypeEnum pull-right" title="Delete"><i class="fa fa-times"></i></span>
+        </li>
+    </div>
+
+    <div class="hide" data-translate-catalog="digitalResource/format">
+        <span id="message_confirmDelete">Are you sure to delete this row ?</span>
+        <span id="message_requiredFields">You must define all required fields</span>
+        <span id="message_incorrectPuid">The puid is invalid</span>
+        <span id="noFormatFound">No format found</span>
     </div>
 </div>
 
@@ -175,6 +268,8 @@ file that was distributed with this source code.
     </div>
 </div>
 
+<script src="/public/js/bootstrap-toggle/bootstrap-toggle.js"></script>
+
 <style>
     #formatFileDropZone {
         border: 2px dashed grey;
@@ -188,7 +283,326 @@ file that was distributed with this source code.
         font-size: 300%;
     }
 </style>
-<script type="application/javascript">
+
+<script type="text/javascript">
+
+    $("#format_formBtn").on('click', "#format_formCancelBtn", function () {
+        $('#format_create').removeClass('hide');
+        $("#format_modify").addClass('hide');
+        clearForm();
+    });
+    $("#format_tableList").on('click', '.editFormat', function () {
+        $('#format_create').addClass('hide');
+        $("#format_modify").removeClass('hide');
+        var formatPuid = $(this).attr("data-formatPuid");
+
+        $.ajax({
+            url: '/format?puid=' + formatPuid,
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                if (response.status) {
+                    clearForm();
+                    $("#format_formModifyBtn").removeClass("hide");
+                    $("#format_formSaveBtn").addClass("hide")
+                    $('#fieldPuid').find('input').val(response.format.puid).attr("disabled",true);
+                    mergeForm(response.format);
+                }
+            },
+            error    : function(response) {
+                gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
+            }
+        });
+    });
+
+    $("#format_tableList").on('click', '.deleteFormat', function () {
+        if (!confirm($("#message_confirmDelete").text())) {
+            return;
+        }
+
+        var formatPuid = $(this).attr("data-formatPuid");
+
+        $.ajax({
+            url: '/format?puid=' + formatPuid,
+            type: 'DELETE',
+            dataType: 'json',
+            success: function (response) {
+                gritter.show(response.message, response.status, response.errors);
+                if (response.status) {
+                    load('/digitalresource/formats');
+                }
+            },
+            error    : function(response) {
+                gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
+            }
+        });
+    });
+
+
+    $("#format_formBtn").on('click', "#format_formSaveBtn", function () {
+        var data = new Object();
+        data.format = serialize();
+
+        if(!data.format.puid) {
+            gritter.show($("#message_incorrectPuid").text(), false);
+            return;
+        }
+
+        if (!checkRequiredFields(data.format)) {
+            gritter.show($("#message_requiredFields").text(), false);
+            return;
+        }
+
+        $.ajax({
+            url: '/format',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (response) {
+                gritter.show(response.message, response.status, response.errors);
+                if (response.status) {
+                    load('/digitalresource/formats');
+                }
+            },
+            error    : function(response) {
+                gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
+            }
+        });
+    });
+
+    $("#format_formBtn").on('click', "#format_formModifyBtn", function () {
+        var data = new Object();
+        data.format = serialize();
+        data.puid = data.format.puid;
+
+        if (!checkRequiredFields(data.format)) {
+            gritter.show($("#message_requiredFields").text(), false);
+            return;
+        }
+
+        $.ajax({
+            url: '/format',
+            type: 'PUT',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (response) {
+                gritter.show(response.message, response.status, response.errors);
+                if (response.status) {
+                    load('/digitalresource/formats');
+                }
+            },
+            error    : function(response) {
+                gritter.show(response.responseJSON.message, response.responseJSON.status, response.responseJSON.errors);
+            }
+        });
+    });
+
+    function clearForm() {
+        $("#format_formContent").find('input[type="text"]').val('');
+
+        $("#fieldPuid").data('puid', '');
+        $('#fieldPuid').find('input').removeAttr("disabled");
+
+        let formGroup = $('#fieldName').closest('.form-group');
+        formGroup.removeClass('has-error');
+        formGroup.removeClass('has-success');
+
+        $('#mimetypeEnumList').empty();
+        $('#extensionEnumList').empty();
+
+        $('input[type=radio][value=0]').prop('checked', true);
+
+        $('#format_formSaveBtn').removeClass('hide');
+        $("#format_formModifyBtn").addClass("hide");
+    }
+
+    function mergeForm(format) {
+        $('#fieldName').find('input').val(format.name);
+        $('#fieldVersion').find('input').val(format.version);
+
+        $.each(format.mimetypes, function (key, value) {
+            $("#inputAddMimetype").val(value);
+            $("#btnAddMimetypeField").click();
+        });
+
+        $.each(format.extensions, function (key, value) {
+            $("#inputAddExtension").val(value);
+            $("#btnAddExtensionField").click();
+        });
+
+        $('input[type=radio][value='+format.status+']').prop('checked', true);
+
+        let formGroup = $('#fieldName').closest('.form-group');
+        formGroup.removeClass('has-error');
+        formGroup.removeClass('has-success');
+    }
+
+    function checkRequiredFields(format) {
+        var requiredFields = ["puid", "name"];
+
+        var error = 0;
+        $.each(requiredFields, function( i, val ) {
+            if (format[val] == null || format[val] == "undefined" || !format[val]) {
+                error++;
+                return;
+            }
+        });
+
+        if (error > 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    function serialize () {
+        if ($('#fieldPuid').data('puid')) {
+            var puid = $('#fieldPuid').data('puid');
+        }
+
+        if ($('#fieldPuid').find('input').val()) {
+            var puid = $('#fieldPuid').find('input').val();
+        }
+
+        var field = {
+            puid            : puid,
+            name            : $('#fieldName').find('input').val(),
+            version         : $('#fieldVersion').find('input').val(),
+            mimetypes       : serializeMimetypes(),
+            extensions      : serializeExtensions(),
+            status          : $('input[type=radio]:checked').val(),
+        };
+        return field;
+    }
+
+    // initialize typeahead
+
+    var formats = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('puid'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+                wildcard: '%QUERY',
+                url: '/digitalResource/format/find?query=%QUERY',
+                rateLimitWait: 500
+            }
+    });
+    // formats.initialize();
+
+    $('#puidTypeahead').typeahead(
+        {
+            hint: true,
+            highlight: true,
+            minLength: 2
+        },
+        {
+            name: 'format',
+            templates: {
+                empty: function () {
+                    return "<span class='well well-sm'>" + $('#noFormatFound').text() + "</span>";
+                },
+                suggestion: function (type) {
+                    var displayName = '[' + type.puid + '] ' + type.name;
+                    if (type.version != undefined) {
+                        displayName += ' ' + type.version;
+                    }
+                    var display = "<span>"
+                            + "<span style='font-family:Helvetica, sans-serif;'>"
+                            + displayName
+                            + "</span></span><br>";
+                    return display;
+                }
+            },
+            display: 'puid',
+            source: formats,
+            limit: 100
+        }
+    ).on('typeahead:selected', function($event, suggestion, source) {
+        $("#fieldPuid").data('puid', suggestion.puid);
+        $('#fieldPuid').find('input').attr("disabled",true);
+        mergeForm(suggestion);
+    });
+
+
+    $("#mimetypeEnumList").on('click', ".deleteMimetypeEnum", function () {
+        $(this).closest(".list-group-item").remove();
+    });
+
+    $("#extensionEnumList").on('click', ".deleteExtensionEnum", function () {
+        $(this).closest(".list-group-item").remove();
+    });
+
+    $("#mimetypeEnumForm").on('click', "#btnAddMimetypeField", function () {
+        if ($("#inputAddMimetype").val() === "" || $("#inputAddMimetype").val() === null || $("#inputAddMimetype").val() === undefined) {
+            return;
+        }
+
+        var template = $("#mimetypeEnumTemplate").clone();
+        template.removeAttr("id");
+        var inputAddMimetype = $("#inputAddMimetype").val()
+
+        template.find(".mimetypeEnumeration")
+                .text(inputAddMimetype)
+                .attr('data-mimetype', inputAddMimetype);
+        $("#mimetypeEnumList").append(template);
+
+        $("#inputAddMimetype").val("");
+    });
+
+    $("#extensionEnumForm").on('click', "#btnAddExtensionField", function () {
+        if ($("#inputAddExtension").val() === "" || $("#inputAddExtension").val() === null || $("#inputAddExtension").val() === undefined) {
+            return;
+        }
+
+        var template = $("#extensionEnumTemplate").clone();
+        template.removeAttr("id");
+        var inputAddExtension = $("#inputAddExtension").val()
+
+        template.find(".extensionEnumeration")
+                .text(inputAddExtension)
+                .attr('data-extension', inputAddExtension);
+        $("#extensionEnumList").append(template);
+
+        $("#inputAddExtension").val("");
+    });
+
+    function serializeMimetypes() {
+        var nbResult = $("#mimetypeEnumList").find(".list-group-item").length;
+        var mimetypes = new Array();
+
+        if (nbResult == 0) {
+            return mimetypes;
+        } else {
+            $.each($("#mimetypeEnumList").find(".mimetypeEnumeration"), function (key, item) {
+                if (item.getAttribute('data-mimetype')) {
+                    mimetypes.push(item.getAttribute('data-mimetype'));
+                }
+            });
+            mimetypes.join(" ");
+        }
+
+        return mimetypes;
+    }
+
+    function serializeExtensions() {
+        var nbResult = $("#extensionEnumList").find(".list-group-item").length;
+        var extensions = new Array();
+
+        if (nbResult == 0) {
+            return extensions;
+        } else {
+            $.each($("#extensionEnumList").find(".extensionEnumeration"), function (key, item) {
+                if (item.getAttribute('data-extension')) {
+                    extensions.push(item.getAttribute('data-extension'));
+                }
+            });
+            extensions.join(" ");
+        }
+
+        return extensions;
+    }
+
     /* ------ MESSAGE FILE ------ */
 
     // Drag & drop
@@ -237,15 +651,11 @@ file that was distributed with this source code.
 
     // Submit
     $('#fileCheckFormat_submit').on('click', function() {
-        var file = serialize();
+        var file = serializeFile();
         $('#fileCheckFormat_submit').prop('disabled', 'true');
         ajax($(this), {
             type        : 'POST',
             url         : '/digitalResource/format/fileformatinformation',
-            /*data        : {
-                    contents  : file.contents,
-                    extension : file.extension
-            },*/
             data : JSON.stringify({'contents'  : file.contents, 'extension' : file.extension}),
             contentType : 'application/json',
             dataType    : 'json',
@@ -269,8 +679,7 @@ file that was distributed with this source code.
         });
     })
 
-
-/* ------ FUNCTION ------ */
+/* ------ FUNCTIONS FOR CHECK FILE FORMAT ------ */
 
     function uploadMessage(file) {
         oFileReader = new FileReader();
@@ -284,7 +693,7 @@ file that was distributed with this source code.
         }
     }
 
-    function serialize() {
+    function serializeFile() {
         var jsonObject = {
             contents : $('#inputFormatFile').data('base64'),
             extension: $('#formatFile_fileName').text().slice(($('#formatFile_fileName').text().lastIndexOf(".") - 1 >>> 0) + 2),
@@ -292,7 +701,6 @@ file that was distributed with this source code.
 
         return jsonObject;
     }
-    /* --------------------------------------- */
 
     // Cancel
     $('[data-hash-copy]').on('click', function() {
@@ -342,4 +750,5 @@ file that was distributed with this source code.
         $("#icon").addClass('fa ' + icon);
 
     });
+
 </script>

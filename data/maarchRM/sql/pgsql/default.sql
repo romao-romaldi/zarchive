@@ -63,4 +63,5 @@ INSERT INTO "lifeCycle"."eventFormat" (type, format, message, notification) VALU
 ('medona/retry', 'type senderOrgRegNumber senderOrgName recipientOrgRegNumber recipientOrgName reference', 'Message %14$s de type %9$s réinitialisé par %13$s (%12$s)', false),
 ('organization/counting', 'orgName ownerOrgId', 'Compter le nombre d''objets numériques dans l''activité %6$s', false),
 ('organization/listing', 'orgName ownerOrgId', 'Lister les identifiants d''objets numériques de l''activité %6$s', false),
-('organization/journal', 'orgName ownerOrgId', 'Lecture du journal de l''organisation %6$s', false);
+('organization/journal', 'orgName ownerOrgId', 'Lecture du journal de l''organisation %6$s', false),
+('recordsManagement/completenessCheck', 'lastCheckedResId lastCheckedResCreated repositoryReference resourcesToCheck checkedResources failed timeout timeoutError', 'Contrôle d''exhaustivité des ressources', false);

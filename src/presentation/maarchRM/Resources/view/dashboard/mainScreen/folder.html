@@ -21,11 +21,9 @@
                     <span class="fa fa-close">&nbsp;</span> Close search
                 </button>
                 <div id="folderToolbarBtn" class="dropdown btn-group">
-                    <button type="button" class="btn btn-success dropdown-toggle pull-right [?merge depositPrivilege.not().then('disabled', '') ?]" id="folderToolbarImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="New archive" disabled>
+                    <button type="button" class="btn btn-success pull-right [?merge depositPrivilege.not().then('disabled', '') ?]" id="folderToolbarImport" title="New archive" disabled>
                         <span class="fa fa-plus">&nbsp;</span> New archive
                     </button>
-                    <ul class="dropdown-menu pull-right">
-                    </ul>
                 </div>
             </div>
         </div>
@@ -62,12 +60,10 @@
             </button>
         </div>
         <?merge depositPrivilege.bool() ?>
-        <div class="pull-right dropdown addChildrenArchive addingNew hide">
-            <button class="btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="pull-right addChildrenArchive addingNew hide">
+            <button class="btn btn-xs btn-default newArchive">
                 <span class="fa fa-plus"></span>
             </button>
-            <ul class="dropdown-menu">
-            </ul>
         </div>
         <div class="archiveContent hide">
             <ul class="tree-l">
@@ -261,7 +257,7 @@
             this.pathList = pathList;
 
 
-            this.buildNewArchiveDropdownMenu(archivalProfiles, acceptArchivesWithoutProfiles);
+            // this.buildNewArchiveDropdownMenu(archivalProfiles, acceptArchivesWithoutProfiles);
 
             $("#folderToolbarSearch").data("orgregnumber", orgRegNumber).data("folderid", folderId);
         },
@@ -450,18 +446,28 @@
         }
     }
 
+    // Import new archive
     NewArchive = {
         loadImportForm: function(e, profileMetadata) {
             $('#folderContents').addClass('hide');
-            trigger('newArchiveForm.recordsManagement', [profileMetadata, ArchiveFolderList.orgRegNumber, ArchiveFolderList.folderId, e.data('parent-archive-id'), e.data('parent-archive-name')]);
+            if (!e) {
+                trigger('newArchiveForm.recordsManagement', [profileMetadata, ArchiveFolderList.orgRegNumber, ArchiveFolderList.folderId, null, null])
+            } else {
+                var archiveId = e.closest(".archive").attr("id");
+                var archiveName = e.closest(".archive").find(".archiveName").first().text();
+                trigger('newArchiveForm.recordsManagement', [profileMetadata, ArchiveFolderList.orgRegNumber, ArchiveFolderList.folderId, archiveId, archiveName]);
+            }
         }
     }
 
     $("#folderPanel").on('click', '.newArchive', function() {
         Metadata.isModification = false;
-        var profile = $(this).parent().text().trim();
-        var profileMetadata = FulltextSearchForm.loadArchivalProfile(profile);
-        NewArchive.loadImportForm($(this), profileMetadata);
+        NewArchive.loadImportForm($(this));
+    });
+
+    $("#folderToolbarImport").on('click', function() {
+        Metadata.isModification = false;
+        NewArchive.loadImportForm();
     });
 
     // Actions on list
@@ -510,6 +516,5 @@
     $('#folderBreadcrumb').onEvent("archiveImportOver.recordsManagement", function() {
         FolderBreadcrumb.unlockNavigation();
     })
-
 
 </script>

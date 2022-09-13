@@ -52,9 +52,9 @@ class archive
 
     /**
      * Controller for format
-     * @var digitalResource/Controller/digitalResource
+     * @var digitalResource/Controller/pronomFormat
      */
-    protected $formatController;
+    protected $pronomFormatController;
 
     /**
      * Controller for access rules
@@ -202,7 +202,7 @@ class archive
 
         $this->digitalResourceController = \laabs::newController("digitalResource/digitalResource");
 
-        $this->formatController = \laabs::newController("digitalResource/format");
+        $this->pronomFormatController = \laabs::newController("digitalResource/pronomFormat");
 
         $this->archiveRelationshipController = \laabs::newController("recordsManagement/archiveRelationship");
 

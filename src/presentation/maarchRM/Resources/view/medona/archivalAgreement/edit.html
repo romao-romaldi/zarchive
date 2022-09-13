@@ -323,13 +323,12 @@
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
                 wildcard: '%QUERY',
-                url: '/digitalResource/format/find/%QUERY',
+                url: '/digitalResource/format/find?query=%QUERY',
                 rateLimitWait: 500,
                 transform: function(response) {
                     return response;
                 }
-            },
-            limit: 100
+            }
         });
 
         // initialize typeahead
@@ -359,7 +358,8 @@
                 }
             },
             display: 'name',
-            source: typesSource
+            source: typesSource,
+            limit: 100
         }).on('typeahead:selected', function ($event, suggestion, source) {
             $("#formatTypeahead").data('format', suggestion);
             $('#addFormat').removeClass('disabled');

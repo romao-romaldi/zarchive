@@ -915,7 +915,10 @@ input:invalid {
                 async       : false,
                 success     : function (response) {
                     Metadata.archive = response;
-                    Metadata.checkAndFill(Metadata.archive, $("#importPanel"));
+                    $('#originatorOrgRegNumber').val(Metadata.archive.originatorOrgRegNumber);
+                    $('#originatorOrgRegNumber').prop('disabled', true);
+                    selectOriginatorOrgRegNumber();
+                    $('#archivalProfile').prop('disabled', true);
                 },
                 error       : function (response) {
                     gritter.show(response.responseText, false);
@@ -974,7 +977,7 @@ input:invalid {
                                 }
                             });
                         }
-                    } else if (property == "descriptionObject") {
+                    } else if ((property == "descriptionObject") || (property == "archivalProfileReference") || (property == "originatorOrgRegNumber") || (property == "parentArchiveId")) {
                         return true;
                     } else {
                         objectTarget = target.find("[name="+property+"]").first();

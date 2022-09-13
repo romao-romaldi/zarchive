@@ -170,6 +170,10 @@ msgid "Clusters"
 msgstr "Grappes de stockage"
 msgctxt "layout"
 
+msgid "Flawed Addresses"
+msgstr "Contenus stockés invalides"
+msgctxt "layout"
+
 msgid "Formats"
 msgstr "Formats"
 msgctxt "layout"

@@ -292,6 +292,29 @@ menu = "[
         ]
     },
     {
+       'label' : 'Demandes de transfert',
+       'href'  : '#',
+       'class' : 'fa fa-sign-in fa-fw',
+       'submenu' : [
+            {
+                'label' : 'Importer un bordereau',
+                'href'  : '/transferrequest'
+            },
+            {
+                'label' : 'Demandes en attente de traitement',
+                'href'  : '/transferrequest/sent'
+            },
+            {
+                'label' : 'Demandes à traiter',
+                'href'  : '/transferrequest/received'
+            },
+            {
+                'label' : 'Historique des demandes',
+                'href'  : '/transferrequest/history'
+            }
+        ]
+    },
+    {
         'label' : 'Communication',
         'href'  : '#',
         'class' : 'fa fa-share fa-fw',
@@ -534,6 +557,10 @@ servicePrivileges = "[
         'description' : 'Extraction et indexation plein texte'
     },
     {
+        'serviceURI' : 'digitalResource/digitalResource/readCompleteness',
+        'description' : 'Contrôler l\'exhaustivité des ressources'
+    },
+    {
         'serviceURI': '*',
         'description' : 'Tous les droits'
     }
@@ -724,6 +751,11 @@ tasks = "[
        'taskId': '13',
        'route' : 'recordsManagement/archives/readExtractfulltext',
        'description' : 'Extraction plein texte'
+    },
+    {
+       'taskId': '14',
+       'route' : 'digitalResource/digitalResource/readCompleteness',
+       'description' : 'Contrôle d\'exhaustivité de ressources'
     }
 ]"
 

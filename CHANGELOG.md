@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Version 2.9
+- `Fixed` Le format de l'identifiant d'un utilisateur est moins restrictif. L'identifiant peut commencer par un caractère alphabétique, numérique ou par un symbole (tiret, arobase etc) .
+- `Added` Possibilité d'effectuer un contrôle d'exhaustivité sur le fonds d'archives depuis le planificateur de tâches.
+- `Added` Nouveau référentiel de formats internes
+- `Changed` Données de référentiel des formats est basée sur le Référentiel Général d'Interopérabilité (RGI).
+- `Added` Affichage du dissuer virtuel dans les métadonnées de gestion du détail d'archive de l'écran de gestion
+- `Changed` Possibilité de déposer directement des archives pour d'autres services producteurs dans l'écran principal
+- `Added` Transaction MEDONA de demande de versement (nécessite une implémentation de format de SIP - implémentée en SEDA 2 dans l'extension archivesPubliques)
+
 ## Version 2.8.5
  - `Fixed` Possibilité de verser des paquets de plus de 1go.
 

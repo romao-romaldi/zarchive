@@ -203,6 +203,24 @@ msgstr "%s archive(s) détruite(s)"
 msgid "%s archives are restituted"
 msgstr "%s archive(s) restituée(s)"
 
+msgid "%s resource(s) to check"
+msgstr "%s ressource(s) à vérifier"
+
+msgid "%s checked resource(s)"
+msgstr "%s ressource(s) vérifiées(s)"
+
+msgid "%s failed resource(s)"
+msgstr "%s ressource(s) invalide(s)"
+
+msgid "Last checked resource identifier : %s"
+msgstr "Identifiant de la dernière ressource vérifiée : %s"
+
+msgid "Creation date of the last checked resource : %s"
+msgstr "Date de création de la dernière ressource vérifiée : %s"
+
+msgid "Time limit reached"
+msgstr "Le délai maximal de contrôle est expiré"
+
 msgid "Invalid archive identifier : %s"
 msgstr "Identifiant des archives invalides : %s"
 
@@ -223,6 +241,9 @@ msgstr "%s bordereau(x) validé(s)"
 
 msgid "%s message(s) processed"
 msgstr "%s bordereau(x) traité(s)"
+
+msgid "digitalResource/digitalResource/readCompleteness"
+msgstr "Contrôle d'exhaustivité des ressources"
 
 msgid "recordsManagement/accessRule/readIndex"
 msgstr "Lecture des règles de communicabilité"
@@ -1046,16 +1067,16 @@ msgstr "Modification d'une règle de conversion"
 msgid "digitalResource/conversionRule/delete_conversionRuleId_"
 msgstr "Suppression d'une règle de conversion"
 
-msgid "digitalResource/format/readList"
+msgid "digitalResource/pronomFormat/readList"
 msgstr "Lecture de tous les formats"
 
-msgid "digitalResource/format/readFind_query_"
+msgid "digitalResource/pronomFormat/readFind_query_"
 msgstr "Recherche de formats"
 
-msgid "digitalResource/format/readGet"
+msgid "digitalResource/pronomFormat/readGet"
 msgstr "Lecture d'un format en fonction du PuID"
 
-msgid "digitalResource/format/createFileformatinformation"
+msgid "digitalResource/pronomFormat/createFileformatinformation"
 msgstr "Informations sur le format d'un document"
 
 msgid "digitalResource/repository/readList"

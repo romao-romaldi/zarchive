@@ -32,6 +32,15 @@ interface digitalResourceInterface {
      * @action digitalResource/digitalResource/isConvertible
      */
     public function updateIsconvertible($digitalResource);
+
+    /**
+     * Check if resources are complete
+     * @param integer $samplingFrequency check frequency in days
+     * @param integer $timeout time limit for completeness in seconds
+     *
+     * @action digitalResource/digitalResource/completenessSampling
+     */
+    public function readCompleteness($samplingFrequency, $timeout);
    
     /**
      * Search digital resource

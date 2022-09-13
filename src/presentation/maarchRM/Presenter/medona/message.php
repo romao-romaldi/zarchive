@@ -33,6 +33,7 @@ class message
     use archiveDeliveryTrait,
         archiveDestructionTrait,
         archiveTransferTrait,
+        archiveTransferRequestTrait,
         archiveOutgoingTransferTrait,
         archiveAuthorizationTrait,
         archiveNotificationTrait,
@@ -477,175 +478,6 @@ class message
      *
      * @return type
      */
-    public function acceptArchiveTransfer()
-    {
-        $this->json->message = $this->translator->getText("Message accepted");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for rejectArchiveTransfer method
-     *
-     * @return type
-     */
-    public function rejectArchiveTransfer()
-    {
-        $this->json->message = $this->translator->getText("Message rejected");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for validateArchiveTransfer method
-     *
-     * @return type
-     */
-    public function validateArchiveTransfer()
-    {
-        $this->json->message = $this->translator->getText("Message validated");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for processBash method
-     *
-     * @return type
-     */
-    public function processArchiveTransfer()
-    {
-        $this->json->message = $this->translator->getText("Message processed");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for derogationDeliveryRequest method
-     *
-     * @return type
-     */
-    public function derogationDeliveryRequest()
-    {
-        $this->json->message = $this->translator->getText("Message sent to derogation");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for rejectArchiveTransfer method
-     *
-     * @return type
-     */
-    public function rejectDeliveryRequest()
-    {
-        $this->json->message = $this->translator->getText("Message rejected");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for rejectArchiveTransfer method
-     *
-     * @return type
-     */
-    public function rejectArchiveDestructionRequest()
-    {
-        $this->json->message = $this->translator->getText("Message rejected");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for rejectArchiveTransfer method
-     *
-     * @return type
-     */
-    public function validateArchiveDestructionRequest()
-    {
-        $this->json->message = $this->translator->getText("Message accepted");
-
-        return $this->json->save();
-    }
-
-
-    /**
-     * Serializer JSON for sendAuthorizationOriginatingAgencyRequest method
-     *
-     * @return type
-     */
-    public function sendAuthorizationOriginatingAgencyRequest()
-    {
-        $this->json->message = $this->translator->getText("Authorization request send to originator agency");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for sendAuthorizationControlAuthorityRequest method
-     *
-     * @return type
-     */
-    public function sendAuthorizationControlAuthorityRequest()
-    {
-        $this->json->message = $this->translator->getText("Authorization request send to control authority");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for acceptAuthorizationOriginatingAgencyRequest method
-     *
-     * @return type
-     */
-    public function acceptAuthorizationOriginatingAgencyRequest()
-    {
-        $this->json->message = $this->translator->getText("Authorization accepted");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for rejectAuthorizationOriginatingAgencyRequest method
-     *
-     * @return type
-     */
-    public function rejectAuthorizationOriginatingAgencyRequest()
-    {
-        $this->json->message = $this->translator->getText("Authorization rejected");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for acceptAuthorizationControlAuthorityRequest method
-     *
-     * @return type
-     */
-    public function acceptAuthorizationControlAuthorityRequest()
-    {
-        $this->json->message = $this->translator->getText("Authorization accepted");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for rejectAuthorizationControlAuthorityRequest method
-     *
-     * @return type
-     */
-    public function rejectAuthorizationControlAuthorityRequest()
-    {
-        $this->json->message = $this->translator->getText("Authorization rejected");
-
-        return $this->json->save();
-    }
-
-    /**
-     * Serializer JSON for acceptArchiveTransfer method
-     *
-     * @return type
-     */
     public function retry()
     {
         $this->json->message = $this->translator->getText("Message restarted");
@@ -739,6 +571,24 @@ class message
             $messageId = (string) $message->messageId;
 
             switch ($message->type) {
+                case 'ArchiveTransferRequest':
+                    if ($message->status == "received" || $message->status == "modified") {
+                        $message->validateButton = "/transferrequestValidate/" . $messageId;
+                        $message->exportButton = "/medona/message/".$messageId."/Export";
+                    } 
+                    if ($message->status == "valid") {
+                        $message->acceptButton = "/transferrequestAcceptance/".$messageId;
+                        $message->rejectButton = "/transferrequestRejection/".$messageId;
+                        $message->exportButton = "/medona/message/".$messageId."/Export";
+                    } 
+                    if ($message->status == "toBeModified") {
+                        $message->rejectButton = "/transferrequestRejection/".$messageId;
+                        $message->retryButton = "/medona/message/". $message->messageId . "/retry";
+                    } 
+                    if ($message->status == "processing") {
+                        $message->retryButton = "/medona/message/". $message->messageId . "/retry";
+                    }
+                    break;
                 case 'ArchiveTransfer':
                     if ($message->status == "received" || $message->status == "modified") {
                         if (!$message->isIncoming) {

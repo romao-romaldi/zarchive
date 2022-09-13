@@ -11,12 +11,10 @@
                     </button>
                 </div>
                 <?merge depositPrivilege.bool() ?>
-                <div class="pull-right dropdown addChildrenArchive addingNew childrenArchiveSelector hide">
-                    <button class="btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="pull-right addChildrenArchive addingNew childrenArchiveSelector hide">
+                    <button class="btn btn-xs btn-default newArchive">
                         <span class="fa fa-plus"></span>
                     </button>
-                    <ul class="dropdown-menu">
-                    </ul>
                 </div>
                 <br/>
                 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -257,6 +255,8 @@
 
             template.addClass('child')
                     .data('archiveid', archive.archiveId)
+                    .attr('id', archive.archiveId)
+                    .addClass('archive')
                     .data('depositdate', BCDate)
                     .children('span')
                     .addClass('childrenArchiveSelection')
@@ -270,7 +270,7 @@
                     .addClass('archiveItem')
                     .attr('id', archive.archiveId)
                     .append(icon)
-                    .append($('<span>').text(archive.archiveName))
+                    .append($('<span>').addClass('archiveName').text(archive.archiveName))
                     .append($('<a/>').attr('href','#').class);
 
             if (archive.archivalProfileName) {
@@ -313,10 +313,8 @@
 
         loadChildrenArchiveButton: function(archivalProfiles, withoutProfile, filePlanLevel) {
             var button = this.selected.find('.addingNew');
-            var list =  button.find('ul');
 
             if (Archive.selected.find(".selectedChild").attr("id")) {
-                var archiveId = Archive.selected.find(".selectedChild").attr("id");
                 var archive = Archive.selected.find(".selectedChild");
                 if (filePlanLevel == "item") {
                     archive.siblings('.exportArchive').removeClass("hide");
@@ -324,7 +322,6 @@
                     archive.siblings('.addingNew').removeClass("hide");
                 }
             } else {
-                var archiveId = button.closest('.archive').attr('id');
                 var archive = button.closest('.archive');
                 if (filePlanLevel == "item") {
                     archive.children('.exportArchive').removeClass("hide")
@@ -336,37 +333,6 @@
             if (filePlanLevel == "item") {
                 return;
             }
-
-            var list =  button.find('ul');
-
-            var archiveName = button.closest('.archive').find('.archiveName').text();
-
-            list.empty();
-            if (withoutProfile == 1) {
-                list.append(
-                    $('<li/>').html(
-                        $('<a/>').attr('href', '#')
-                                 .addClass('small newArchive')
-                                 .data('parent-archive-id', archiveId)
-                                 .data('parent-archive-name', archiveName)
-                                 .text($('#withoutProfile_txt').text())
-                    )
-                );
-            }
-
-            $.each(archivalProfiles, function() {
-                list.append(
-                    $('<li/>').html(
-                        $('<a/>').attr('href', '#')
-                                 .addClass('small newArchive')
-                                 .data('json', JSON.parse(this.json))
-                                 .data('parent-archive-id', archiveId)
-                                 .data('parent-archive-name', archiveName)
-                                 .text(this.name)
-                    )
-                );
-            })
-            var position = this.selected.position();
         }
     }
 
@@ -429,7 +395,7 @@
     $('#middleColumn').on('click', '.exportArchive', function() {
         var archive = $(this).siblings('.archiveItem');
         if (!archive.length) {
-            archive = $(this).closest('.archiveItem');;
+            archive = $(this).closest('.archiveItem');
         }
         var archiveId = archive.attr('id');
         window.open('/recordsManagement/export/'+ archiveId);

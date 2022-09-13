@@ -160,4 +160,52 @@ trait archiveTransferTrait
 
         return $this->view->saveHtml();
     }
+
+    /**
+     * Serializer JSON for acceptArchiveTransfer method
+     *
+     * @return type
+     */
+    public function acceptArchiveTransfer()
+    {
+        $this->json->message = $this->translator->getText("Message accepted");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for rejectArchiveTransfer method
+     *
+     * @return type
+     */
+    public function rejectArchiveTransfer()
+    {
+        $this->json->message = $this->translator->getText("Message rejected");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for validateArchiveTransfer method
+     *
+     * @return type
+     */
+    public function validateArchiveTransfer()
+    {
+        $this->json->message = $this->translator->getText("Message validated");
+
+        return $this->json->save();
+    }
+
+    /**
+     * Serializer JSON for processBash method
+     *
+     * @return type
+     */
+    public function processArchiveTransfer()
+    {
+        $this->json->message = $this->translator->getText("Message processed");
+
+        return $this->json->save();
+    }
 }

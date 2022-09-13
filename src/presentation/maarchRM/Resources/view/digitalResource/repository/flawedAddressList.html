@@ -6,7 +6,7 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 #-->
 
-<div class="container-fluid" data-translate-catalog="digitalResource/repository">
+<div class="container-fluid" data-translate-catalog="digitalResource/flawedAddresses">
     <div class="page-header">
         <h1>
             <i class="fa fa-times-circle"></i>
@@ -14,7 +14,7 @@ file that was distributed with this source code.
         </h1>
     </div>
 </div>
-<div class="container-fluid" data-translate-catalog="digitalResource/repository">
+<div class="container-fluid" data-translate-catalog="digitalResource/flawedAddresses">
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-primary">
@@ -28,6 +28,7 @@ file that was distributed with this source code.
                         <thead>
                             <tr>
                                 <th>Repository reference</th>
+                                <th>Resource identifier</th>
                                 <th class="hidden-xs">Checking date</th>
                                 <th>Address</th>
                                 <th style="width:1%;"></th>
@@ -37,8 +38,9 @@ file that was distributed with this source code.
                             <?merge addresses ?>
                             <tr>
                                 <td><?merge .repositoryReference ?></td>
-                                <td class="hidden-xs"><?merge .lastIntegrityCheck ?></td>
-                                <td><?merge .path ?></td>
+                                <td><?merge .resId ?></td>
+                                <td><?merge .lastIntegrityCheck ?></td>
+                                <td style="word-wrap : break-word;"><?merge .path ?></td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm checkIntegrity" data-address="[?merge .json ?]" title="Check integrity">
                                         <span class="fa fa-fw fa-database"/>
@@ -58,7 +60,7 @@ file that was distributed with this source code.
         $.ajax({
             type        : 'PUT',
             url         : '/checkAddressIntegrity',
-            data        : JSON.stringify({address:$(this).data('address')}),
+            data        : JSON.stringify({resId:$(this).data('address').resId, repositoryId:$(this).data('address').repositoryId}),
             contentType: 'application/json',
             dataType    : 'json',
             success     : function (response) {

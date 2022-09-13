@@ -888,10 +888,13 @@ trait archiveEntryTrait
         // feat/16379 : update retention rule start date from last deposit
         if (!empty($archive->parentArchiveId)) {
             $parentArchive = $this->sdoFactory->read('recordsManagement/archive', $archive->parentArchiveId);
-            $parentArchivalProfile = $this->archivalProfileController->getByReference($parentArchive->archivalProfileReference);
-            if ($parentArchivalProfile->isRetentionLastDeposit) {
-                $archiveIds = $this->getParentAndSiblingIds($archive);
-                $this->updateRetentionRuleStartDate($archiveIds);
+
+            if (!empty($parentArchive->archivalProfileReference)) {
+                $parentArchivalProfile = $this->archivalProfileController->getByReference($parentArchive->archivalProfileReference);
+                if ($parentArchivalProfile->isRetentionLastDeposit) {
+                    $archiveIds = $this->getParentAndSiblingIds($archive);
+                    $this->updateRetentionRuleStartDate($archiveIds);
+                }
             }
         }
 

@@ -236,7 +236,7 @@ class repository
             $address->lastIntegrityCheck = \laabs::newTimestamp();
             $address->integrityCheckResult = false;
 
-            $this->sdoFactory->update($address);
+            $this->sdoFactory->update($address, 'digitalResource/address');
             throw \laabs::newException("digitalResource/repositoryException", "Resource contents not available at address %s.", 404, null, [$repository->repositoryUri.DIRECTORY_SEPARATOR.$address->path]);
         }
 
@@ -244,7 +244,33 @@ class repository
     }
 
     /**
-     * Check the integrty of all resources in a repository
+     * Check if a resource exists in a repository
+     * @param digitalResource/repository $repository
+     * @param digitalResource/address    $address of the resource
+     *
+     * @return boolean The digitalResource verify
+     */
+    public function isResource($repository, $address)
+    {
+        try {
+            $repositoryService = $repository->getService();
+            $address->path = str_replace('\\', '/', $address->path);
+            $result = $repositoryService->readObject($address->path,0);
+
+        } catch (\Exception $e) {
+            throw \laabs::newException("digitalResource/repositoryException", "Could not check resource at address %s.", 500, null, [$repository->repositoryUri.DIRECTORY_SEPARATOR.$address->path]);
+        }
+
+        if (!$result) {
+            $address->integrityCheckResult = false;
+            $this->sdoFactory->update($address, 'digitalResource/address');
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check the integrity of all resources in a repository
      * @param string  $repositoryReference The reference of the repository to check
      * @param bool    $init                Start an new integrity check or continue from last check
      * @param integer $addressLimit        The maximum address to check
@@ -329,15 +355,15 @@ class repository
      *
      * @return boolean The result of the validation
      */
-    public function validateAddressIntegrity($address, $repository = false)
+    public function validateAddressIntegrity($resId, $repositoryId)
     {
         try {
+            $digitalResource = $this->sdoFactory->read('digitalResource/digitalResource', $resId);
+            $address = $this->sdoFactory->read('digitalResource/address', ['resId' => $resId, 'repositoryId' => $repositoryId]);
+            $repository = $this->openRepository($repositoryId);
+
             $address->lastIntegrityCheck = \laabs::newTimestamp();
 
-            $digitalResource = $this->sdoFactory->read('digitalResource/digitalResource', $address->resId);
-            if (!$repository) {
-                $repository = $this->openRepository($address->repositoryId);
-            }
             $handler = $this->retrieveContents($repository, $address);
 
             $hash = strtolower(\laabs\hash_stream($digitalResource->hashAlgorithm, $handler));
@@ -350,8 +376,12 @@ class repository
         } catch (\Exception $exception) {
             $address->integrityCheckResult = false;
         }
+        
+        $archiveController = \laabs::newController("recordsManagement/archive");
+        $archive = $this->sdoFactory->read('recordsManagement/archive',$digitalResource->archiveId);
+        $archiveController->logIntegrityCheck($archive, "Check from flawed addresses", $digitalResource, $address->integrityCheckResult);
 
-        $this->sdoFactory->update($address, 'digitalResource/address');
+        $this->sdoFactory->update($address);
 
         return $address->integrityCheckResult;
     }

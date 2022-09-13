@@ -5,6 +5,51 @@
 msgid "Format information"
 msgstr "Information du format"
 
+msgid "Format creation"
+msgstr "Création d'un format"
+
+msgid "Update format"
+msgstr "Modification d'un format"
+
+msgid "The first and last character must be a letter. You must use only letters and the special character '_'"
+msgstr "Les premier et dernier caractères doivent être des lettres. Vous devez utiliser uniquement les lettres et le caractère spécial '_'"
+
+msgid "You must define all required fields"
+msgstr "Vous devez remplir tous les champs obligatoires."
+
+msgid "Are you sure to delete this row ?"
+msgstr "Êtes-vous sûr de vouloir supprimer ce format?"
+
+msgid "Format deleted"
+msgstr "Format supprimé"
+
+msgid "Format created"
+msgstr "Format créé"
+
+msgid "Format updated"
+msgstr "Format modifié"
+
+msgid "Sustainable format"
+msgstr "Format pérenne"
+
+msgid "Format status"
+msgstr "Statut du format"
+
+msgid "Status"
+msgstr "Statut"
+
+msgid "Sustainability"
+msgstr "Pérennité"
+
+msgid "No format found"
+msgstr "Aucun format trouvé"
+
+msgid "The puid is invalid"
+msgstr "Le puid est invalide"
+
+msgid "Identifier"
+msgstr "Identifiant"
+
 msgid "Formats"
 msgstr "Formats"
 
@@ -44,3 +89,17 @@ msgstr "Empreinte numérique SHA256"
 msgid "Hash SHA512"
 msgstr "Empreinte numérique SHA512"
 
+msgid "Under observation"
+msgstr "En observation"
+
+msgid "Recommended"
+msgstr "Recommandé"
+
+msgid "Deprecated"
+msgstr "En fin de vie"
+
+msgid "Not sustainable"
+msgstr "Retiré"
+
+msgid "Without recommendation"
+msgstr "Sans recommandation"
