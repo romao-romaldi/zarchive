@@ -8,6 +8,37 @@ Voir le fichier spécifique
 
 ## Configuration
 
+### Ajout du point de menu MEDONA pour la transaction de demande de versement
+Le menu des échanges possède un nouveau groupe.
+Il faut ajouter les éléments suivants dans la directive `menu` de la section `[medona]` :
+
+
+    {
+       'label' : 'Demandes de transfert',
+       'href'  : '#',
+       'class' : 'fa fa-sign-in fa-fw',
+       'submenu' : [
+            {
+                'label' : 'Importer un bordereau',
+                'href'  : '/transferrequest'
+            },
+            {
+                'label' : 'Demandes en attente de traitement',
+                'href'  : '/transferrequest/sent'
+            },
+            {
+                'label' : 'Demandes à traiter',
+                'href'  : '/transferrequest/received'
+            },
+            {
+                'label' : 'Historique des demandes',
+                'href'  : '/transferrequest/history'
+            }
+        ]
+    },
+
+    
+
 ### Ajout d'une nouvelle tâche planifiée
 
 La tâche planifiée "Contrôler l'exhaustivité des ressources" a été ajoutée.
