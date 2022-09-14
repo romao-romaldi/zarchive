@@ -106,10 +106,10 @@ class Statistics
 
         if (
             !empty($filter)
-            && !in_array($filter, ['archivalProfile', 'originatingOrg'])
+            && preg_match("[\W]", $filter)
         ) {
             throw new \core\Exception\BadRequestException(
-                $this->translator->getText("The filter parameter must be between archivalProfile or originatingOrg")
+                $this->translator->getText("Unknown character present in filter")
             );
         }
 
