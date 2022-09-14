@@ -104,6 +104,15 @@ class Statistics
             throw new \core\Exception\BadRequestException($this->translator->getText("The sizeFilter parameter must be between 0 and 3 included"));
         }
 
+        if (
+            !empty($filter)
+            && !in_array($filter, ['archivalProfile', 'originatingOrg'])
+        ) {
+            throw new \core\Exception\BadRequestException(
+                $this->translator->getText("The filter parameter must be between archivalProfile or originatingOrg")
+            );
+        }
+
         $this->sizeFilter = $sizeFilter;
 
         $statistics = ["unit" => $this->sizeCategories[$this->sizeFilter]];
