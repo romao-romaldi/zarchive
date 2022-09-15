@@ -58,7 +58,7 @@ class AuthorizationOriginatingAgencyRequest extends AuthorizationRequest
 
         $message->senderOrgRegNumber = $requestMessage->recipientOrgRegNumber;
         $message->recipientOrgRegNumber = $originatorOrgRegNumber;
-        $message->comment = $requestMessage->object->comment;
+        $message->comment = $requestMessage->comment;
 
         $this->readOrgs($message);
 
