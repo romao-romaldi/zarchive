@@ -22,6 +22,32 @@
 require_once('../core/laabs.php');
 
 laabs::init();
+
+test();
+function test() {
+
+    $repoController = \laabs::newController('digitalResource/repository');
+    $s3repository = $repoController->openRepository('maarchRM_ri95ij-hlcu-6bg2nh');
+    var_dump($s3repository);
+    $s3 = $s3repository->getService();
+    var_dump($s3);
+
+    $path = '<instance>/originatorOwnerOrgId/archivalProfileReference/<date(Y)>/<date(m)>/<date(d)>';
+
+    $cont = $s3->createContainer($path);
+    var_dump($cont);
+
+    $path = $s3->createObject('data', $path.'/archiveId/resid');
+    var_dump($path);
+
+    $url = $s3->readObject($path);
+    var_dump($url);
+
+    $result = $s3->deleteObject($path);
+    var_dump($result);
+    exit;
+}
+
 switch (true) {
     // OpenAPI and other utils
     case (pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_FILENAME) == 'openapi'):

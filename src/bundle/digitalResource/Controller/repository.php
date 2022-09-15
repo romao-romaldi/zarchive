@@ -424,7 +424,9 @@ class repository
         $repositoryServiceArgs['name'] = $repository->repositoryUri;
 
         if (!empty($repository->parameters)) {
-            $repositoryServiceArgs['options'] = $repository->parameters;
+            foreach ($repository->parameters as $param) {
+                $repositoryServiceArgs['options'][trim($param->paramName)] = trim($param->paramVal);
+            }
         }
 
         return $repositoryDependency->callService($repositoryServiceName, $repositoryServiceArgs);
