@@ -1710,8 +1710,8 @@ msgstr "Informations"
 msgid "User already exist"
 msgstr "L'utilisateur existe déjà"
 
-msgid "Username and / or password invalid"
-msgstr "Nom d'utilisateur et / ou mot de passe invalide"
+msgid "Username and / or password invalid and / or User is locked"
+msgstr "Nom d'utilisateur ou mot de passe invalide ou utilisateur verrouillé"
 
 msgid "organization/organization/readTodisplay"
 msgstr "Liste des organisations"

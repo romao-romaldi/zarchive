@@ -661,6 +661,9 @@ msgstr "L'utilisateur %1$s est désactivé"
 msgid "User %1$s is locked"
 msgstr "L'utilisateur %1$s est verrouillé"
 
+msgid "Username and / or password invalid and / or User is locked"
+msgstr "Nom d'utilisateur ou mot de passe invalide ou utilisateur verrouillé"
+
 msgid "Invalid username or email."
 msgstr "Nom d'utilisateur ou courriel incorrect."
 
