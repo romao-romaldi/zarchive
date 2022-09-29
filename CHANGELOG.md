@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 2.9.1
+ - `Fixed` CVE-2022-37772 Vulnérabilité brute force sur utilisateurs verrouillés
+ - `Fixed` CVE-2022-37773 Vulnérabilité d'injection SQL dans l'écran de statistiques
+ - `Fixed` CVE-2022-37774 Vulnérabilité de contrôle d'accès sur documents prévisualisés
+ - `Fixed` Mauvais commentaire sauvegardé lors des demandes d'autorisation au service producteur et à l'autorité de contrôle
+ - `Fixed` Mauvais message d'erreur lors de la validation d'un message avc un profil d'archive non valide
+ 
 ## Version 2.9
 - `Fixed` Le format de l'identifiant d'un utilisateur est moins restrictif. L'identifiant peut commencer par un caractère alphabétique, numérique ou par un symbole (tiret, arobase etc) .
 - `Added` Possibilité d'effectuer un contrôle d'exhaustivité sur le fonds d'archives depuis le planificateur de tâches.
