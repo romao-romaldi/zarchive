@@ -104,6 +104,15 @@ class Statistics
             throw new \core\Exception\BadRequestException($this->translator->getText("The sizeFilter parameter must be between 0 and 3 included"));
         }
 
+        if (
+            !empty($filter)
+            && preg_match("[\W]", $filter)
+        ) {
+            throw new \core\Exception\BadRequestException(
+                $this->translator->getText("Unknown character present in filter")
+            );
+        }
+
         $this->sizeFilter = $sizeFilter;
 
         $statistics = ["unit" => $this->sizeCategories[$this->sizeFilter]];
