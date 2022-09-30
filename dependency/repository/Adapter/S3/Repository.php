@@ -30,14 +30,23 @@ use Aws;
 class Repository implements \dependency\repository\RepositoryInterface
 {
     /* Properties */
+    /**
+     * @var string The service endpoint
+     * @example https://s3.us-east-2.amazonaws.com
+     */
     protected $endpoint;
 
     /**
-     * The options
+     * @var string|int The bucket name OR number of names in storage path used for bucket name
+     */
+    protected $bucket;
+
+    /**
+     * The client options
      * @var array
      */
-    protected $options = [
-        'bucketPathSteps' => 2
+    protected $clientOptions = [
+        'version' => 'latest'
     ];
 
     /**
@@ -54,32 +63,47 @@ class Repository implements \dependency\repository\RepositoryInterface
      *
      * @return void
      */
-    public function __construct($name, array $options = null)
+    public function __construct($name, array $options = [])
     {
         // Set host name
         $this->endpoint = $name;
 
-        if (is_array($options)) {
-            $this->options = array_merge($this->options, $options);
-        }
-
-        if (!isset($this->options['pathToAwsSdk']) || !is_file($this->options['pathToAwsSdk'].'/aws-autoloader.php')) {
+        // Require AWS SDK autoloader
+        if (!isset($options['sdk']) || !is_file($options['sdk'].'/aws-autoloader.php')) {
             throw new \Exception("Unable to find AWS SDK");
         }
 
-        require $this->options['pathToAwsSdk'].'/aws-autoloader.php';
+        require_once $options['sdk'].'/aws-autoloader.php';
+        unset($options['sdk']);
 
-        // Get authentication
-        if (!isset($this->options['accessKeyId']) || !isset($this->options['secretAccessKey'])) {
+        // Get credentials
+        if (!isset($options['key']) || !isset($options['secret'])) {
             throw new \Exception("No credential provided");
         }
-        $credentials = new Aws\Credentials\Credentials($this->options['accessKeyId'], $this->options['secretAccessKey']);
 
-        $this->client = new Aws\S3\S3Client([
-            'version'     => 'latest',
-            'region'      => 'eu-west-3',
-            'credentials' => $credentials
-        ]);
+        $options['credentials'] = new Aws\Credentials\Credentials($options['key'], $options['secret']);
+        unset($options['key']);
+        unset($options['secret']);
+
+        // Set repository specific options
+        if (!isset($options['bucket'])) {
+            throw new \Exception("Either a bucket name (string) or a path depth (int) must be provided");
+        }
+        if (ctype_digit($options['bucket'])) {
+            $this->bucket = (int) $options['bucket'];
+        } else {
+            $this->bucket = $options['bucket'];
+        }
+        unset($options['bucket']);
+
+        if (!isset($options['version'])) {
+            $options['version'] = 'latest';
+        }
+        
+        // Remaining options are set as the client options
+        $options['endpoint'] = $this->endpoint;
+        
+        $this->client = new Aws\S3\S3Client($options);    
     }
 
     // CONTAINER
@@ -95,15 +119,13 @@ class Repository implements \dependency\repository\RepositoryInterface
         $path = $this->resolvePath($name);
 
         // Parse bucket name
-        $parser = $this->parsePath($path);
+        $params = $this->parsePath($path);
+        unset($params['Key']);
 
-        $bucket = $parser->bucket;
-        var_dump('Create bucket at '.$bucket);
-
-        // Call S3 API
-        $result = $this->client->createBucket([
-            'Bucket' => $bucket,
-        ]);
+        if (!$this->client->doesBucketExist($params['Bucket'])) {
+            // Call S3 API
+            $result = $this->client->createBucket($params);
+        }
 
         // Call S3 API
         // Store object for metadata ?
@@ -154,17 +176,14 @@ class Repository implements \dependency\repository\RepositoryInterface
      */
     public function createObject($data, $path)
     {
-        $path = $this->resolvePath($name);
+        $path = $this->resolvePath($path);
 
         // Parse bucket name
-        $parser = $this->parsePath($path);
+        $params = $this->parsePath($path);
+        $params['Body'] = $data;
 
         // Call S3 API
-        $result = $this->client->putObject([
-            'Bucket' => $parser->bucket,
-            'Key' => $parser->key,
-            'Body' => 'this is the body!'
-        ]);
+        $result = $this->client->putObject($params);
 
         return $path;
     }
@@ -180,54 +199,34 @@ class Repository implements \dependency\repository\RepositoryInterface
     {
         $path = $this->resolvePath($path);
 
-        $parser = $this->parsePath($path);
+        $params = $this->parsePath($path);
 
         switch ($mode) {
             case 0:
-                var_dump('Check objet at url '.$url);
-
-                // Call S3 API
-                $result = $this->client->doesObjectExistV2([
-                    'Bucket' => $parser->bucket,
-                    'Key' => $parser->key
-                ]);
+                   // Call S3 API
+                $result = $this->client->doesObjectExistV2($params);
 
                 return $result;
 
             case 1:
-                var_dump('Read objet data at url '.$url);
-
-                // Call S3 API
                 // // Call S3 API
-                $result = $this->client->getObject([
-                    'Bucket' => $parser->bucket,
-                    'Key' => $parser->key
-                ]);
+                $result = $this->client->getObject($params);
 
-                $data = $result['body'];
+                $data = $result['Body']->detach();
 
                 return $data;
 
             case 2:
-                var_dump('Read objet metadata at url '.$url);
-
                 // Call S3 API
-                $result = $this->client->headObject([
-                    'Bucket' => $parser->bucket,
-                    'Key' => $parser->key
-                ]);
+                $result = $this->client->getObject($params);
 
                 // TODO parse result to get metadata as expected
+
                 return $result;
 
             case 3:
-                var_dump('Read objet at url '.$url);
-
                 // Call S3 API
-                $result = $this->client->getObject([
-                    'Bucket' => $parser->bucket,
-                    'Key' => $parser->key
-                ]);
+                $result = $this->client->getObject($params);
 
                 // TODO parse result to get data and metadata in returned array
 
@@ -252,8 +251,6 @@ class Repository implements \dependency\repository\RepositoryInterface
 
         $parser = $this->parsePath($path);
 
-        var_dump('Can not update objet metadata at '.$path);
-
         return false;
     }
 
@@ -267,13 +264,10 @@ class Repository implements \dependency\repository\RepositoryInterface
     {
         $path = $this->resolvePath($path);
 
-        $parser = $this->parsePath($path);
+        $params = $this->parsePath($path);
 
         // Call S3 API
-        $result = $this->client->deleteObject([
-            'Bucket' => $bucket,
-            'Key' => $key,
-        ]);
+        $result = $this->client->deleteObject($params);
 
         return true;
     }
@@ -289,14 +283,21 @@ class Repository implements \dependency\repository\RepositoryInterface
      */
     protected function parsePath($path)
     {
-        $steps = explode('/', $path);
+        if (is_int($this->bucket)) {
+            $steps = explode('/', $path);
 
-        $parser = (object) [
-            'bucket' => implode('.', array_slice($steps, 0, $this->options['bucketPathSteps'])),
-            'key' => implode('/', array_slice($steps, ($this->options['bucketPathSteps']-1)))
-        ];
+            return [
+                'Bucket' => strtolower(implode('.', array_slice($steps, 0, $this->bucket))),
+                'Key' => implode('/', array_slice($steps, ($this->bucket)))
+            ];
+        }
 
-        return $parser;
+        if (is_string($this->bucket)) {
+            return [
+                'Bucket' => $this->bucket,
+                'Key' => $path
+            ];
+        }
     }
 
     protected function getObjectUrl($path)
