@@ -78,10 +78,10 @@ class userAuthentication
         } else {
             $tokenDuration = 86400;
         }
-        
+
         // Set token
         $this->setToken($userLogin, $tokenDuration);
-        
+
         // Require password change
         if ($this->securityPolicy['passwordValidity'] && $this->securityPolicy["passwordValidity"] != 0) {
             $diff = ($userLogin->lastLogin->getTimestamp() - $userAccount->passwordLastChange->getTimestamp()) / $tokenDuration;
@@ -121,7 +121,7 @@ class userAuthentication
         } else {
             $tokenDuration = 86400;
         }
-        
+
         // Set token
         $this->setToken($userLogin, $tokenDuration);
 
@@ -131,7 +131,7 @@ class userAuthentication
     /**
      * Get user from userName
      * @param string $userName
-     * 
+     *
      * @return auth/account
      * @throws auth/authenticationException when username not found
      */
@@ -140,7 +140,11 @@ class userAuthentication
         $exists = $this->sdoFactory->exists('auth/account', array('accountName' => $userName));
 
         if (!$exists) {
-            throw \laabs::newException('auth/authenticationException', 'Username and / or password invalid', 401);
+            throw \laabs::newException(
+                'auth/authenticationException',
+                'Username and / or password invalid and / or User is locked',
+                401
+            );
         }
 
         return $this->sdoFactory->read('auth/account', array('accountName' => $userName));
@@ -149,7 +153,7 @@ class userAuthentication
     /**
      * Check user password and hability to login
      * @param object $userAccount
-     * 
+     *
      * @return object
      */
     protected function checkCredentials($userAccount, $password)
@@ -162,13 +166,17 @@ class userAuthentication
         $userLogin->lastIp = $_SERVER["REMOTE_ADDR"];
 
         // Check password
-        if (!password_verify($password, $userAccount->password) && hash($this->passwordEncryption, $password) != $userAccount->password) {
+        if (
+            !password_verify($password, $userAccount->password)
+            && hash($this->passwordEncryption, $password) != $userAccount->password
+        ) {
             // Update bad password count
             $userLogin->badPasswordCount = $userAccount->badPasswordCount + 1;
             $this->sdoFactory->update($userLogin, 'auth/account');
 
             // If count exceeds max attempts, lock user
-            if ($this->securityPolicy['loginAttempts']
+            if (
+                $this->securityPolicy['loginAttempts']
                 && $userLogin->badPasswordCount > $this->securityPolicy['loginAttempts'] - 1
             ) {
                 $userAccountController = \laabs::newController('auth/userAccount');
@@ -184,21 +192,30 @@ class userAuthentication
                 );
             }
 
-            throw \laabs::newException('auth/authenticationException', 'Username and / or password invalid', 401);
+            throw \laabs::newException(
+                'auth/authenticationException',
+                'Username and / or password invalid and / or User is locked',
+                401
+            );
         }
 
         if (password_needs_rehash($userAccount->password, PASSWORD_DEFAULT)) {
             $userLogin->password = password_hash($password, PASSWORD_DEFAULT);
         }
-        
+
         // Check locked
         if ($userAccount->locked == true) {
-            if (!isset($this->securityPolicy['lockDelay']) // No delay while locked
+            if (
+                !isset($this->securityPolicy['lockDelay']) // No delay while locked
                 || $this->securityPolicy['lockDelay'] == 0 // Unlimited delay
                 || !isset($userAccount->lockDate)          // Delay but no date for lock so unlimited
                 || ($currentDate->getTimestamp() - $userAccount->lockDate->getTimestamp()) < ($this->securityPolicy['lockDelay']) // Date + delay upper than current date
             ) {
-                throw \laabs::newException('auth/authenticationException', 'User %1$s is locked', 403, null, array($userName));
+                throw \laabs::newException(
+                    'auth/authenticationException',
+                    'Username and / or password invalid and / or User is locked',
+                    401
+                );
             }
         }
 
@@ -270,7 +287,10 @@ class userAuthentication
      */
     public function checkPasswordPolicies($newPassword)
     {
-        if ($this->securityPolicy['passwordMinLength'] && strlen($newPassword) < $this->securityPolicy['passwordMinLength']) {
+        if (
+            $this->securityPolicy['passwordMinLength']
+            && strlen($newPassword) < $this->securityPolicy['passwordMinLength']
+        ) {
             throw new \core\Exception\ForbiddenException("The password is too short.", 403);
         }
 
@@ -282,7 +302,10 @@ class userAuthentication
             throw new \core\Exception\ForbiddenException("The password must contain digits.", 403);
         }
 
-        if ($this->securityPolicy['passwordRequiresMixedCase'] && (!preg_match('~[A-Z]~', $newPassword) || !preg_match('~[a-z]~', $newPassword))) {
+        if (
+            $this->securityPolicy['passwordRequiresMixedCase']
+            && (!preg_match('~[A-Z]~', $newPassword) || !preg_match('~[a-z]~', $newPassword))
+        ) {
             throw new \core\Exception\ForbiddenException("The password must contain upper and lower case.", 403);
         }
     }
@@ -290,7 +313,7 @@ class userAuthentication
     /**
      * Check if user is enabled
      * @param object $userAccount
-     * 
+     *
      * @return object
      */
     protected function checkEnabled($userAccount)
