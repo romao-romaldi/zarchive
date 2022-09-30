@@ -257,7 +257,7 @@ class cluster
         }
 
         foreach ($cluster->clusterRepository as $clusterRepository) {
-            if ($clusterRepository->repository == null || !is_readable($clusterRepository->repository->repositoryUri)) {
+            if ($clusterRepository->repository == null) {
                 throw \laabs::newException("digitalResource/clusterException", "All repositories must be accessible");
             }
 
@@ -407,7 +407,6 @@ class cluster
         $result = true;
 
         foreach ($cluster->clusterRepository as $clusterRepository) {
-
             $address = $this->sdoFactory->read('digitalResource/address', ['resId' => $resource->resId, 'repositoryId' => $clusterRepository->repositoryId]);
             if (!$this->repositoryController->isResource($clusterRepository->repository, $address)) {
                 $result = false;
