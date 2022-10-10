@@ -89,7 +89,7 @@ class eventNotifier
 
     protected function matchAssert($event, $name, $value)
     {
-        if (is_string($value)) {
+        if (is_scalar($value)) {
             return ($event->{$name} == $value);
         }
     }
