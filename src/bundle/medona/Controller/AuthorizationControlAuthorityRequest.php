@@ -55,7 +55,7 @@ class AuthorizationControlAuthorityRequest extends AuthorizationRequest
         $message->authorizationReason = $requestMessage->type;
 
         $message->senderOrgRegNumber = $requestMessage->recipientOrgRegNumber;
-        $message->comment = $requestMessage->object->comment;
+        $message->comment = $requestMessage->comment;
 
         if ($requestMessage->type == "ArchiveDeliveryRequest") {
             $controlAuthority = $this->getControlAuthority($requestMessage->senderOrg->orgId);

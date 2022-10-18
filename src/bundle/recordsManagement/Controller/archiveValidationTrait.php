@@ -290,10 +290,10 @@ trait archiveValidationTrait
                 if (isset($archive->archivalProfileReference)) {
                     if (empty($archive->contents[$i]->archivalProfileReference)) {
                         if (!$this->currentArchivalProfile->acceptArchiveWithoutProfile) {
-                            throw new \core\Exception\BadRequestException("Invalid contained archive profile %s", 400, null, $archive->contents[$i]->archivalProfileReference);
+                            throw new \core\Exception\BadRequestException("Invalid contained archive profile %s", 400, null, [$archive->contents[$i]->archivalProfileReference]);
                         }
                     } elseif (!in_array($archive->contents[$i]->archivalProfileReference, $containedProfiles)) {
-                        throw new \core\Exception\BadRequestException("Invalid contained archive profile %s", 400, null, $archive->contents[$i]->archivalProfileReference);
+                        throw new \core\Exception\BadRequestException("Invalid contained archive profile %s", 400, null, [$archive->contents[$i]->archivalProfileReference]);
                     }
                 }
 

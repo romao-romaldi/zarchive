@@ -18,17 +18,17 @@
  * along with dependency fileSystem.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace dependency\fileSystem\plugins;
+
 /**
  * Class for a file in file system
- * 
+ *
  * @package Dependency/fileSystem
  */
 class zip
 {
-    
     protected $executable;
 
-    public function __construct($zipExecutable=false)
+    public function __construct($zipExecutable = false)
     {
         if (!$zipExecutable) {
             switch (DIRECTORY_SEPARATOR) {
@@ -46,10 +46,9 @@ class zip
         }
         $locale = 'fr_FR.UTF-8';
         setlocale(LC_ALL, $locale);
-        putenv('LC_ALL='.$locale);
+        putenv('LC_ALL=' . $locale);
     }
 
-    
     public function add($archive, $filename, array $options=null)
     {
         $tokens = array('"' . $this->executable . '"');
@@ -57,7 +56,6 @@ class zip
         $tokens[] = '"' . $archive . '"';
         $tokens[] = '"' . $filename . '"';
 //        $tokens[] = '-scsUTF-8';
-        
         if ($options) {
             foreach ($options as $option) {
                 $tokens[] = $option;
@@ -75,8 +73,9 @@ class zip
             return true;
         } else {
             $message = $this->handleError($return);
-
-            throw new \dependency\fileSystem\Exception($message, $return, null, $output);
+            // Output hidden for security reason (https://forge.maarch.org/issues/21936), uncomment for debug
+            // throw new \dependency\fileSystem\Exception($message, $return, null, $output);
+            throw new \dependency\fileSystem\Exception($message, $return, null);
         }
     }
 
@@ -94,7 +93,7 @@ class zip
      * @return boolean
      * @throws \dependency\fileSystem\Exception
      */
-    public function extract($archive, $outdir, $filename=false, array $options=null, $command = "x")
+    public function extract($archive, $outdir, $filename = false, array $options = null, $command = "x")
     {
         $tokens = array('"' . $this->executable . '"');
         $tokens[] = $command;
@@ -125,8 +124,9 @@ class zip
             return true;
         } else {
             $message = $this->handleError($return);
-
-            throw new \dependency\fileSystem\Exception($message, $return, null, $output);
+            // Output hidden for security reason (https://forge.maarch.org/issues/21936), uncomment for debug
+            // throw new \dependency\fileSystem\Exception($message, $return, null, $output);
+            throw new \dependency\fileSystem\Exception($message, $return, null);
         }
     }
 
@@ -148,7 +148,7 @@ class zip
         //var_dump($output);
         //var_dump($return);
         $contents = array();
-        for ($line=16, $end=count($output)-2; $line<$end; $line++) {
+        for ($line = 16, $end = count($output) - 2; $line < $end; $line++) {
             $contents[] = substr($output[$line], 53);
         }
 
@@ -156,8 +156,9 @@ class zip
             return $contents;
         } else {
             $message = $this->handleError($return);
-
-            throw new \dependency\fileSystem\Exception($message, $return, null, $output);
+            // Output hidden for security reason (https://forge.maarch.org/issues/21936), uncomment for debug
+            // throw new \dependency\fileSystem\Exception($message, $return, null, $output);
+            throw new \dependency\fileSystem\Exception($message, $return, null);
         }
     }
 
@@ -179,7 +180,7 @@ class zip
         //var_dump($command);
         //var_dump($output);
         //var_dump($return);
-        for ($offset=0, $end=12; $offset<=$end; $offset++) {
+        for ($offset = 0, $end = 12; $offset <= $end; $offset++) {
             $line = $output[$offset];
             if (strpos($line, "=") !== false) {
                 $infos[trim(strtok($line, "="))] = trim(strtok("="));
@@ -187,7 +188,7 @@ class zip
         }
 
         $infos['contents'] = array();
-        for ($offset=14, $end=count($output); $offset<$end; $offset++) {
+        for ($offset = 14, $end = count($output); $offset < $end; $offset++) {
             $line = $output[$offset];
             if ($line == "") {
                 $infos['contents'][] = $content;
@@ -202,33 +203,32 @@ class zip
             return $infos;
         } else {
             $message = $this->handleError($return);
-
-            throw new \dependency\fileSystem\Exception($message, $return, null, $output);
+            // Output hidden for security reason (https://forge.maarch.org/issues/21936), uncomment for debug
+            // throw new \dependency\fileSystem\Exception($message, $return, null, $output);
+            throw new \dependency\fileSystem\Exception($message, $return, null);
         }
     }
 
     protected function handleError($return)
-    {       
+    {
         switch ($return) {
-            case 1 :
-                return "Warning: Some files could not be processed. See output for more informations.";
+            case 1:
+                return "Warning: Some files could not be processed. See zip dependency for more informations.";
 
-            case 2 : 
-                return "Error: Unable to process the command. See output for more informations.";
- 
-            case 7 : 
+            case 2:
+                return "Error: Unable to process the command. See zip dependency for more informations.";
+
+            case 7:
                 return "Command line error.";
 
-            case 8 :
+            case 8:
                 return "Not enough memory for operation.";
 
-            case 255 :
+            case 255:
                 return "User stopped the process.";
 
             default:
                 return "Unknown error.";
-
         }
     }
-
 }

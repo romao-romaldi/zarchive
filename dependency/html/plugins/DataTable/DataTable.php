@@ -32,6 +32,8 @@ class DataTable extends \dependency\html\AbstractHtmlClass
 
     protected $toolbars;
 
+    protected $catalog;
+
     /* -------------------------------------------------------------------------
     - Methods
     ------------------------------------------------------------------------- */
@@ -50,6 +52,19 @@ class DataTable extends \dependency\html\AbstractHtmlClass
         $this->element->ownerDocument->addScript('/public/js/DataTables/datatables.js');
 
         $this->parameters->sPaginationType = "full_numbers";
+
+        $view = $this->element->ownerDocument;
+        $catalogElement = $view->XPath->query("ancestor-or-self::*[@data-translate-catalog]", $this->element)->item(0);
+        if ($catalogElement) {
+            $this->catalog = $catalogElement->getAttribute('data-translate-catalog');
+        }
+        
+        $all = $view->translator->getText("All", false, $this->catalog);
+
+        $this->parameters->lengthMenu = [
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, $all]
+        ];
     }
 
     public function saveHtml()
@@ -99,44 +114,48 @@ EOS;
 
     public function translate()
     {
-        $view = $this->element->ownerDocument;
-        $translator = $view->translator;
+        $translator = $this->element->ownerDocument->translator;
 
-        $catalogElement = $view->XPath->query("ancestor-or-self::*[@data-translate-catalog]", $this->element)->item(0);
-
-        if (!$catalogElement) {
-            return;
-        }
-
-        $catalog = $catalogElement->getAttribute('data-translate-catalog');
         $this->parameters->oLanguage = new \stdClass();
 
-        $this->parameters->oLanguage->sProcessing   = $translator->getText("Processing...", false, $catalog);
-        $this->parameters->oLanguage->sSearch       = $translator->getText("Search:", false, $catalog);
+        $this->parameters->oLanguage->sProcessing   = $translator->getText("Processing...", false, $this->catalog);
+        $this->parameters->oLanguage->sSearch       = $translator->getText("Search:", false, $this->catalog);
 
-        $this->parameters->oLanguage->sLengthMenu   = $translator->getText("Show _MENU_ entries", false, $catalog);
-        $this->parameters->oLanguage->sInfo         = $translator->getText("Showing _START_ to _END_ of _TOTAL_ entries", false, $catalog);
-        $this->parameters->oLanguage->sInfoEmpty    = $translator->getText("Showing 0 to 0 of 0 entries", false, $catalog);
-        $this->parameters->oLanguage->sInfoFiltered = $translator->getText("(filtered from _MAX_ total entries)", false, $catalog);
-        $this->parameters->oLanguage->sInfoPostFix  = ""; //$translator->getText("", false, $catalog);
-        $this->parameters->oLanguage->sLoadingRecords = $translator->getText("Loading...", false, $catalog);
-        $this->parameters->oLanguage->sZeroRecords  = $translator->getText("No matching records found", false, $catalog);
-        $this->parameters->oLanguage->sEmptyTable   = $translator->getText("No data available in table", false, $catalog);
+        $this->parameters->oLanguage->sLengthMenu   = $translator->getText("Show _MENU_ entries", false, $this->catalog);
+        $this->parameters->oLanguage->sInfo         = $translator->getText("Showing _START_ to _END_ of _TOTAL_ entries", false, $this->catalog);
+        $this->parameters->oLanguage->sInfoEmpty    = $translator->getText("Showing 0 to 0 of 0 entries", false, $this->catalog);
+        $this->parameters->oLanguage->sInfoFiltered = $translator->getText("(filtered from _MAX_ total entries)", false, $this->catalog);
+        $this->parameters->oLanguage->sInfoPostFix  = ""; //$translator->getText("", false, $this->catalog);
+        $this->parameters->oLanguage->sLoadingRecords = $translator->getText("Loading...", false, $this->catalog);
+        $this->parameters->oLanguage->sZeroRecords  = $translator->getText("No matching records found", false, $this->catalog);
+        $this->parameters->oLanguage->sEmptyTable   = $translator->getText("No data available in table", false, $this->catalog);
 
         $this->parameters->oLanguage->oPaginate = new \stdClass();
-        $this->parameters->oLanguage->oPaginate->sFirst   = $translator->getText("First", false, $catalog);
-        $this->parameters->oLanguage->oPaginate->sPrevious= $translator->getText("Previous", false, $catalog);
-        $this->parameters->oLanguage->oPaginate->sNext    = $translator->getText("Next", false, $catalog);
-        $this->parameters->oLanguage->oPaginate->sLast    = $translator->getText("Last", false, $catalog);
+        $this->parameters->oLanguage->oPaginate->sFirst   = $translator->getText("First", false, $this->catalog);
+        $this->parameters->oLanguage->oPaginate->sPrevious= $translator->getText("Previous", false, $this->catalog);
+        $this->parameters->oLanguage->oPaginate->sNext    = $translator->getText("Next", false, $this->catalog);
+        $this->parameters->oLanguage->oPaginate->sLast    = $translator->getText("Last", false, $this->catalog);
 
         $this->parameters->oLanguage->oAria = new \stdClass();
-        $this->parameters->oLanguage->oAria->sSortAscending      = $translator->getText(": activate to sort column ascending", false, $catalog);
-        $this->parameters->oLanguage->oAria->sSortDescending    = $translator->getText(": activate to sort column descending", false, $catalog);
+        $this->parameters->oLanguage->oAria->sSortAscending      = $translator->getText(": activate to sort column ascending", false, $this->catalog);
+        $this->parameters->oLanguage->oAria->sSortDescending    = $translator->getText(": activate to sort column descending", false, $this->catalog);
     }
 
     public function setPaginationType($paginationType)
     {
         $this->parameters->sPaginationType = $paginationType;
+    }
+
+    public function setLengthMenu(array $lengths, array $lengthLabels = null)
+    {
+        if (is_null($lengthLabels)) {
+            $this->parameters->lengthMenu = $lengths;
+        } else {
+            $this->parameters->lengthMenu = [
+                $lengths,
+                $lengthLabels
+            ];
+        }
     }
 
     public function setUnsearchableColumns($indexes)

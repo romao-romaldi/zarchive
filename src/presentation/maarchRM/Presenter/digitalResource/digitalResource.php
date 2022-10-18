@@ -28,6 +28,7 @@ namespace Presentation\maarchRM\Presenter\digitalResource;
 class digitalResource
 {
     use \presentation\maarchRM\Presenter\exceptions\exceptionTrait;
+
     public $view;
 
     protected $translator;
@@ -36,9 +37,13 @@ class digitalResource
      * Constuctor of registered mail html serializer
      * @param \dependency\html\Document $view The view
      */
-    public function __construct(\dependency\html\Document $view, \dependency\localisation\TranslatorInterface $translator)
-    {
+    public function __construct(
+        \dependency\html\Document $view,
+        \dependency\localisation\TranslatorInterface $translator,
+        \dependency\json\JsonObject $json
+    ) {
         $this->view = $view;
+        $this->json = $json;
         $this->translator = $translator;
         $this->translator->setCatalog('digitalResource/conversionRule');
     }
@@ -53,32 +58,30 @@ class digitalResource
             return $this->view->saveHtml();
         }
 
+        $base64File = '';
         // Get preview if size exceeds 2Mb
         if ($resource->size > 2000000) {
             switch ($resource->mimetype) {
                 case 'application/pdf':
-                    $url = $this->getPDFPreview($resource);
+                    $base64File = $this->getPDFPreview($resource);
                     break;
-
                 case 'text/html':
                 case 'text/plain':
-                    $url = $this->getMarkupLanguagePreview($resource);
+                    $base64File = $this->getMarkupLanguagePreview($resource);
                     break;
 
                 default:
             }
         } else {
             $contents = stream_get_contents($resource->attachment->data);
-            $url = \laabs::createPublicResource($contents);
+            $base64File = base64_encode($contents);
         }
 
-        if ($url) {
-            $oldBrowserWarningText = $this->translator->getText("Old Browser download");
-            $this->view->addContent(
-                '<object class="embed-responsive-item" data="'.$url.'"" type="'.$resource->mimetype.'"><p>' . $oldBrowserWarningText . '</p></object>'
-            );
-        }
+        $this->json->base64File = $base64File;
+        $this->json->mimetype = $resource->mimetype;
+        $this->json->oldBrowserWarningText = $this->translator->getText("Old Browser download");
 
+        return $this->json->save();
         return $this->view->saveHtml();
     }
 
@@ -92,7 +95,7 @@ class digitalResource
             fclose($fp);
 
             $fpdi = \laabs::newService('dependency/PDF/Factory')->getFpdi();
-            
+
             $docpages = $fpdi->setSourceFile($tempfile);
             if ($docpages > 2) {
                 $page = $fpdi->importPage(1);
@@ -108,26 +111,23 @@ class digitalResource
                 $contents = $fpdi->Output('S');
             } else {
                 $contents = file_get_contents($tempfile);
+                unlink($tempfile);
             }
         } catch (\Exception $exception) {
             $contents = stream_get_contents($resource->attachment->data);
         }
 
-        $url = \laabs::createPublicResource($contents);
-
-        return $url;
+        return base64_encode($contents);
     }
 
     protected function getMarkupLanguagePreview($resource)
     {
         rewind($resource->attachment->data);
         $contents = fread($resource->attachment->data, 10000);
-        
+
         $contents = strip_tags($contents);
 
-        $url = \laabs::createPublicResource($contents);
-
-        return $url;
+        return base64_encode($contents);
     }
 
     /**
@@ -141,7 +141,7 @@ class digitalResource
         $url = \laabs::createPublicResource($contents);
 
         $this->view->addContent(
-            '<iframe class="" style="height:100%;width:100%" src="'.$url.'"" ></iframe>'
+            '<iframe class="" style="height:100%;width:100%" src="' . $url . '"" ></iframe>'
         );
 
         return $this->view->saveHtml();

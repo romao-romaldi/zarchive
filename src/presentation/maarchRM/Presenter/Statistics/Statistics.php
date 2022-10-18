@@ -138,7 +138,7 @@ class Statistics
         foreach ($array as $key => $statistic) {
             if (array_key_exists('originatingorg', $statistic)) {
                 $results[$statistic['originatingorg']] = $statistic[$statType];
-            } else {
+            } elseif (array_key_exists('archivalprofile', $statistic)) {
                 $results[$statistic['archivalprofile']] = $statistic[$statType];
             }
         }
