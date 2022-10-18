@@ -85,7 +85,7 @@ class repository
         try {
             $this->getService($repository);
         } catch (\Exception $e) {
-            throw \laabs::newException("digitalResource/repositoryException", "Service not found.");
+            throw \laabs::newException("digitalResource/repositoryException", $e);
         }
 
         $repository->parameters = json_encode($repository->parameters);
@@ -111,8 +111,7 @@ class repository
         try {
             $this->getService($repository);
         } catch (\Exception $e) {
-
-            throw \laabs::newException("digitalResource/repositoryException", "Service not found.");
+            throw \laabs::newException("digitalResource/repositoryException", $e->getmessage());
         }
 
         $repository->parameters = json_encode($repository->parameters);
@@ -424,7 +423,9 @@ class repository
         $repositoryServiceArgs['name'] = $repository->repositoryUri;
 
         if (!empty($repository->parameters)) {
-            $repositoryServiceArgs['options'] = $repository->parameters;
+            foreach ($repository->parameters as $param) {
+                $repositoryServiceArgs['options'][trim($param->paramName)] = trim($param->paramVal);
+            }
         }
 
         return $repositoryDependency->callService($repositoryServiceName, $repositoryServiceArgs);
