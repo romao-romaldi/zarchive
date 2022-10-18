@@ -1,6 +1,10 @@
 # CHANGELOG
 
 ## Version 2.9.1
+ - `Added` Connecteur de stockage S3
+ - `Added` Configuration possible des tailles de page dans le module dataTable
+ - `Changed` Valeur 'Tous' ajoutée par défaut dans les tailles de page de résultat
+ - `Fixed` Filtre inopérant sur les résultats d'opération pour l'envoi de notifications sur événements
  - `Fixed` CVE-2022-37772 Vulnérabilité brute force sur utilisateurs verrouillés
  - `Fixed` CVE-2022-37773 Vulnérabilité d'injection SQL dans l'écran de statistiques
  - `Fixed` CVE-2022-37774 Vulnérabilité de contrôle d'accès sur documents prévisualisés
