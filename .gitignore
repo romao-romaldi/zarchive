@@ -2,8 +2,6 @@ data/maarchRM/log.txt
 data/maarchRM/repository/
 data/maarchRM/tmp/
 data/maarchRM/luceneIndex/
-data/maarchRM/conf/vhost.win.conf
-data/maarchRM/conf/vhost.conf
 web/tmp
 data/tmp
 web/public/dependency/
@@ -11,8 +9,6 @@ dependency/fileSystem/plugins/fid/cache/*
 dependency/csrf/log/*
 nbproject/
 src/ext/*
-data/maarchRM/conf/configuration.ini
-data/maarchRM/conf/confvars.ini
 vendor/*
 data/maarchRM/medona/*
 node_modules
