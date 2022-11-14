@@ -1,6 +1,6 @@
 ﻿-- AUTH
 INSERT INTO auth.account ("accountId", "accountName", "displayName", "accountType", "emailAddress", enabled, password, "passwordChangeRequired", "passwordLastChange", locked, "lockDate", "badPasswordCount", "lastLogin", "lastIp", "replacingUserAccountId", "firstName", "lastName", title, salt, "tokenDate", authentication, preferences, "ownerOrgId", "isAdmin") VALUES 
-('superadmin', 'superadmin', 'super admin', 'user', 'support@maarch.fr', true, '186cf774c97b60a1c106ef718d10970a6a06e06bef89553d9ae65d938a886eae', false, NULL, false, NULL, 0, NULL, NULL, NULL, 'Admin', 'Super', 'M.', NULL, NULL, NULL, NULL, NULL, true);
+('superadmin', 'superadmin', 'super admin', 'user', 'support@zeliaconsultings.com', true, '186cf774c97b60a1c106ef718d10970a6a06e06bef89553d9ae65d938a886eae', false, NULL, false, NULL, 0, NULL, NULL, NULL, 'Admin', 'Super', 'M.', NULL, NULL, NULL, NULL, NULL, true);
 
 -- ROLE
 INSERT INTO "auth"."role"("roleId", "roleName", "description", "securityLevel", "enabled") VALUES
